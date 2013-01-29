@@ -17,18 +17,31 @@
 #include <math.h>
 #include "loadobj.h"
 /* Globals*/
+#define PI 3.14159
 
-GLfloat rotationMatrix2[] = { 	0.7f, -0.7f, 0.0f, 0.0f,
-								0.7f, 0.7f, 0.0f, 0.0f,
+GLfloat rotationMatrixX[] = { 	1.0f, 0.0f, 0.0f, 0.0f,
+								0.0f, 1.0f, 0.0f, 0.0f,
 								0.0f, 0.0f, 1.0f, 0.0f,
 								0.0f, 0.0f, 0.0f, 1.0f };
-GLfloat rotationMatrix[] = { 	0.7f, 0.0f, -0.7f, 0.0f,
+
+GLfloat rotationMatrixY[] = { 	1.0f, 0.0f, 0.0f, 0.0f,
 								0.0f, 1.0f, 0.0f, 0.0f,
-								0.7f, 0.0f, 0.7f, 0.0f,
+								0.0f, 0.0f, 1.0f, 0.0f,
 								0.0f, 0.0f, 0.0f, 1.0f };
+
+GLfloat rotationMatrixZ[] = { 	1.0f, 0.0f, 0.0f, 0.0f,
+								0.0f, 1.0f, 0.0f, 0.0f,
+								0.0f, 0.0f, 1.0f, 0.0f,
+								0.0f, 0.0f, 0.0f, 1.0f };
+
 GLfloat translationMatrix[] = { 1.0f, 0.0f, 0.0f, 0.0f,
 								0.0f, 1.0f, 0.0f, 0.0f,
 								0.0f, 0.0f, 1.0f, -2.0f,
+								0.0f, 0.0f, 0.0f, 1.0f };
+
+GLfloat translationMatrix2[] = {1.0f, 0.0f, 0.0f, 0.0f,
+								0.0f, 1.0f, 0.0f, 0.0f,
+								0.0f, 0.0f, 1.0f, 0.0f,
 								0.0f, 0.0f, 0.0f, 1.0f };
 
 #define near 1.0
@@ -47,25 +60,34 @@ GLuint program;
 GLfloat xModify;
 GLfloat yModify;
 GLfloat zModify;
-float rotate;
+float gravity;
+float rotateFront;
+float rotateSide;
 Model *m;
 
 
 
 
 
-void set_sincos(GLfloat* m, float alpha) { 
+void setSincosX(GLfloat* m, float alpha) { 
+	m[5] = cos(alpha);
+	m[6] = -sin(alpha);
+	m[9] = sin(alpha);
+	m[10] = cos(alpha);
+}
+
+void setSincosY(GLfloat* m, float alpha) { 
+	m[0] = cos(alpha);
+	m[2] = sin(alpha);
+	m[8] = -sin(alpha);
+	m[10] = cos(alpha);
+}
+
+void setSincosZ(GLfloat* m, float alpha) { 
 	m[0] = cos(alpha);
 	m[1] = -sin(alpha);
 	m[4] = sin(alpha);
 	m[5] = cos(alpha);
-}
-
-void set_sincos2(GLfloat* m, float alpha) { 
-	m[5] = cos(alpha);
-	m[6] = sin(alpha);
-	m[9] = -sin(alpha);
-	m[10] = cos(alpha);
 }
 
 void init(void) {	
@@ -84,10 +106,12 @@ void init(void) {
 	glCullFace(GL_TRUE);
 	printError("GL inits");
 
-	xModify = 0;
-	yModify = 0;
-	zModify = 0;
-	rotate = 0;
+	xModify = 0.0;
+	yModify = 0.0;
+	zModify = 0.0;
+	gravity = 0.0;
+	rotateFront = 0.0;
+	rotateSide = 0.0;
 
 	/* Load and compile shader*/
 	program = loadShaders("main.vert", "main.frag");
@@ -120,12 +144,16 @@ void init(void) {
     glBufferData(GL_ELEMENT_ARRAY_BUFFER, m->numIndices*sizeof(GLuint), m->indexArray, GL_STATIC_DRAW);
 
  	/* End of upload of geometry*/
+	setSincosX(&rotationMatrixX, 0.0);
+	setSincosY(&rotationMatrixY, 0.0);
+	setSincosZ(&rotationMatrixZ, 0.0);
 
-	glUniformMatrix4fv(glGetUniformLocation(program, "rotationMatrix"), 1, GL_TRUE, rotationMatrix);
-	glUniformMatrix4fv(glGetUniformLocation(program, "rotationMatrix2"), 1, GL_TRUE, rotationMatrix2);
+	glUniformMatrix4fv(glGetUniformLocation(program, "rotationMatrixX"), 1, GL_TRUE, rotationMatrixX);
+	glUniformMatrix4fv(glGetUniformLocation(program, "rotationMatrixY"), 1, GL_TRUE, rotationMatrixY);
+	glUniformMatrix4fv(glGetUniformLocation(program, "rotationMatrixZ"), 1, GL_TRUE, rotationMatrixZ);
 	glUniformMatrix4fv(glGetUniformLocation(program, "translationMatrix"), 1, GL_TRUE, translationMatrix);
+	//glUniformMatrix4fv(glGetUniformLocation(program, "translationMatrix2"), 1, GL_TRUE, translationMatrix);
 	glUniformMatrix4fv(glGetUniformLocation(program, "projMatrix"), 1, GL_TRUE, projMatrix);
-
 
 	printError("init arrays");
 }
@@ -136,20 +164,23 @@ void display(void) {
 	/* clear the screen*/
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-	if (yModify > 0) { 
-		yModify -= 0.03;
-	} else {
-		yModify = 0;
-	}
-
 	translationMatrix[3] += xModify; //x
 	translationMatrix[7] = yModify; //y
 	translationMatrix[11] += zModify; //z
-	set_sincos(&rotationMatrix, rotate);
-	set_sincos2(&rotationMatrix2, rotate);
+
+	setSincosX(&rotationMatrixX, rotateFront + rotateSide);
+	setSincosY(&rotationMatrixY, rotateFront + rotateSide);
+	setSincosZ(&rotationMatrixZ, rotateFront + rotateSide);
+
+/*	translationMatrix2[3] = -translationMatrix[3]; //x
+	translationMatrix2[7] = -translationMatrix[7]; //y
+	translationMatrix2[11] = -translationMatrix[11]; //z
+*/
 	glUniformMatrix4fv(glGetUniformLocation(program, "translationMatrix"), 1, GL_TRUE, translationMatrix);
-	glUniformMatrix4fv(glGetUniformLocation(program, "rotationMatrix"), 1, GL_TRUE, rotationMatrix);
-	glUniformMatrix4fv(glGetUniformLocation(program, "rotationMatrix2"), 1, GL_TRUE, rotationMatrix2);
+//	glUniformMatrix4fv(glGetUniformLocation(program, "translationMatrix2"), 1, GL_TRUE, translationMatrix);
+	//glUniformMatrix4fv(glGetUniformLocation(program, "rotationMatrixX"), 1, GL_TRUE, rotationMatrixX);
+	glUniformMatrix4fv(glGetUniformLocation(program, "rotationMatrixY"), 1, GL_TRUE, rotationMatrixY);
+	//glUniformMatrix4fv(glGetUniformLocation(program, "rotationMatrixZ"), 1, GL_TRUE, rotationMatrixZ);
 
     glBindVertexArray(bunnyVertexArrayObjID);    // Select VAO
     glDrawElements(GL_TRIANGLES, m->numIndices, GL_UNSIGNED_INT, 0L);
@@ -160,18 +191,21 @@ void display(void) {
 }
 
 void keyUp (unsigned char key, int x, int y) { 
-	rotate = 0;
 	switch(key){
 		case 'w':
+			rotateFront += PI;
 			zModify = 0;
 			break;
 		case 's':
+			rotateFront -= PI;
 			zModify = 0;
 			break;
 		case 'a':
+			rotateSide += PI / 2;
 			xModify = 0;
 			break;
 		case 'd':
+			rotateSide -= PI / 2;
 			xModify = 0;
 		default:
 			break;
@@ -181,23 +215,24 @@ void keyUp (unsigned char key, int x, int y) {
 void processNormalKeys(unsigned char key, int x, int y){
 	switch(key){
 		case 'w':
-			rotate = 0.2;
-			zModify = -0.1;
+			rotateFront -= PI;
+			zModify = -0.08;
 			break;
 		case 's':
-			rotate = -0.2;
-			zModify = 0.1;
+			rotateFront += PI;
+			zModify = 0.08;
 			break;
 		case 'a':
-			rotate = 0.2;
-			xModify = -0.1;
+			rotateSide -= PI / 2;
+			xModify = -0.08;
 			break;
 		case 'd':
-			rotate = -0.2;
-			xModify = 0.1;
+			rotateSide += PI / 2;
+			xModify = 0.08;
 			break;
 		case ' ':
-			yModify = 1.0;
+			gravity = -0.2;
+			yModify = 0.01;
 			break;
 		default:
 			break;
@@ -205,6 +240,17 @@ void processNormalKeys(unsigned char key, int x, int y){
 }
 
 void OnTimer(int value) {
+	if (gravity < 0 && yModify > 0) { 
+		yModify -= gravity;
+		gravity += 0.035;
+	} else if (yModify >= 0.05) {
+		gravity += 0.01;
+		yModify -= gravity;
+	} else {
+		yModify = 0;
+		gravity = 0;
+	}
+
     glutPostRedisplay();
     glutTimerFunc(20, &OnTimer, value);
 }
