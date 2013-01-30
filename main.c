@@ -100,7 +100,7 @@ void init(void) {
 	/* Reference to shader program*/
 
 	/* GL inits*/
-	glClearColor(0.2,0.2,0.5,0);
+	glClearColor(0.0f,0.0f,0.0f,0.0f);
 	glEnable(GL_DEPTH_TEST);
 	glEnable(GL_CULL_FACE);
 	glCullFace(GL_TRUE);
@@ -231,8 +231,10 @@ void processNormalKeys(unsigned char key, int x, int y){
 			xModify = 0.08;
 			break;
 		case ' ':
-			gravity = -0.2;
-			yModify = 0.01;
+			if (yModify == 0) { 
+				gravity = -0.2;
+				yModify = 0.01;
+			}
 			break;
 		default:
 			break;
