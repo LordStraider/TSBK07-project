@@ -109,7 +109,7 @@ void init(void) {
 	/* Reference to shader program*/
 
 	/* GL inits*/
-	glClearColor(0.0f,0.0f,0.0f,0.0f);
+	glClearColor(0.5f,0.5f,0.5f,0.5f);
 	glEnable(GL_DEPTH_TEST);
 	glEnable(GL_CULL_FACE);
 	glCullFace(GL_TRUE);
@@ -149,11 +149,11 @@ void init(void) {
     glEnableVertexAttribArray(glGetAttribLocation(program, "inPosition"));
 
     // VBO for normal data
-    /*glBindBuffer(GL_ARRAY_BUFFER, bunnyNormalBufferObjID);
+    glBindBuffer(GL_ARRAY_BUFFER, bunnyNormalBufferObjID);
     glBufferData(GL_ARRAY_BUFFER, m->numVertices*3*sizeof(GLfloat), m->normalArray, GL_STATIC_DRAW);
     glVertexAttribPointer(glGetAttribLocation(program, "inNormal"), 3, GL_FLOAT, GL_FALSE, 0, 0);
     glEnableVertexAttribArray(glGetAttribLocation(program, "inNormal"));
-    */
+    
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, bunnyIndexBufferObjID);
     glBufferData(GL_ELEMENT_ARRAY_BUFFER, m->numIndices*sizeof(GLuint), m->indexArray, GL_STATIC_DRAW);
 
@@ -175,11 +175,11 @@ void init(void) {
     glEnableVertexAttribArray(glGetAttribLocation(program, "inPosition2"));
 
     // VBO for normal data
-/*    glBindBuffer(GL_ARRAY_BUFFER, klingonNormalBufferObjID);
+    glBindBuffer(GL_ARRAY_BUFFER, klingonNormalBufferObjID);
     glBufferData(GL_ARRAY_BUFFER, m2->numVertices*3*sizeof(GLfloat), m2->normalArray, GL_STATIC_DRAW);
     glVertexAttribPointer(glGetAttribLocation(program, "inNormal2"), 3, GL_FLOAT, GL_FALSE, 0, 0);
     glEnableVertexAttribArray(glGetAttribLocation(program, "inNormal2"));
- */   
+   
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, klingonIndexBufferObjID);
     glBufferData(GL_ELEMENT_ARRAY_BUFFER, m2->numIndices*sizeof(GLuint), m2->indexArray, GL_STATIC_DRAW);
 
@@ -203,6 +203,22 @@ void init(void) {
 	printError("init arrays");
 }
 
+float getRotation() {
+	float rotate = rotateFront + rotateSide;
+
+	if (round(rotateFront - PI) == 0 && round(rotateSide + PI/2) == 0) { // w + a
+		rotate = - 3 * PI / 4;
+	} else if (round(rotateFront - PI) == 0 && round(rotateSide - PI/2) == 0) { // w + d
+		rotate = 3 * PI / 4;
+	} else if (round(rotateFront - 2 * PI) == 0 && round(rotateSide + PI/2) == 0) { // s + a
+		rotate = - PI / 4;
+	} else if (round(rotateFront - 2 * PI) == 0 && round(rotateSide - PI/2) == 0) { // s + d
+		rotate = PI / 4;
+	} 
+
+	return rotate;
+}
+
 void display(void) {
 	printError("pre display");
 
@@ -216,9 +232,9 @@ void display(void) {
 	translationMatrix[7] = yValue; //y
 	translationMatrix[11] = zValue; //z
 
-	setSincosX(&rotationMatrixX, rotateFront + rotateSide);
-	setSincosY(&rotationMatrixY, rotateFront + rotateSide);
-	setSincosZ(&rotationMatrixZ, rotateFront + rotateSide);
+	setSincosX(&rotationMatrixX, getRotation());
+	setSincosY(&rotationMatrixY, getRotation());
+	setSincosZ(&rotationMatrixZ, getRotation());
 
 /*	translationMatrix2[3] = -translationMatrix[3]; //x
 	translationMatrix2[7] = -translationMatrix[7]; //y
@@ -251,19 +267,19 @@ void display(void) {
 void keyUpFunc (unsigned char key, int x, int y) { 
 	switch(key){
 		case 'w':
-			rotateFront += PI;
+			rotateFront = 0.0;
 			zModify = 0;
 			break;
 		case 's':
-			rotateFront -= PI;
+			rotateFront = 0.0;
 			zModify = 0;
 			break;
 		case 'a':
-			rotateSide += PI / 2;
+			rotateSide = 0.0;
 			xModify = 0;
 			break;
 		case 'd':
-			rotateSide -= PI / 2;
+			rotateSide = 0.0;
 			xModify = 0;
 		default:
 			break;
@@ -273,25 +289,26 @@ void keyUpFunc (unsigned char key, int x, int y) {
 void processNormalKeys(unsigned char key, int x, int y){
 	switch(key){
 		case 'w':
-			rotateFront -= PI;
+			rotateFront = PI;
 			zModify = -0.08;
 			break;
 		case 's':
-			rotateFront += PI;
+			rotateFront = 2 * PI;
 			zModify = 0.08;
 			break;
 		case 'a':
-			rotateSide -= PI / 2;
+			rotateSide = -PI / 2;
 			xModify = -0.08;
 			break;
 		case 'd':
-			rotateSide += PI / 2;
+			rotateSide = PI / 2;
 			xModify = 0.08;
 			break;
 		case ' ':
-			if (yModify == 0) { 
-				gravity = -0.2;
-				yModify = 0.01;
+			if (yValue == 0) { 
+				gravity = -0.1;
+				yModify = 0.0;
+				yValue = 0.1;
 			}
 			break;
 		default:
@@ -300,14 +317,15 @@ void processNormalKeys(unsigned char key, int x, int y){
 }
 
 void OnTimer(int value) {
-	if (gravity < 0 && yModify > 0) { 
+	if (gravity < 0 && yValue > 0) {
 		yModify -= gravity;
 		gravity += 0.035;
-	} else if (yModify >= 0.05) {
+	} else if (yValue >= 0.05) {
 		gravity += 0.01;
 		yModify -= gravity;
 	} else {
 		yModify = 0;
+		yValue = 0;
 		gravity = 0;
 	}
 
