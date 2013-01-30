@@ -248,7 +248,7 @@ void display(void) {
 	glutSwapBuffers();
 }
 
-void keyUp (unsigned char key, int x, int y) { 
+void keyUpFunc (unsigned char key, int x, int y) { 
 	switch(key){
 		case 'w':
 			rotateFront += PI;
@@ -320,7 +320,7 @@ int main(int argc, char *argv[]) {
 	glutCreateWindow ("GL3 white triangle example");
 	glutDisplayFunc(display); 
 	glutKeyboardFunc(processNormalKeys);
-	glutKeyboardUpFunc(keyUp);
+	glutKeyboardUpFunc(keyUpFunc);
 	glutTimerFunc(20, &OnTimer, 0);
 	init ();
 	glutMainLoop();

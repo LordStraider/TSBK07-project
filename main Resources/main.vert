@@ -18,8 +18,8 @@ uniform mat4 projMatrix;
 
 void main(void)
 {
-//	mat3 normalMatrix = mat3(translationMatrix * rotationMatrixZ * rotationMatrixY * rotationMatrixX); // Cheap normal matrix
-//	exNormal = normalMatrix * inNormal;
+	//mat3 normalMatrix = mat3(translationMatrix * rotationMatrixZ * rotationMatrixY * rotationMatrixX); // Cheap normal matrix
+	//exNormal = normalMatrix * inNormal;
 
 
 //	mat3 normalMatrix2 = mat3(translationMatrix * rotationMatrixZ); // Cheap normal matrix
