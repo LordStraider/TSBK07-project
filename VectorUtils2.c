@@ -5,6 +5,12 @@
 // But it seems to work just fine on my tests with translation, rotations
 // and matrix multiplications.
 
+// 1208: Added lookAt, perspective, frustum
+// Also made Transpose do what it should. TransposeRotation is the old function.
+// 120913: Fixed perspective. Never trust other's code...
+// 120925: Transposing in CrossMatrix
+// 121119: Fixed one more glitch in perspective.
+
 
 #include "VectorUtils2.h"
 
@@ -310,25 +316,48 @@ char transposed = 0;
 	}
 
 
-	// Transponerar enbart rotationsdelen! Kopierar till ny matris.
-	void Transpose(GLfloat *m, GLfloat *a)
+	// Only transposes rotation part.
+	void TransposeRotation(GLfloat *m, GLfloat *dest)
 	{
+		GLfloat a[16];
+		int i;
+		
 		a[0] = m[0]; a[4] = m[1]; a[8] = m[2];      a[12] = m[12];
 		a[1] = m[4]; a[5] = m[5]; a[9] = m[6];      a[13] = m[13];
 		a[2] = m[8]; a[6] = m[9]; a[10] = m[10];    a[14] = m[14];
 
 		a[3] = m[3]; a[7] = m[7]; a[11] = m[11];    a[15] = m[15];
+
+		for (i = 0; i <= 15; i++)
+			dest[i] = a[i];
+	}
+
+	// Complete transpose! Copy to new matrix (can be same).
+	void Transpose(GLfloat *m, GLfloat *dest)
+	{
+		GLfloat a[16];
+		int i;
+		
+		a[0] = m[0]; a[4] = m[1]; a[8] = m[2];      a[12] = m[3];
+		a[1] = m[4]; a[5] = m[5]; a[9] = m[6];      a[13] = m[7];
+		a[2] = m[8]; a[6] = m[9]; a[10] = m[10];    a[14] = m[11];
+
+		a[3] = m[12]; a[7] = m[13]; a[11] = m[14];    a[15] = m[15];
+
+		for (i = 0; i <= 15; i++)
+			dest[i] = a[i];
 	}
 
 
-// Rotation kring godtycklig axel (enbart rotationen)
+
+// Rotation around arbitrary axis (rotation only)
 void ArbRotate(Point3D *axis, GLfloat fi, GLfloat *m)
 {
-	Point3D x, y, z;//, a -> behövs ej?
+	Point3D x, y, z;
 	GLfloat R[16], Rt[16], Raxel[16], RtRx[16];
 
-// Kolla ocksŒ om parallell med Z-axel!
-	if (axis->x < 0.0000001) // Under nŒgon tillrŠckligt liten grŠns
+// Check if parallel to Z
+	if (axis->x < 0.0000001) // Below som small value
 	if (axis->x > -0.0000001)
 	if (axis->y < 0.0000001)
 	if (axis->y > -0.0000001) {
@@ -378,19 +407,32 @@ void ArbRotate(Point3D *axis, GLfloat fi, GLfloat *m)
 }
 
 
-// KLART HIT
 
 
 // Inte testad mycket. Hoppas jag inte vŠnt pŒ den.
 void CrossMatrix(Point3D *a, GLfloat *m) // Skapar matris fšr kryssprodukt
 {
-	m[0] =    0; m[4] =-a->z; m[8] = a->y; m[12] = 0.0;
-	m[1] = a->z; m[5] =    0; m[9] =-a->x; m[13] = 0.0;
-	m[2] =-a->y; m[6] = a->x; m[10]=    0; m[14] = 0.0;
-	m[3] =  0.0; m[7] =  0.0; m[11]=  0.0; m[15] = 0.0;
-	// OBS! 0.0 i homogena koordinaten. DŠrmed kan matrisen
-	// inte anvŠndas generellt, men duger fšr matrisderivatan.
+	if (transposed)
+	{
+		m[0] =    0; m[4] =-a->z; m[8] = a->y; m[12] = 0.0;
+		m[1] = a->z; m[5] =    0; m[9] =-a->x; m[13] = 0.0;
+		m[2] =-a->y; m[6] = a->x; m[10]=    0; m[14] = 0.0;
+		m[3] =  0.0; m[7] =  0.0; m[11]=  0.0; m[15] = 0.0;
+		// OBS! 0.0 i homogena koordinaten. DŠrmed kan matrisen
+		// inte anvŠndas generellt, men duger fšr matrisderivatan.
+	}
+	else
+	{
+		m[0] =    0; m[1] =-a->z; m[2] = a->y; m[3] = 0.0;
+		m[4] = a->z; m[5] =    0; m[7] =-a->x; m[7] = 0.0;
+		m[8] =-a->y; m[9] = a->x; m[10]=    0; m[11] = 0.0;
+		m[12] =  0.0; m[13] =  0.0; m[14]=  0.0; m[15] = 0.0;
+		// OBS! 0.0 i homogena koordinaten. DŠrmed kan matrisen
+		// inte anvŠndas generellt, men duger fšr matrisderivatan.
+	}
 }
+
+// KLART HIT
 
 void MatrixAdd(GLfloat *a, GLfloat *b, GLfloat *dest)
 {
@@ -403,4 +445,86 @@ void MatrixAdd(GLfloat *a, GLfloat *b, GLfloat *dest)
 void SetTransposed(char t)
 {
 	transposed = t;
+}
+
+
+// Build standard matrices
+
+void lookAt(Point3D *p, Point3D *l,
+			GLfloat vx, GLfloat vy, GLfloat vz,
+			GLfloat *m )
+{
+	Point3D n, v, u;
+
+	SetVector(vx, vy, vz, &v);
+
+	VectorSub(l, p, &n);
+	Normalize(&n);
+	ScalarMult(&n, -1, &n);
+
+	CrossProduct(&v, &n, &u);
+	Normalize(&u);
+	CrossProduct(&n, &u, &v);
+
+	GLfloat rot[] = { u.x, u.y, u.z, 0,
+                      v.x, v.y, v.z, 0,
+                      n.x, n.y, n.z, 0,
+                      0,   0,   0,   1 };
+	GLfloat trans[16];
+	T(-p->x, -p->y, -p->z, trans);
+	Mult(rot, trans, m);
+}
+
+// From http://www.opengl.org/wiki/GluPerspective_code
+// Changed names and parameter order to conform with VU style
+// Rewritten 120913 because it was all wrong...
+
+// Creates a projection matrix like gluPerspective or glFrustum.
+// Upload to your shader as usual.
+void perspective(float fovyInDegrees, float aspectRatio,
+                      float znear, float zfar, float *matrix)
+{
+    float ymax, xmax;
+    ymax = znear * tanf(fovyInDegrees * M_PI / 360.0);
+    if (aspectRatio < 1.0)
+    {
+	    ymax = znear * tanf(fovyInDegrees * M_PI / 360.0);
+       xmax = ymax * aspectRatio;
+    }
+    else
+    {
+	    xmax = znear * tanf(fovyInDegrees * M_PI / 360.0);
+       ymax = xmax / aspectRatio;
+    }
+    
+    frustum(-xmax, xmax, -ymax, ymax, znear, zfar, matrix);
+}
+
+void frustum(float left, float right, float bottom, float top,
+                  float znear, float zfar, float *matrix)
+{
+    float temp, temp2, temp3, temp4;
+    temp = 2.0 * znear;
+    temp2 = right - left;
+    temp3 = top - bottom;
+    temp4 = zfar - znear;
+    matrix[0] = temp / temp2; // 2*near/(right-left)
+    matrix[1] = 0.0;
+    matrix[2] = 0.0;
+    matrix[3] = 0.0;
+    matrix[4] = 0.0;
+    matrix[5] = temp / temp3; // 2*near/(top - bottom)
+    matrix[6] = 0.0;
+    matrix[7] = 0.0;
+    matrix[8] = (right + left) / temp2; // A = r+l / r-l
+    matrix[9] = (top + bottom) / temp3; // B = t+b / t-b
+    matrix[10] = (-zfar - znear) / temp4; // C = -(f+n) / f-n
+    matrix[11] = -1.0;
+    matrix[12] = 0.0;
+    matrix[13] = 0.0;
+    matrix[14] = (-temp * zfar) / temp4; // D = -2fn / f-n
+    matrix[15] = 0.0;
+    
+    if (!transposed)
+    	Transpose(matrix, matrix);
 }

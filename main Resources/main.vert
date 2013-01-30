@@ -3,9 +3,12 @@
 in  vec3 inPosition;
 in  vec3 inNormal;
 
-out vec3 exNormal; 
+in  vec3 inPosition2;
+in  vec3 inNormal2;
 
-// NY
+out vec3 exNormal; 
+out vec3 exNormal2;
+
 uniform mat4 rotationMatrixX;
 uniform mat4 rotationMatrixY;
 uniform mat4 rotationMatrixZ;
@@ -16,7 +19,11 @@ uniform mat4 projMatrix;
 void main(void)
 {
 	mat3 normalMatrix = mat3(translationMatrix * rotationMatrixZ * rotationMatrixY * rotationMatrixX); // Cheap normal matrix
-	exNormal = normalMatrix * inNormal; // Phong
+	exNormal = normalMatrix * inNormal;
 
-	gl_Position = projMatrix * translationMatrix * rotationMatrixZ * rotationMatrixY * rotationMatrixX * vec4(inPosition, 1.0);
+
+	normalMatrix = mat3(translationMatrix * rotationMatrixZ); // Cheap normal matrix
+	exNormal2 = normalMatrix * inNormal2;
+
+	gl_Position = projMatrix * translationMatrix * rotationMatrixZ * rotationMatrixY * rotationMatrixX * vec4(inPosition, 1.0)    +    projMatrix * translationMatrix * rotationMatrixZ * vec4(inPosition2, 1.0);
 }

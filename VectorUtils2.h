@@ -8,6 +8,10 @@
 #endif
 #include <math.h>
 
+#ifndef M_PI
+#define M_PI           3.14159265358979323846
+#endif
+
 #define Vector3f Point3D
 #define Matrix3f Matrix3D
 #define Matrix4f Matrix4D
@@ -49,11 +53,21 @@
 
 
 	void OrthoNormalizeMatrix(GLfloat *R);
-	void Transpose(GLfloat *m, GLfloat *a);
+	void Transpose(GLfloat *m, GLfloat *dest);
+	void TransposeRotation(GLfloat *m, GLfloat *dest);
 	void ArbRotate(Point3D *axis, GLfloat fi, GLfloat *m);
 	void CrossMatrix(Point3D *a, GLfloat *m);
 	void MatrixAdd(GLfloat *a, GLfloat *b, GLfloat *dest);
 
 	void SetTransposed(char t);
+
+// GLU replacement functions
+	void lookAt(Point3D *p, Point3D *l,
+			GLfloat vx, GLfloat vy, GLfloat vz,
+			GLfloat *m );
+	void perspective(float fovyInDegrees, float aspectRatio,
+                      float znear, float zfar, float *matrix);
+	void frustum(float left, float right, float bottom, float top,
+                  float znear, float zfar, float *matrix);
 
 #endif
