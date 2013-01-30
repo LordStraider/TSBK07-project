@@ -6,11 +6,13 @@ in vec3 exNormal;
 
 void main(void)
 {
-	const vec3 light = vec3(0.7, 0.58, 0.88);
+/*	const vec3 light = vec3(0.7, 0.58, 0.88);
 
 	float shade = dot(normalize(exNormal), light);
 //	float shade2 = dot(normalize(exNormal2), light);	
 
-	outColor = vec4(shade, shade, shade, 1.0);
-	// + vec4(shade2, shade2, shade2, 1.0);
+	outColor = vec4(shade, shade, shade, 1.0) + vec4(1.0,0.0,0.0,1.0); //vec4(shade2, shade2, shade2, 1.0);
+	
+*/
+	outColor = vec4(1.0,0.0,0.0,1.0);
 }

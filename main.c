@@ -56,16 +56,19 @@ GLfloat projMatrix[] = {	2.0f*near/(right-left), 0.0f, (right+left)/(right-left)
 							0.0f, 0.0f, -1.0f, 0.0f };
 
 unsigned int bunnyVertexArrayObjID;
-//unsigned int klingonVertexArrayObjID;
+unsigned int klingonVertexArrayObjID;
 GLuint program;
 GLfloat xModify;
+GLfloat xValue;
 GLfloat yModify;
+GLfloat yValue;
 GLfloat zModify;
+GLfloat zValue;
 float gravity;
 float rotateFront;
 float rotateSide;
 Model *m;
-//Model *m2;
+Model *m2;
 
 
 
@@ -99,7 +102,7 @@ void init(void) {
 	unsigned int bunnyIndexBufferObjID;
 	unsigned int bunnyNormalBufferObjID;
 
-/*	unsigned int klingonVertexBufferObjID;
+	unsigned int klingonVertexBufferObjID;
 	unsigned int klingonIndexBufferObjID;
 	unsigned int klingonNormalBufferObjID;
 
@@ -115,6 +118,9 @@ void init(void) {
 	xModify = 0.0;
 	yModify = 0.0;
 	zModify = 0.0;
+	xValue = 0.0;
+	yValue = 0.0;
+	zValue = -2.0;
 	gravity = 0.0;
 	rotateFront = 0.0;
 	rotateSide = 0.0;
@@ -126,13 +132,15 @@ void init(void) {
 	/* Upload geometry to the GPU:*/
 
 	m = LoadModel("bunny.obj");
-//	m2 = LoadModel("klingon.obj");
+	m2 = LoadModel("klingon.obj");
 
     glGenVertexArrays(1, &bunnyVertexArrayObjID);
     glGenBuffers(1, &bunnyVertexBufferObjID);
     glGenBuffers(1, &bunnyIndexBufferObjID);
     glGenBuffers(1, &bunnyNormalBufferObjID);
     
+    
+    glBindVertexArray(bunnyVertexArrayObjID);
     
     // VBO for vertex data
     glBindBuffer(GL_ARRAY_BUFFER, bunnyVertexBufferObjID);
@@ -141,22 +149,24 @@ void init(void) {
     glEnableVertexAttribArray(glGetAttribLocation(program, "inPosition"));
 
     // VBO for normal data
-    glBindBuffer(GL_ARRAY_BUFFER, bunnyNormalBufferObjID);
+    /*glBindBuffer(GL_ARRAY_BUFFER, bunnyNormalBufferObjID);
     glBufferData(GL_ARRAY_BUFFER, m->numVertices*3*sizeof(GLfloat), m->normalArray, GL_STATIC_DRAW);
     glVertexAttribPointer(glGetAttribLocation(program, "inNormal"), 3, GL_FLOAT, GL_FALSE, 0, 0);
     glEnableVertexAttribArray(glGetAttribLocation(program, "inNormal"));
-    
+    */
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, bunnyIndexBufferObjID);
     glBufferData(GL_ELEMENT_ARRAY_BUFFER, m->numIndices*sizeof(GLuint), m->indexArray, GL_STATIC_DRAW);
 
 
 
 
-/*    glGenVertexArrays(1, &klingonVertexArrayObjID);
+    glGenVertexArrays(1, &klingonVertexArrayObjID);
     glGenBuffers(1, &klingonVertexBufferObjID);
     glGenBuffers(1, &klingonIndexBufferObjID);
     glGenBuffers(1, &klingonNormalBufferObjID);
 
+    
+    glBindVertexArray(klingonVertexArrayObjID);
 
     // VBO for vertex data
     glBindBuffer(GL_ARRAY_BUFFER, klingonVertexBufferObjID);
@@ -165,11 +175,11 @@ void init(void) {
     glEnableVertexAttribArray(glGetAttribLocation(program, "inPosition2"));
 
     // VBO for normal data
-    glBindBuffer(GL_ARRAY_BUFFER, klingonNormalBufferObjID);
+/*    glBindBuffer(GL_ARRAY_BUFFER, klingonNormalBufferObjID);
     glBufferData(GL_ARRAY_BUFFER, m2->numVertices*3*sizeof(GLfloat), m2->normalArray, GL_STATIC_DRAW);
     glVertexAttribPointer(glGetAttribLocation(program, "inNormal2"), 3, GL_FLOAT, GL_FALSE, 0, 0);
     glEnableVertexAttribArray(glGetAttribLocation(program, "inNormal2"));
-    
+ */   
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, klingonIndexBufferObjID);
     glBufferData(GL_ELEMENT_ARRAY_BUFFER, m2->numIndices*sizeof(GLuint), m2->indexArray, GL_STATIC_DRAW);
 
@@ -177,10 +187,11 @@ void init(void) {
 
 
  	// End of upload of geometry
+//*/
 	setSincosX(&rotationMatrixX, 0.0);
 	setSincosY(&rotationMatrixY, 0.0);
 	setSincosZ(&rotationMatrixZ, 0.0);
-*/
+
 	glUniformMatrix4fv(glGetUniformLocation(program, "rotationMatrixX"), 1, GL_TRUE, rotationMatrixX);
 	glUniformMatrix4fv(glGetUniformLocation(program, "rotationMatrixY"), 1, GL_TRUE, rotationMatrixY);
 	glUniformMatrix4fv(glGetUniformLocation(program, "rotationMatrixZ"), 1, GL_TRUE, rotationMatrixZ);
@@ -198,9 +209,12 @@ void display(void) {
 	/* clear the screen*/
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-	translationMatrix[3] += xModify; //x
-	translationMatrix[7] = yModify; //y
-	translationMatrix[11] += zModify; //z
+	xValue += xModify;
+	yValue += yModify;
+	zValue += zModify;
+	translationMatrix[3] = xValue; //x
+	translationMatrix[7] = yValue; //y
+	translationMatrix[11] = zValue; //z
 
 	setSincosX(&rotationMatrixX, rotateFront + rotateSide);
 	setSincosY(&rotationMatrixY, rotateFront + rotateSide);
@@ -220,9 +234,15 @@ void display(void) {
     glDrawElements(GL_TRIANGLES, m->numIndices, GL_UNSIGNED_INT, 0L);
 //	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
   	
-  	/*glBindVertexArray(klingonVertexArrayObjID);    // Select VAO
+	translationMatrix[3] = 0; //x
+	translationMatrix[7] = 0; //y
+	translationMatrix[11] = -2; //z
+
+	glUniformMatrix4fv(glGetUniformLocation(program, "translationMatrix"), 1, GL_TRUE, translationMatrix);
+
+  	glBindVertexArray(klingonVertexArrayObjID);    // Select VAO
     glDrawElements(GL_TRIANGLES, m2->numIndices, GL_UNSIGNED_INT, 0L);
-	*/
+	//*/
 	printError("display");
 	
 	glutSwapBuffers();
@@ -304,4 +324,5 @@ int main(int argc, char *argv[]) {
 	glutTimerFunc(20, &OnTimer, 0);
 	init ();
 	glutMainLoop();
+	return 0;
 }
