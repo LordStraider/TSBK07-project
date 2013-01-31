@@ -1,21 +1,13 @@
-/* Lab 1-1.
-// This is the same as the first simple example in the course book,
-// but with a few error checks.
-// Remember to copy your file to a new on appropriate places during the lab so you keep old results.
-// Note that the files "lab1-1.frag", "lab1-1.vert" are required.
-
-// Includes vary a bit with platforms.
-// MS Windows needs GLEW or glee.
-// Mac uses slightly different paths.*/
 #ifdef __APPLE__
 	#include <OpenGL/gl3.h>
 	#include "MicroGlut.h"
-	// linking hint for Lightweight IDE
-	//uses framework Cocoa
 #endif
 #include "GL_utilities.h"
 #include <math.h>
 #include "loadobj.h"
+
+
+
 /* Globals*/
 #define PI 3.14159
 
@@ -34,14 +26,19 @@ GLfloat rotationMatrixZ[] = { 	1.0f, 0.0f, 0.0f, 0.0f,
 								0.0f, 0.0f, 1.0f, 0.0f,
 								0.0f, 0.0f, 0.0f, 1.0f };
 
+GLfloat scalingMatrix[] = {		1.0f, 0.0f, 0.0f, 0.0f,
+								0.0f, 0.0f, 0.0f, 0.0f,
+								0.0f, 0.0f, 1.0f, 0.0f,
+								0.0f, 0.0f, 0.0f, 1.0f };
+
 GLfloat translationMatrix[] = { 1.0f, 0.0f, 0.0f, 0.0f,
 								0.0f, 1.0f, 0.0f, 0.0f,
 								0.0f, 0.0f, 1.0f, -2.0f,
 								0.0f, 0.0f, 0.0f, 1.0f };
 
-GLfloat translationMatrix2[] = {1.0f, 0.0f, 0.0f, 0.0f,
+GLfloat translationMatrix2[] = { 1.0f, 0.0f, 0.0f, 0.0f,
 								0.0f, 1.0f, 0.0f, 0.0f,
-								0.0f, 0.0f, 1.0f, 0.0f,
+								0.0f, 0.0f, 1.0f, -2.0f,
 								0.0f, 0.0f, 0.0f, 1.0f };
 
 #define near 1.0
@@ -55,6 +52,7 @@ GLfloat projMatrix[] = {	2.0f*near/(right-left), 0.0f, (right+left)/(right-left)
 							0.0f, 0.0f, -(far + near)/(far - near), -2*far*near/(far - near),
 							0.0f, 0.0f, -1.0f, 0.0f };
 
+unsigned int bunnyShadowVertexArrayObjID;
 unsigned int bunnyVertexArrayObjID;
 unsigned int klingonVertexArrayObjID;
 GLuint program;
@@ -65,10 +63,11 @@ GLfloat yValue;
 GLfloat zModify;
 GLfloat zValue;
 float gravity;
-float rotateFront;
-float rotateSide;
-Model *m;
-Model *m2;
+int rotateFront;
+int rotateSide;
+Model *bunny;
+Model *bunnyShadow;
+Model *klingon;
 
 
 
@@ -95,12 +94,16 @@ void setSincosZ(GLfloat* m, float alpha) {
 	m[5] = cos(alpha);
 }
 
-void init(void) {	
+void init(void) {
 	/* two vertex buffer objects, used for uploading the*/
 
 	unsigned int bunnyVertexBufferObjID;
 	unsigned int bunnyIndexBufferObjID;
 	unsigned int bunnyNormalBufferObjID;
+
+	unsigned int bunnyShadowVertexBufferObjID;
+	unsigned int bunnyShadowIndexBufferObjID;
+	unsigned int bunnyShadowNormalBufferObjID;
 
 	unsigned int klingonVertexBufferObjID;
 	unsigned int klingonIndexBufferObjID;
@@ -131,8 +134,7 @@ void init(void) {
 	printError("init shader");
 	/* Upload geometry to the GPU:*/
 
-	m = LoadModel("bunny.obj");
-	m2 = LoadModel("klingon.obj");
+	bunny = LoadModel("bunny.obj");
 
     glGenVertexArrays(1, &bunnyVertexArrayObjID);
     glGenBuffers(1, &bunnyVertexBufferObjID);
@@ -144,21 +146,52 @@ void init(void) {
     
     // VBO for vertex data
     glBindBuffer(GL_ARRAY_BUFFER, bunnyVertexBufferObjID);
-    glBufferData(GL_ARRAY_BUFFER, m->numVertices*3*sizeof(GLfloat), m->vertexArray, GL_STATIC_DRAW);
-    glVertexAttribPointer(glGetAttribLocation(program, "inPosition"), 3, GL_FLOAT, GL_FALSE, 0, 0); 
-    glEnableVertexAttribArray(glGetAttribLocation(program, "inPosition"));
+    glBufferData(GL_ARRAY_BUFFER, bunny->numVertices*3*sizeof(GLfloat), bunny->vertexArray, GL_STATIC_DRAW);
+    glVertexAttribPointer(glGetAttribLocation(program, "inPosition0"), 3, GL_FLOAT, GL_FALSE, 0, 0); 
+    glEnableVertexAttribArray(glGetAttribLocation(program, "inPosition0"));
 
     // VBO for normal data
     glBindBuffer(GL_ARRAY_BUFFER, bunnyNormalBufferObjID);
-    glBufferData(GL_ARRAY_BUFFER, m->numVertices*3*sizeof(GLfloat), m->normalArray, GL_STATIC_DRAW);
-    glVertexAttribPointer(glGetAttribLocation(program, "inNormal"), 3, GL_FLOAT, GL_FALSE, 0, 0);
-    glEnableVertexAttribArray(glGetAttribLocation(program, "inNormal"));
+    glBufferData(GL_ARRAY_BUFFER, bunny->numVertices*3*sizeof(GLfloat), bunny->normalArray, GL_STATIC_DRAW);
+    glVertexAttribPointer(glGetAttribLocation(program, "inNormal0"), 3, GL_FLOAT, GL_FALSE, 0, 0);
+    glEnableVertexAttribArray(glGetAttribLocation(program, "inNormal0"));
     
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, bunnyIndexBufferObjID);
-    glBufferData(GL_ELEMENT_ARRAY_BUFFER, m->numIndices*sizeof(GLuint), m->indexArray, GL_STATIC_DRAW);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, bunny->numIndices*sizeof(GLuint), bunny->indexArray, GL_STATIC_DRAW);
 
 
 
+
+	bunnyShadow = LoadModel("bunny.obj");
+
+    glGenVertexArrays(1, &bunnyShadowVertexArrayObjID);
+    glGenBuffers(1, &bunnyShadowVertexBufferObjID);
+    glGenBuffers(1, &bunnyShadowIndexBufferObjID);
+    glGenBuffers(1, &bunnyShadowNormalBufferObjID);
+    
+    
+    glBindVertexArray(bunnyShadowVertexArrayObjID);
+    
+    // VBO for vertex data
+    glBindBuffer(GL_ARRAY_BUFFER, bunnyShadowVertexBufferObjID);
+    glBufferData(GL_ARRAY_BUFFER, bunnyShadow->numVertices*3*sizeof(GLfloat), bunnyShadow->vertexArray, GL_STATIC_DRAW);
+    glVertexAttribPointer(glGetAttribLocation(program, "inPosition1"), 3, GL_FLOAT, GL_FALSE, 0, 0); 
+    glEnableVertexAttribArray(glGetAttribLocation(program, "inPosition1"));
+
+    // VBO for normal data
+    glBindBuffer(GL_ARRAY_BUFFER, bunnyShadowNormalBufferObjID);
+    glBufferData(GL_ARRAY_BUFFER, bunnyShadow->numVertices*3*sizeof(GLfloat), bunnyShadow->normalArray, GL_STATIC_DRAW);
+    glVertexAttribPointer(glGetAttribLocation(program, "inNormal1"), 3, GL_FLOAT, GL_FALSE, 0, 0);
+    glEnableVertexAttribArray(glGetAttribLocation(program, "inNormal1"));
+    
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, bunnyShadowIndexBufferObjID);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, bunnyShadow->numIndices*sizeof(GLuint), bunnyShadow->indexArray, GL_STATIC_DRAW);
+
+
+
+
+
+	klingon = LoadModel("klingon.obj");
 
     glGenVertexArrays(1, &klingonVertexArrayObjID);
     glGenBuffers(1, &klingonVertexBufferObjID);
@@ -170,33 +203,28 @@ void init(void) {
 
     // VBO for vertex data
     glBindBuffer(GL_ARRAY_BUFFER, klingonVertexBufferObjID);
-    glBufferData(GL_ARRAY_BUFFER, m2->numVertices*3*sizeof(GLfloat), m2->vertexArray, GL_STATIC_DRAW);
+    glBufferData(GL_ARRAY_BUFFER, klingon->numVertices*3*sizeof(GLfloat), klingon->vertexArray, GL_STATIC_DRAW);
     glVertexAttribPointer(glGetAttribLocation(program, "inPosition2"), 3, GL_FLOAT, GL_FALSE, 0, 0); 
     glEnableVertexAttribArray(glGetAttribLocation(program, "inPosition2"));
 
     // VBO for normal data
     glBindBuffer(GL_ARRAY_BUFFER, klingonNormalBufferObjID);
-    glBufferData(GL_ARRAY_BUFFER, m2->numVertices*3*sizeof(GLfloat), m2->normalArray, GL_STATIC_DRAW);
+    glBufferData(GL_ARRAY_BUFFER, klingon->numVertices*3*sizeof(GLfloat), klingon->normalArray, GL_STATIC_DRAW);
     glVertexAttribPointer(glGetAttribLocation(program, "inNormal2"), 3, GL_FLOAT, GL_FALSE, 0, 0);
     glEnableVertexAttribArray(glGetAttribLocation(program, "inNormal2"));
    
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, klingonIndexBufferObjID);
-    glBufferData(GL_ELEMENT_ARRAY_BUFFER, m2->numIndices*sizeof(GLuint), m2->indexArray, GL_STATIC_DRAW);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, klingon->numIndices*sizeof(GLuint), klingon->indexArray, GL_STATIC_DRAW);
 
 
 
-
- 	// End of upload of geometry
-//*/
-	setSincosX(&rotationMatrixX, 0.0);
-	setSincosY(&rotationMatrixY, 0.0);
-	setSincosZ(&rotationMatrixZ, 0.0);
 
 	glUniformMatrix4fv(glGetUniformLocation(program, "rotationMatrixX"), 1, GL_TRUE, rotationMatrixX);
 	glUniformMatrix4fv(glGetUniformLocation(program, "rotationMatrixY"), 1, GL_TRUE, rotationMatrixY);
 	glUniformMatrix4fv(glGetUniformLocation(program, "rotationMatrixZ"), 1, GL_TRUE, rotationMatrixZ);
+	glUniformMatrix4fv(glGetUniformLocation(program, "scalingMatrix"), 1, GL_TRUE, scalingMatrix);
 	glUniformMatrix4fv(glGetUniformLocation(program, "translationMatrix"), 1, GL_TRUE, translationMatrix);
-	//glUniformMatrix4fv(glGetUniformLocation(program, "translationMatrix2"), 1, GL_TRUE, translationMatrix);
+	glUniformMatrix4fv(glGetUniformLocation(program, "translationMatrix2"), 1, GL_TRUE, translationMatrix2);
 	glUniformMatrix4fv(glGetUniformLocation(program, "projMatrix"), 1, GL_TRUE, projMatrix);
 
 
@@ -204,17 +232,39 @@ void init(void) {
 }
 
 float getRotation() {
-	float rotate = rotateFront + rotateSide;
+	float rotate = 0.0;
 
-	if (round(rotateFront - PI) == 0 && round(rotateSide + PI/2) == 0) { // w + a
-		rotate = - 3 * PI / 4;
-	} else if (round(rotateFront - PI) == 0 && round(rotateSide - PI/2) == 0) { // w + d
-		rotate = 3 * PI / 4;
-	} else if (round(rotateFront - 2 * PI) == 0 && round(rotateSide + PI/2) == 0) { // s + a
-		rotate = - PI / 4;
-	} else if (round(rotateFront - 2 * PI) == 0 && round(rotateSide - PI/2) == 0) { // s + d
-		rotate = PI / 4;
-	} 
+	switch (rotateFront + rotateSide) {
+		case 1:			// w
+			rotate = PI;
+			break;
+		case 2:			// s
+			rotate = 0.0;
+			break;
+		case 10:		// a
+			rotate = - PI / 2;
+			break;
+		case 20:		// d
+			rotate = PI / 2;
+			break;
+
+		case 11:		// w + a
+			rotate = - 3 * PI / 4;
+			break;
+		case 21:		// w + d
+			rotate = 3 * PI / 4;
+			break;
+
+		case 12:		// s + a
+			rotate = - PI / 4;
+			break;
+		case 22:		// s + d
+			rotate = PI / 4;
+			break;
+		default:
+			rotate = 0.0;
+			break;
+	}
 
 	return rotate;
 }
@@ -232,33 +282,34 @@ void display(void) {
 	translationMatrix[7] = yValue; //y
 	translationMatrix[11] = zValue; //z
 
-	setSincosX(&rotationMatrixX, getRotation());
+//	setSincosX(&rotationMatrixX, getRotation());
 	setSincosY(&rotationMatrixY, getRotation());
-	setSincosZ(&rotationMatrixZ, getRotation());
+//	setSincosZ(&rotationMatrixZ, getRotation());
 
-/*	translationMatrix2[3] = -translationMatrix[3]; //x
-	translationMatrix2[7] = -translationMatrix[7]; //y
-	translationMatrix2[11] = -translationMatrix[11]; //z
-*/
 	glUniformMatrix4fv(glGetUniformLocation(program, "translationMatrix"), 1, GL_TRUE, translationMatrix);
-//	glUniformMatrix4fv(glGetUniformLocation(program, "translationMatrix2"), 1, GL_TRUE, translationMatrix);
-	//glUniformMatrix4fv(glGetUniformLocation(program, "rotationMatrixX"), 1, GL_TRUE, rotationMatrixX);
 	glUniformMatrix4fv(glGetUniformLocation(program, "rotationMatrixY"), 1, GL_TRUE, rotationMatrixY);
-	//glUniformMatrix4fv(glGetUniformLocation(program, "rotationMatrixZ"), 1, GL_TRUE, rotationMatrixZ);
-
     glBindVertexArray(bunnyVertexArrayObjID);    // Select VAO
-    glDrawElements(GL_TRIANGLES, m->numIndices, GL_UNSIGNED_INT, 0L);
-//	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-  	
+    glDrawElements(GL_TRIANGLES, bunny->numIndices, GL_UNSIGNED_INT, 0L);
+
+
+	translationMatrix[3] = xValue; //x
+	translationMatrix[7] = -0.2; //y
+	translationMatrix[11] = zValue; //z
+	glUniformMatrix4fv(glGetUniformLocation(program, "scalingMatrix"), 1, GL_TRUE, scalingMatrix);
+	glUniformMatrix4fv(glGetUniformLocation(program, "translationMatrix"), 1, GL_TRUE, translationMatrix);
+	glUniformMatrix4fv(glGetUniformLocation(program, "rotationMatrixY"), 1, GL_TRUE, rotationMatrixY);
+  	glBindVertexArray(bunnyShadowVertexArrayObjID);    // Select VAO
+    glDrawElements(GL_TRIANGLES, bunnyShadow->numIndices, GL_UNSIGNED_INT, 0L);
+
+
 	translationMatrix[3] = 0; //x
 	translationMatrix[7] = 0; //y
 	translationMatrix[11] = -2; //z
-
 	glUniformMatrix4fv(glGetUniformLocation(program, "translationMatrix"), 1, GL_TRUE, translationMatrix);
-
+	glUniformMatrix4fv(glGetUniformLocation(program, "rotationMatrixY"), 1, GL_TRUE, rotationMatrixY);
   	glBindVertexArray(klingonVertexArrayObjID);    // Select VAO
-    glDrawElements(GL_TRIANGLES, m2->numIndices, GL_UNSIGNED_INT, 0L);
-	//*/
+    glDrawElements(GL_TRIANGLES, klingon->numIndices, GL_UNSIGNED_INT, 0L);
+
 	printError("display");
 	
 	glutSwapBuffers();
@@ -267,19 +318,19 @@ void display(void) {
 void keyUpFunc (unsigned char key, int x, int y) { 
 	switch(key){
 		case 'w':
-			rotateFront = 0.0;
+			rotateFront = 0;
 			zModify = 0;
 			break;
 		case 's':
-			rotateFront = 0.0;
+			rotateFront = 0;
 			zModify = 0;
 			break;
 		case 'a':
-			rotateSide = 0.0;
+			rotateSide = 0;
 			xModify = 0;
 			break;
 		case 'd':
-			rotateSide = 0.0;
+			rotateSide = 0;
 			xModify = 0;
 		default:
 			break;
@@ -289,19 +340,19 @@ void keyUpFunc (unsigned char key, int x, int y) {
 void processNormalKeys(unsigned char key, int x, int y){
 	switch(key){
 		case 'w':
-			rotateFront = PI;
+			rotateFront = 1;
 			zModify = -0.08;
 			break;
 		case 's':
-			rotateFront = 2 * PI;
+			rotateFront = 2;
 			zModify = 0.08;
 			break;
 		case 'a':
-			rotateSide = -PI / 2;
+			rotateSide = 10;
 			xModify = -0.08;
 			break;
 		case 'd':
-			rotateSide = PI / 2;
+			rotateSide = 20;
 			xModify = 0.08;
 			break;
 		case ' ':
