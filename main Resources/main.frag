@@ -1,15 +1,18 @@
 #version 150
-
+ 
+in vec2 exTexCoord;
+in vec3 exNormal; 
 out vec4 outColor;
-in vec3 exNormal0;
-in vec3 exNormal1; 
+uniform sampler2D texUnit;
+
 
 void main(void)
 {
-	const vec3 light = vec3(0.7, 0.58, 0.88);
+	const vec3 light = vec3(0.58, 0.58, 0.58);
+	float shade;
+	
+	shade = dot(normalize(exNormal), light);
+	shade = clamp(shade, 0, 1);
 
-	float shade0 = dot(normalize(exNormal0), light);
-	float shade1 = dot(normalize(exNormal1), light);	
-
-	outColor = vec4(shade0, shade0, shade0, 1.0);
+	outColor = texture(texUnit, exTexCoord) * vec4(shade, shade, shade, 1.0);
 }
