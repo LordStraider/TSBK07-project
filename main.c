@@ -1,6 +1,8 @@
 #ifdef __APPLE__
 	#include <OpenGL/gl3.h>
 	#include "MicroGlut.h"
+	// linking hint for Lightweight IDE
+	//uses framework Cocoa
 #endif
 #include "GL_utilities.h"
 #include "LoadTGA.h"
@@ -9,10 +11,11 @@
 #include "VectorUtils2.h"
 
 
+
 /* Globals*/
 #define PI 3.14159
 
-GLfloat rot[16], trans[16], total[16], cam[16];
+GLfloat rot[16], trans[16], shear[16], total[16], cam[16];
 
 
 #define near 1.0
@@ -74,8 +77,8 @@ void init(void) {
 	printError("init shader");
 
 	bunny = LoadModelPlus("bunnyplus.obj");
-    //bunnyShadow = LoadModelPlus("bunnyplus.obj");
-    //klingon = LoadModelPlus("klingon.obj");
+    bunnyShadow = LoadModelPlus("bunnyplus.obj");
+    klingon = LoadModelPlus("klingon.obj");
 
 	LoadTGATextureSimple("maskros512.tga", &bunnyTex);
 
@@ -94,17 +97,6 @@ void init(void) {
 	}
 
  	/* End of upload of geometry*/
- 	SetVector(0.0, 0.0, 1.0, &p);
- 	SetVector(0.0, 0.0, -3.0, &l);
-
-	lookAt(&p, &l, 0.0, 1.0, 0.0, &cam);
-
-	T(0, 0, -2, trans);
-	Ry(0.0, rot);
-    Mult(rot, trans, total);
-
-	glUniformMatrix4fv(glGetUniformLocation(program, "mdlMatrix"), 1, GL_TRUE, total);
-	glUniformMatrix4fv(glGetUniformLocation(program, "camMatrix"), 1, GL_TRUE, cam);
 	glUniformMatrix4fv(glGetUniformLocation(program, "projMatrix"), 1, GL_TRUE, projMatrix);
 
 
@@ -156,22 +148,42 @@ void display(void) {
 	/* clear the screen*/
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-	//xValue += xModify;
-	//yValue += yModify;
-	//zValue += zModify;
+ 	SetVector(0.0, 0.0, 1.0, &p);
+ 	SetVector(0.0, 0.0, -3.0, &l);
 
-	GLfloat t = (GLfloat)glutGet(GLUT_ELAPSED_TIME);
+	lookAt(&p, &l, 0.0, 1.0, 0.0, &cam);
 
-	T(0, 0, -2, trans);
-	Ry(t/1000, rot);
-    Mult(trans, rot, total);
-	Rx(t/1000, rot);
-    Mult(total, rot, total);
+	glUniformMatrix4fv(glGetUniformLocation(program, "camMatrix"), 1, GL_TRUE, cam);
+	
+	xValue += xModify;
+	yValue += yModify;
+	zValue += zModify;
+
+
+    IdentityMatrix(total);
+	T(xValue, yValue, zValue, trans);
+	Ry(getRotation(), rot);
+    Mult(rot, trans, total);
 	glUniformMatrix4fv(glGetUniformLocation(program, "mdlMatrix"), 1, GL_TRUE, total);
-
     DrawModel(bunny, program, "inPosition", "inNormal", "inTexCoord");
-    //DrawModel(bunnyShadow, program, "inPosition", "inNormal", "inTexCoord");
-    //DrawModel(klingon, program, "inPosition", "inNormal", "inTexCoord");
+
+
+    IdentityMatrix(total);
+    S(0.0, 1.0, 0.0, shear);
+	T(xValue, yValue, zValue, trans);
+	Ry(getRotation(), rot);
+    Mult(trans, shear, total);
+    Mult(rot, total, total);
+	glUniformMatrix4fv(glGetUniformLocation(program, "mdlMatrix"), 1, GL_TRUE, total);
+    DrawModel(bunnyShadow, program, "inPosition", "inNormal", "inTexCoord");
+
+
+    IdentityMatrix(total);
+	T(0.0, 0.0, -2.0, trans);
+	Ry(0.0, rot);
+    Mult(rot, trans, total);
+    DrawModel(klingon, program, "inPosition", "inNormal", "inTexCoord");
+
 
 	printError("display");
 	
@@ -231,7 +243,7 @@ void processNormalKeys(unsigned char key, int x, int y){
 }
 
 void OnTimer(int value) {
-	/*if (gravity < 0 && yValue > 0) {
+	if (gravity < 0 && yValue > 0) {
 		yModify -= gravity;
 		gravity += 0.035;
 	} else if (yValue >= 0.05) {
@@ -241,7 +253,7 @@ void OnTimer(int value) {
 		yModify = 0;
 		yValue = 0;
 		gravity = 0;
-	}*/
+	}
 
     glutPostRedisplay();
     glutTimerFunc(20, &OnTimer, value);
@@ -251,8 +263,8 @@ int main(int argc, char *argv[]) {
 	glutInit(&argc, argv);
 	glutCreateWindow ("GL3 white triangle example");
 	glutDisplayFunc(display); 
-//	glutKeyboardFunc(processNormalKeys);
-//	glutKeyboardUpFunc(keyUpFunc);
+	glutKeyboardFunc(processNormalKeys);
+	glutKeyboardUpFunc(keyUpFunc);
 	glutTimerFunc(20, &OnTimer, 0);
 	init ();
 	glutMainLoop();
