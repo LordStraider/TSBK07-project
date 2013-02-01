@@ -14,5 +14,5 @@ void main(void)
 	shade = dot(normalize(exNormal), light);
 	shade = clamp(shade, 0, 1);
 
-	outColor = texture(texUnit, exTexCoord) * vec4(shade, shade, shade, 1.0);
+	outColor = shade * texture(texUnit, exTexCoord);
 }
