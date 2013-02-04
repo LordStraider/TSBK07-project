@@ -39,8 +39,7 @@ GLfloat yValue;
 GLfloat zModify;
 GLfloat zValue;
 float gravity;
-int rotateFront;
-int rotateSide;
+float rotate;
 Model *bunny;
 Model *bunnyShadow;
 Model *klingon;
@@ -69,8 +68,7 @@ void init(void) {
 	yValue = 0.0;
 	zValue = -2.0;
 	gravity = 0.0;
-	rotateFront = 0.0;
-	rotateSide = 0.0;
+	rotate = 0.0;
 
  	/* Load and compile shader*/
 	program = loadShaders("main.vert", "main.frag");
@@ -96,51 +94,13 @@ void init(void) {
 	printError("init arrays");
 }
 
-float getRotation() {
-	float rotate = 0.0;
-
-	switch (rotateFront + rotateSide) {
-		case 1:			// w
-			rotate = PI;
-			break;
-		case 2:			// s
-			rotate = 0.0;
-			break;
-		case 10:		// a
-			rotate = PI / 2;
-			break;
-		case 20:		// d
-			rotate = - PI / 2;
-			break;
-
-		case 11:		// w + a
-			rotate = 3 * PI / 4;
-			break;
-		case 21:		// w + d
-			rotate = - 3 * PI / 4;
-			break;
-
-		case 12:		// s + a
-			rotate = PI / 4;
-			break;
-		case 22:		// s + d
-			rotate = - PI / 4;
-			break;
-		default:
-			rotate = PI;
-			break;
-	}
-
-	return rotate;
-}
-
 void displayModels(GLfloat t) {
 	glUseProgram(program);
 	glUniformMatrix4fv(glGetUniformLocation(program, "camMatrix"), 1, GL_TRUE, cam);
 
 
 	T(xValue, yValue, zValue, trans);
-	Ry(getRotation(), rot);
+	Ry(rotate, rot);
     Mult(trans, rot, total);
 	glBindTexture(GL_TEXTURE_2D, bunnyTex);
 	glUniformMatrix4fv(glGetUniformLocation(program, "mdlMatrix"), 1, GL_TRUE, total);
@@ -171,7 +131,7 @@ void displayShadows(GLfloat t) {
 
 	T(xValue, -0.6, zValue, trans);
 	S(1/(yValue+1), 0, 1/(yValue+1), shear);
-	Ry(getRotation(), rot);
+	Ry(rotate, rot);
     Mult(trans, shear, total);
     Mult(total, rot, total);
 	glUniformMatrix4fv(glGetUniformLocation(programShadow, "mdlMatrix"), 1, GL_TRUE, total);
@@ -220,59 +180,51 @@ void display(void) {
 	glutSwapBuffers();
 }
 
-void keyUpFunc (unsigned char key, int x, int y) { 
-	switch(key){
-		case 'w':
-			rotateFront = 0;
-			zModify = 0;
-			break;
-		case 's':
-			rotateFront = 0;
-			zModify = 0;
-			break;
-		case 'a':
-			rotateSide = 0;
-			xModify = 0;
-			break;
-		case 'd':
-			rotateSide = 0;
-			xModify = 0;
-		default:
-			break;
-	}
-} 
-
-void processNormalKeys(unsigned char key, int x, int y){
-	switch(key){
-		case 'w':
-			rotateFront = 1;
-			zModify = -0.08;
-			break;
-		case 's':
-			rotateFront = 2;
-			zModify = 0.08;
-			break;
-		case 'a':
-			rotateSide = 10;
-			xModify = -0.08;
-			break;
-		case 'd':
-			rotateSide = 20;
-			xModify = 0.08;
-			break;
-		case ' ':
-			if (yValue == 0) { 
-				gravity = -0.1;
-				yModify = 0.0;
-				yValue = 0.1;
-			}
-			break;
-		default:
-			break;
-	}
+void MouseController(int x, int y){
+//	rotate = 1/cos(x);
 }
 
 void OnTimer(int value) {
+	xModify = 0.0;
+	zModify = 0.0;
+	rotate = 0.0;
+	
+	if (keyIsDown('w') && keyIsDown('d')){
+		xModify = 0.08;
+		rotate = - 3 * PI / 4;
+		zModify = -0.08;
+	} else if (keyIsDown('w') && keyIsDown('a')){
+		xModify = -0.08;
+		rotate = 3 * PI / 4;
+		zModify = -0.08;
+	} else if (keyIsDown('s') && keyIsDown('d')){
+		xModify = 0.08;
+		rotate = - PI / 4;
+		zModify = 0.08;
+	} else if (keyIsDown('s') && keyIsDown('a')){
+		xModify = -0.08;
+		rotate = PI / 4;
+		zModify = 0.08;
+	} else if (keyIsDown('w')){
+		rotate = PI;
+		zModify = -0.08;
+	} else if (keyIsDown('s')){
+		rotate = 0.0;
+		zModify = 0.08;
+	} else if (keyIsDown('a')){
+		xModify = -0.08;
+		rotate = PI / 2;
+	} else if (keyIsDown('d')){
+		xModify = 0.08;
+		rotate = - PI / 2;
+	}
+
+	if (keyIsDown(' ') && yValue == 0) { 
+		gravity = -0.1;
+		yModify = 0.0;
+		yValue = 0.1;
+	}
+
 	if (gravity < 0 && yValue > 0) {
 		yModify -= gravity;
 		gravity += 0.035;
@@ -292,9 +244,9 @@ void OnTimer(int value) {
 int main(int argc, char *argv[]) {
 	glutInit(&argc, argv);
 	glutCreateWindow ("GL3 white triangle example");
-	glutDisplayFunc(display); 
-	glutKeyboardFunc(processNormalKeys);
-	glutKeyboardUpFunc(keyUpFunc);
+	glutDisplayFunc(display);
+	initKeymapManager();
+	glutPassiveMotionFunc(MouseController);
 	glutTimerFunc(20, &OnTimer, 0);
 	init ();
 	glutMainLoop();
