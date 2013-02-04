@@ -15,14 +15,6 @@
 
 GLfloat rot[16], trans[16], shear[16], total[16], cam[16];
 
-/*GLfloat ground[16] = {	-1.0f, 0.0f, -1.0f,
-						-1.0f, 0.0f, 1.0f,
-						 1.0f, 0.0f, 1.0f 
-
-						-1.0f, 0.0f, -1.0f,
-						 1.0f, 0.0f,  1.0f,
-						 1.0f, 0.0f, -1.0f };*/
-
 #define near 1.0
 #define far 30.0
 #define right 1.0
@@ -39,6 +31,7 @@ GLuint program;
 GLuint programShadow;
 GLuint bunnyTex;
 GLuint klingonTex;
+GLuint groundTex;
 GLfloat xModify;
 GLfloat xValue;
 GLfloat yModify;
@@ -53,6 +46,7 @@ Model *bunnyShadow;
 Model *klingon;
 Model *klingonShadow;
 Model *ground;
+
 
 
 
@@ -84,11 +78,14 @@ void init(void) {
 	glUseProgram(program);
 	printError("init shader");
 
+
 	bunny = LoadModelPlus("bunnyplus.obj");
     klingon = LoadModelPlus("teapot.obj");
+    ground = LoadModelPlus("cubeplus.obj");
 
 	LoadTGATextureSimple("maskros512.tga", &bunnyTex);
 	LoadTGATextureSimple("dirt.tga", &klingonTex);
+	LoadTGATextureSimple("grass.tga", &groundTex);
 
 
  	/* End of upload of geometry*/
@@ -137,33 +134,10 @@ float getRotation() {
 	return rotate;
 }
 
-void display(void) {
-	printError("pre display");
-
-	/* clear the screen*/
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
-/*	if (rotateFront == 2) {
-	 	SetVector(xValue, 0.0, zValue-3, &p);
-	 	SetVector(xValue, 0.0, zValue, &l);
-	} else {
-	 	SetVector(xValue, 0.0, (zValue+3), &p);
-	 	SetVector(xValue, 0.0, zValue, &l);
-	}*/
+void displayModels(GLfloat t) {
 	glUseProgram(program);
-	SetVector(xValue, 0.0, (zValue+3), &p);
- 	SetVector(xValue, 0.0, zValue, &l);
-
-
-	lookAt(&p, &l, 0.0, 1.0, 0.0, &cam);
-
 	glUniformMatrix4fv(glGetUniformLocation(program, "camMatrix"), 1, GL_TRUE, cam);
-	xValue += xModify;
-	yValue += yModify;
-	zValue += zModify;
 
-
-	GLfloat t = (GLfloat)glutGet(GLUT_ELAPSED_TIME);
 
 	T(xValue, yValue, zValue, trans);
 	Ry(getRotation(), rot);
@@ -173,7 +147,7 @@ void display(void) {
     DrawModel(bunny, program, "inPosition", "inNormal", "inTexCoord");
 
 
-	T(0, 0, -4, trans);
+	T(5, 8, -4, trans);
 	Ry(-t/1000, rot);
     Mult(trans, rot, total);
 	Rx(t/1000, rot);
@@ -183,29 +157,63 @@ void display(void) {
     DrawModel(klingon, program, "inPosition", "inNormal", "inTexCoord");
 
 
+	T(0, -1, 0, trans);
+	S(100,0, 100, shear);
+    Mult(trans, shear, total);
+	glBindTexture(GL_TEXTURE_2D, groundTex);
+	glUniformMatrix4fv(glGetUniformLocation(program, "mdlMatrix"), 1, GL_TRUE, total);
+    DrawModel(ground, program, "inPosition", "inNormal", "inTexCoord");
+}
 
+void displayShadows(GLfloat t) {
+	glUseProgram(programShadow);
+	glUniformMatrix4fv(glGetUniformLocation(programShadow, "camMatrix"), 1, GL_TRUE, cam);
 
 	T(xValue, -0.6, zValue, trans);
-	S(1/(yValue+1), 0, 1/(yValue+1), shear);	
+	S(1/(yValue+1), 0, 1/(yValue+1), shear);
 	Ry(getRotation(), rot);
     Mult(trans, shear, total);
     Mult(total, rot, total);
-	glUseProgram(programShadow);
-	glUniformMatrix4fv(glGetUniformLocation(programShadow, "camMatrix"), 1, GL_TRUE, cam);
 	glUniformMatrix4fv(glGetUniformLocation(programShadow, "mdlMatrix"), 1, GL_TRUE, total);
     DrawModel(bunny, program, "inPosition", "inNormal", "inTexCoord");
 
 
 
-	T(0, -1.0, -4, trans);
+	T(5, -0.6, -4, trans);
 	S(1, 0, 1, shear);
     Mult(trans, shear, total);
 	Ry(-t/1000, rot);
     Mult(total, rot, total);
 	Rx(t/1000, rot);
     Mult(total, rot, total);
-	glUniformMatrix4fv(glGetUniformLocation(program, "mdlMatrix"), 1, GL_TRUE, total);
+	glUniformMatrix4fv(glGetUniformLocation(programShadow, "mdlMatrix"), 1, GL_TRUE, total);
     DrawModel(klingon, program, "inPosition", "inNormal", "inTexCoord");
+}
+
+void display(void) {
+	printError("pre display");
+
+	/* clear the screen*/
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	
+/*	if (rotateFront == 2) {
+	 	SetVector(xValue, 0.0, zValue-3, &p);
+	 	SetVector(xValue, 0.0, zValue, &l);
+	} else {
+	 	SetVector(xValue, 0.0, (zValue+3), &p);
+	 	SetVector(xValue, 0.0, zValue, &l);
+	}*/	
+	SetVector(xValue, 0.0, (zValue+3), &p);
+ 	SetVector(xValue, 0.0, zValue, &l);
+	lookAt(&p, &l, 0.0, 1.0, 0.0, &cam);
+
+	GLfloat t = (GLfloat)glutGet(GLUT_ELAPSED_TIME);
+	xValue += xModify;
+	yValue += yModify;
+	zValue += zModify;
+
+	displayModels(t);
+	displayShadows(t);
 
 	printError("display");
 	
