@@ -59,14 +59,14 @@ GLuint programShadow;
 GLuint programSingleColor;
 
 GLuint bunnyTex;
-GLuint klingonTex;
+GLuint dirtTex;
 GLuint groundTex;
 GLuint skyBoxTex;
 
 Model *bunny;
 Model *bunnyShadow;
-Model *klingon;
-Model *klingonShadow;
+Model *teapot;
+Model *teapotShadow;
 Model *ground;
 Model *skyBox;
 Model *blade;
@@ -115,7 +115,7 @@ void init(void) {
 
 
     bunny = LoadModelPlus("bunnyplus.obj");
-    klingon = LoadModelPlus("teapot.obj");
+    teapot = LoadModelPlus("teapot.obj");
     ground = LoadModelPlus("cubeplus.obj");
     skyBox = LoadModelPlus("skybox.obj");
     blade = LoadModelPlus("blade.obj");
@@ -126,7 +126,7 @@ void init(void) {
 
     LoadTGATextureSimple("maskros512.tga", &bunnyTex);
     LoadTGATextureSimple("SkyBox512.tga", &skyBoxTex);
-    LoadTGATextureSimple("dirt.tga", &klingonTex);
+    LoadTGATextureSimple("dirt.tga", &dirtTex);
     LoadTGATextureSimple("grass.tga", &groundTex);
 
 
@@ -197,9 +197,9 @@ void displayModels(GLfloat t) {
     Mult(trans, rot, total);
     Rx(t/1000, rot);
     Mult(total, rot, total);
-    glBindTexture(GL_TEXTURE_2D, klingonTex);
+    glBindTexture(GL_TEXTURE_2D, dirtTex);
     glUniformMatrix4fv(glGetUniformLocation(program, "mdlMatrix"), 1, GL_TRUE, total);
-    DrawModel(klingon, program, "inPosition", "inNormal", "inTexCoord");
+    DrawModel(teapot, program, "inPosition", "inNormal", "inTexCoord");
 }
 
 void displayShadows(GLfloat t) {
@@ -225,7 +225,7 @@ void displayShadows(GLfloat t) {
     Rx(t/1000, rot);
     Mult(total, rot, total);
     glUniformMatrix4fv(glGetUniformLocation(programShadow, "mdlMatrix"), 1, GL_TRUE, total);
-    DrawModel(klingon, program, "inPosition", "inNormal", "inTexCoord");
+    DrawModel(teapot, program, "inPosition", "inNormal", "inTexCoord");
 }
 
 void displayNoLight() {
@@ -266,7 +266,7 @@ void displayNoLight() {
     Mult(trans, shear, total);
     Rz(M_PI/2, rot);
     Mult(total, rot, total);
-    glBindTexture(GL_TEXTURE_2D, klingonTex);
+    glBindTexture(GL_TEXTURE_2D, dirtTex);
     glUniformMatrix4fv(glGetUniformLocation(programNoLight, "camMatrix"), 1, GL_TRUE, cam);
     glUniformMatrix4fv(glGetUniformLocation(programNoLight, "mdlMatrix"), 1, GL_TRUE, total);
     DrawModel(ground, programNoLight, "inPosition", "inNormal", "inTexCoord");
@@ -275,7 +275,6 @@ void displayNoLight() {
     Mult(trans, shear, total);
     Rz(M_PI/2, rot);
     Mult(total, rot, total);
-    glBindTexture(GL_TEXTURE_2D, klingonTex);
     glUniformMatrix4fv(glGetUniformLocation(programNoLight, "camMatrix"), 1, GL_TRUE, cam);
     glUniformMatrix4fv(glGetUniformLocation(programNoLight, "mdlMatrix"), 1, GL_TRUE, total);
     DrawModel(ground, programNoLight, "inPosition", "inNormal", "inTexCoord");
@@ -285,7 +284,6 @@ void displayNoLight() {
     Mult(trans, shear, total);
     Rz(M_PI/2, rot);
     Mult(total, rot, total);
-    glBindTexture(GL_TEXTURE_2D, klingonTex);
     glUniformMatrix4fv(glGetUniformLocation(programNoLight, "camMatrix"), 1, GL_TRUE, cam);
     glUniformMatrix4fv(glGetUniformLocation(programNoLight, "mdlMatrix"), 1, GL_TRUE, total);
     DrawModel(ground, programNoLight, "inPosition", "inNormal", "inTexCoord");
@@ -294,7 +292,6 @@ void displayNoLight() {
     Mult(trans, shear, total);
     Rz(M_PI/2, rot);
     Mult(total, rot, total);
-    glBindTexture(GL_TEXTURE_2D, klingonTex);
     glUniformMatrix4fv(glGetUniformLocation(programNoLight, "camMatrix"), 1, GL_TRUE, cam);
     glUniformMatrix4fv(glGetUniformLocation(programNoLight, "mdlMatrix"), 1, GL_TRUE, total);
     DrawModel(ground, programNoLight, "inPosition", "inNormal", "inTexCoord");
@@ -316,7 +313,7 @@ void display(void) {
     zValue += zModify;
 
     if (yModify == 0) {
-        yCamPos = yValue;
+        yCamPos = yValue+2;
     }
     SetVector(xValue + 5 * cos(camPos), yCamPos, zValue + 5 * sin(camPos), &p);
     SetVector(xValue, yCamPos + 0.5, zValue, &l);
@@ -426,15 +423,15 @@ void OnTimer(int value) {
     }
 
     if (keyIsDown(' ') && yValue == 0.5) { 
-        gravity = -0.4;
+        gravity = -0.18;
         yValue = 0.55;
     }
 
     if (gravity < 0 && yValue > 0.5) {
-        yModify -= gravity;
         gravity += 0.035;
-    } else if (yValue > 0.55) {
-        gravity += 0.07;
+        yModify -= gravity;
+    } else if (yValue > 1.5) {
+        gravity += 0.01;
         yModify -= gravity;
     } else {
         yModify = 0;
