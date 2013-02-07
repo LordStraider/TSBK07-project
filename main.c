@@ -238,7 +238,7 @@ void displayNoLight() {
     T(0, 0, 0, trans);
     glBindTexture(GL_TEXTURE_2D, skyBoxTex);
     GLfloat tmp[16];
-    lookAt(&p, &l, 0.0, 1.0, 0.0, &tmp);
+    CopyMatrix(cam, tmp);
     tmp[3] = 0;
     tmp[7] = 0;
     tmp[11] = 0;
@@ -315,13 +315,13 @@ void display(void) {
     yValue += yModify;
     zValue += zModify;
 
-    if (yModify = 0) {
+    if (yModify == 0) {
         yCamPos = yValue;
     }
     SetVector(xValue + 5 * cos(camPos), yCamPos, zValue + 5 * sin(camPos), &p);
     SetVector(xValue, yCamPos + 0.5, zValue, &l);
 
-    lookAt(&p, &l, 0.0, 1.0, 0.0, &cam);
+    lookAt(&p, &l, 0.0, 1.0, 0.0, cam);
 
 
     displayNoLight();
