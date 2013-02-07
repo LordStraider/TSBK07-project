@@ -22,7 +22,6 @@
 #define M_PI           3.14159265358979323846
 #endif
 
-#define FPS             50
 
 GLfloat rot[16], trans[16], shear[16], total[16], cam[16];
 
@@ -38,6 +37,7 @@ GLfloat projMatrix[] = {    2.0f*near/(right-left), 0.0f, (right+left)/(right-le
                             0.0f, 0.0f, -1.0f, 0.0f };
 
 GLfloat camPos;
+GLfloat yCamPos;
 GLfloat camMod;
 GLfloat xModify;
 GLfloat xValue;
@@ -45,6 +45,7 @@ GLfloat yModify;
 GLfloat yValue;
 GLfloat zModify;
 GLfloat zValue;
+
 float gravity;
 float angle;
 float angleMod;
@@ -96,10 +97,11 @@ void init(void) {
     yValue = 0.5;
     zValue = -2.0;
     gravity = 0.0;
-    rotate = 0.0;
+    rotate = M_PI / 2;
     angle = 0.0;
-    camPos = 1.0;
+    camPos = M_PI / 2;
     menuPressed = false;
+    yCamPos = 2.0;
 
     /* Load and compile shader*/
     program = loadShaders("main.vert", "main.frag");
@@ -180,6 +182,7 @@ void displayModels(GLfloat t) {
     glUniformMatrix4fv(glGetUniformLocation(program, "camMatrix"), 1, GL_TRUE, cam);
 
 
+    /* Making the bunny */
     T(xValue, yValue, zValue, trans);
     Ry(rotate+angle, rot);
     Mult(trans, rot, total);
@@ -188,6 +191,7 @@ void displayModels(GLfloat t) {
     DrawModel(bunny, program, "inPosition", "inNormal", "inTexCoord");
 
 
+    /* Making the teapot */
     T(5, 8, -4, trans);
     Ry(-t/1000, rot);
     Mult(trans, rot, total);
@@ -202,6 +206,7 @@ void displayShadows(GLfloat t) {
     glUseProgram(programShadow);
     glUniformMatrix4fv(glGetUniformLocation(programShadow, "camMatrix"), 1, GL_TRUE, cam);
 
+    /* Making shadow under the bunny */
     T(xValue, 0.01, zValue, trans);
     S(1/(yValue+0.5), 0, 1/(yValue+0.5), shear);
     Ry(rotate, rot);
@@ -211,7 +216,7 @@ void displayShadows(GLfloat t) {
     DrawModel(bunny, program, "inPosition", "inNormal", "inTexCoord");
 
 
-
+    /* Making shadow under the teapot */
     T(5, 0.01, -4, trans);
     S(1, 0, 1, shear);
     Mult(trans, shear, total);
@@ -226,7 +231,7 @@ void displayShadows(GLfloat t) {
 void displayNoLight() {
     glUseProgram(programNoLight);
 
-
+    /* Making skybox */
     glDisable(GL_DEPTH_TEST);
     glDisable(GL_CULL_FACE);
 
@@ -245,10 +250,51 @@ void displayNoLight() {
     glEnable(GL_CULL_FACE);
 
 
+    /* Making ground */
     T(0, 0, 0, trans);
     S(100,0, 100, shear);
     Mult(trans, shear, total);
     glBindTexture(GL_TEXTURE_2D, groundTex);
+    glUniformMatrix4fv(glGetUniformLocation(programNoLight, "camMatrix"), 1, GL_TRUE, cam);
+    glUniformMatrix4fv(glGetUniformLocation(programNoLight, "mdlMatrix"), 1, GL_TRUE, total);
+    DrawModel(ground, programNoLight, "inPosition", "inNormal", "inTexCoord");
+
+
+    /* Making walls around the area */
+    T(0, 2.5, 50, trans);
+    S(100, 5, 0, shear);
+    Mult(trans, shear, total);
+    Rz(M_PI/2, rot);
+    Mult(total, rot, total);
+    glBindTexture(GL_TEXTURE_2D, klingonTex);
+    glUniformMatrix4fv(glGetUniformLocation(programNoLight, "camMatrix"), 1, GL_TRUE, cam);
+    glUniformMatrix4fv(glGetUniformLocation(programNoLight, "mdlMatrix"), 1, GL_TRUE, total);
+    DrawModel(ground, programNoLight, "inPosition", "inNormal", "inTexCoord");
+    T(0, 2.5, -50, trans);
+    S(100, 5, 0, shear);
+    Mult(trans, shear, total);
+    Rz(M_PI/2, rot);
+    Mult(total, rot, total);
+    glBindTexture(GL_TEXTURE_2D, klingonTex);
+    glUniformMatrix4fv(glGetUniformLocation(programNoLight, "camMatrix"), 1, GL_TRUE, cam);
+    glUniformMatrix4fv(glGetUniformLocation(programNoLight, "mdlMatrix"), 1, GL_TRUE, total);
+    DrawModel(ground, programNoLight, "inPosition", "inNormal", "inTexCoord");
+
+    T(50, 2.5, 0, trans);
+    S(0, 5, 100, shear);
+    Mult(trans, shear, total);
+    Rz(M_PI/2, rot);
+    Mult(total, rot, total);
+    glBindTexture(GL_TEXTURE_2D, klingonTex);
+    glUniformMatrix4fv(glGetUniformLocation(programNoLight, "camMatrix"), 1, GL_TRUE, cam);
+    glUniformMatrix4fv(glGetUniformLocation(programNoLight, "mdlMatrix"), 1, GL_TRUE, total);
+    DrawModel(ground, programNoLight, "inPosition", "inNormal", "inTexCoord");
+    T(-50, 2.5, 0, trans);
+    S(0, 5, 100, shear);
+    Mult(trans, shear, total);
+    Rz(M_PI/2, rot);
+    Mult(total, rot, total);
+    glBindTexture(GL_TEXTURE_2D, klingonTex);
     glUniformMatrix4fv(glGetUniformLocation(programNoLight, "camMatrix"), 1, GL_TRUE, cam);
     glUniformMatrix4fv(glGetUniformLocation(programNoLight, "mdlMatrix"), 1, GL_TRUE, total);
     DrawModel(ground, programNoLight, "inPosition", "inNormal", "inTexCoord");
@@ -265,45 +311,15 @@ void display(void) {
 
     camPos += camMod;
 
-/*
-    Point3D a;
-    Point3D b;
-    SetVector(xValue + xModify, 0, zValue + zModify, &a);
-    SetVector(camPos, 0, camPos, &b);
-    Normalize(&a);
-    Normalize(&b);
-    GLfloat ang = DotProduct(&a, &b);
-//    printf("ang: %f, xVal: %f, zVal: %f, sin: %f, cos: %f, newX: %f, newZ: %f\n", 
-//            ang, xValue, zValue, sin(ang), cos(ang), (xValue + xModify) * cos(ang) + (zValue + zModify) * sin(ang), 
-//            (zValue + zModify) * sin(ang) + (xValue + xModify) * cos(ang));
-
-    angle = DotProduct(&a, &b);// += angleMod;
-//  camPos = xValue + zValue * cos(angle);
-//  camPos = zValue + xValue * sin(angle);
-//*/
-    Point3D newPos;
-    SetVector(xValue + xModify, yValue + yModify, zValue + zModify, &newPos);
-    Ry(angle, rot);
-    MatrixMultPoint3D(rot, &newPos, &newPos);
-//*/ 
-   /* xValue += xModify * sin(camPos) + xModify * sin(camPos);
+    xValue += xModify;
     yValue += yModify;
-    zValue += zModify * cos(camPos) - zModify * sin(camPos);
-xValue = newPos.x;
-yValue = newPos.y;
-zValue = newPos.z;
-//*/
-//    xValue += xModify * cos(ang) + zModify * sin(ang);
-//    yValue = yModify;
-//    zValue += zModify * -sin(ang) + xModify * cos(ang);
-//  SetVector(camPos, 1.0, camPos, &p);
+    zValue += zModify;
 
-xValue += xModify;
-yValue += yModify;
-zValue += zModify;
-
-    SetVector(xValue + 5 * cos(camPos), 2.0, zValue + 5 * sin(camPos), &p);
-    SetVector(xValue, 2.5, zValue, &l);
+    if (yModify = 0) {
+        yCamPos = yValue;
+    }
+    SetVector(xValue + 5 * cos(camPos), yCamPos, zValue + 5 * sin(camPos), &p);
+    SetVector(xValue, yCamPos + 0.5, zValue, &l);
 
     lookAt(&p, &l, 0.0, 1.0, 0.0, &cam);
 
@@ -360,56 +376,49 @@ void OnTimer(int value) {
     zModify = 0.0;
     angleMod = 0.0;
     camMod = 0.0;
-    rotate = 0.0;
-    
-    if (keyIsDown('w') && keyIsDown('d')){
-        xModify = 0.2 * cos(camPos);
-        zModify = -0.2 * sin(camPos);
-        rotate = - 3 * M_PI / 4;
-    } else if (keyIsDown('w') && keyIsDown('a')){
-        xModify = -0.2 * cos(camPos);
-        zModify = -0.2 * sin(camPos);
-        rotate = 3 * M_PI / 4;
-    } else if (keyIsDown('s') && keyIsDown('d')){
-        xModify = 0.2 * cos(camPos);
-        zModify = 0.2 * sin(camPos);
-        rotate = - M_PI / 4;
-    } else if (keyIsDown('s') && keyIsDown('a')){
-        xModify = -0.2 * cos(camPos);
-        zModify = 0.2 * sin(camPos);
-        rotate = M_PI / 4;
-    } else if (keyIsDown('w')){
-        xModify = -0.2 * cos(camPos);
-        zModify = -0.2 * sin(camPos);
-        rotate = 3 * M_PI / 4;
-//        zModify = -0.2 * sin(camPos);
-//        rotate = M_PI;
-    } else if (keyIsDown('s')){
-        xModify = 0.2 * cos(camPos);
-        zModify = 0.2 * sin(camPos);
-        rotate = - M_PI / 4;
-//        zModify = 0.2 * sin(camPos);
-//        rotate = 0.0;
-    } else if (keyIsDown('a')){
-        xModify = -0.2 * sin(camPos);
-        zModify = 0.2 * cos(camPos);
-        rotate = - M_PI / 4;
-//        xModify = -0.2 * cos(camPos);
-//        rotate = M_PI / 2;
-    } else if (keyIsDown('d')){
-        xModify = 0.2 * sin(camPos);
-        zModify = -0.2 * cos(camPos);
+    rotate = camPos + M_PI / 2;
+    float rotateFront = 0.0;
+    float rotateSide = 0.0;
 
-//        xModify = 0.2 * cos(camPos);
-        rotate = - M_PI / 2;
+    
+    if (keyIsDown('w')){
+        xModify += -0.2 * cos(camPos);
+        zModify += -0.2 * sin(camPos);
+    }
+    if (keyIsDown('s')){
+        xModify += 0.2 * cos(camPos);
+        zModify += 0.2 * sin(camPos);
+        rotateFront = - M_PI;
+    }
+    if (keyIsDown('a')){
+        xModify += -0.2 * sin(camPos);
+        zModify += 0.2 * cos(camPos);
+        rotateSide = - M_PI / 2;
+    }
+    if (keyIsDown('d')){
+        xModify += 0.2 * sin(camPos);
+        zModify += -0.2 * cos(camPos);
+        rotateSide = M_PI / 2;
     } 
 
-    if (keyIsDown('x')) {
-        angleMod = M_PI / FPS;
-        camMod = M_PI / FPS;
-    } else if (keyIsDown('z')) {
-        angleMod = -M_PI / FPS;
-        camMod = -M_PI / FPS;
+    if (keyIsDown('w') && keyIsDown('a')){
+        rotate += - M_PI / 4;
+    } else if (keyIsDown('w') && keyIsDown('d')){
+        rotate += M_PI / 4;
+    } else if (keyIsDown('s') && keyIsDown('a')){
+        rotate += - 3 * M_PI / 4;
+    } else if (keyIsDown('s') && keyIsDown('d')){
+        rotate += 3 * M_PI / 4;
+    } else {
+        rotate += rotateFront + rotateSide;
+    }
+
+    if (keyIsDown('e')) {
+        angleMod = M_PI / 60;
+        camMod = M_PI / 60;
+    } else if (keyIsDown('q')) {
+        angleMod = -M_PI / 60;
+        camMod = -M_PI / 60;
     }
 
     if (keyIsDown('m')) {
@@ -417,15 +426,15 @@ void OnTimer(int value) {
     }
 
     if (keyIsDown(' ') && yValue == 0.5) { 
-        gravity = -0.1;
+        gravity = -0.4;
         yValue = 0.55;
     }
 
     if (gravity < 0 && yValue > 0.5) {
         yModify -= gravity;
-        gravity += 0.025;
-    } else if (yValue >= 1.00) {
-        gravity += 0.012;
+        gravity += 0.035;
+    } else if (yValue > 0.55) {
+        gravity += 0.07;
         yModify -= gravity;
     } else {
         yModify = 0;
@@ -434,7 +443,7 @@ void OnTimer(int value) {
     }
 
     glutPostRedisplay();
-    glutTimerFunc(1000/FPS, &OnTimer, value);
+    glutTimerFunc(20, &OnTimer, value);
 }
 
 int main(int argc, char *argv[]) {
@@ -446,7 +455,7 @@ int main(int argc, char *argv[]) {
     glutDisplayFunc(display);
     initKeymapManager();
 //  glutPassiveMotionFunc(MouseController);
-    glutTimerFunc(1000/FPS, &OnTimer, 0);
+    glutTimerFunc(20, &OnTimer, 0);
     init ();
     glutMainLoop();
     return 0;
