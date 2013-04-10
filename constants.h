@@ -5,7 +5,7 @@
 #import <ApplicationServices/ApplicationServices.h>
 #include "GL_utilities.h"
 #include "loadobj.h"
-#include "VectorUtils2.h"
+#include "VectorUtils3.h"
 
 
 
@@ -13,7 +13,7 @@
 #define M_PI           3.14159265358979323846
 #endif
 
-extern GLfloat rot[], trans[], shear[], total[], cam[];
+extern mat4 rot, trans, shear, total, cam;
 
 #define near 1.0
 #define far 300.0
@@ -40,7 +40,7 @@ extern float rotate;
 extern float speed;
 extern bool menuPressed;
 
-extern Point3D p,l;
+extern Point3D p,l, v;
 extern GLuint program;
 extern GLuint programNoLight;
 extern GLuint programShadow;

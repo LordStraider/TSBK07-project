@@ -2,13 +2,13 @@
 
 
 
-GLfloat rot[16], trans[16], shear[16], total[16], cam[16];
+mat4 rot, trans, shear, total, cam;
 
 
-GLfloat projMatrix[] = { 2.0f*near/(right-left), 0.0f, (right+left)/(right-left), 0.0f,
+GLfloat projMatrix[16] = { 2.0f*near/(right-left), 0.0f, (right+left)/(right-left), 0.0f,
 	                            0.0f, 2.0f*near/(top-bottom), (top+bottom)/(top-bottom), 0.0f,
 	                            0.0f, 0.0f, -(far + near)/(far - near), -2*far*near/(far - near),
-	                            0.0f, 0.0f, -1.0f, 0.0f };;
+	                            0.0f, 0.0f, -1.0f, 0.0f };
 GLfloat camPos;
 GLfloat yCamPos;
 GLfloat camMod;
@@ -26,7 +26,7 @@ float rotate;
 float speed;
 bool menuPressed;
 
-Point3D p,l;
+Point3D p,l, v;
 GLuint program;
 GLuint programNoLight;
 GLuint programShadow;

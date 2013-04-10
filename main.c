@@ -1,13 +1,18 @@
 #ifdef __APPLE__
     #include <OpenGL/gl3.h>
     #include "MicroGlut.h"
+#else
+//  #include <GL/glee.h> Might be needed for Windows - not tested
+    #include <GL/gl.h>
+    #include <GL/glu.h>
 #endif
+
 #import <ApplicationServices/ApplicationServices.h>
 #include "GL_utilities.h"
-#include "LoadTGA.h"
+#include "LoadTGA2.h"
 #include <math.h>
 #include "loadobj.h"
-#include "VectorUtils2.h"
+#include "VectorUtils3.h"
 #include <stdio.h>
 #include "constants.h"
 #include "draw.h"
@@ -71,7 +76,7 @@ int main(int argc, char *argv[]) {
     glutInitWindowSize (800, 640);
 
     glutInit(&argc, argv);
-    glutCreateWindow ("Zelda - Quest of the world");
+    glutCreateWindow ("TSBK07 - project");
     glutDisplayFunc(display);
     initKeymapManager();
 //  glutPassiveMotionFunc(MouseController);
