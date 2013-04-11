@@ -2,13 +2,15 @@
 
 
 void keyController(){
-    xModify = 0.0;
+	float rotateFront = 0.0;
+    float rotateSide = 0.0;
+    
+	xModify = 0.0;
     zModify = 0.0;
     angleMod = 0.0;
     camMod = 0.0;
     rotate = camPos + M_PI / 2;
-    float rotateFront = 0.0;
-    float rotateSide = 0.0;
+
     speed = 1.0;
 
 

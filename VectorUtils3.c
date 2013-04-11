@@ -592,23 +592,18 @@ void SetTransposed(char t)
 	transposed = t;
 }
 
-
 // Build standard matrices
 
 mat4 lookAtv(vec3 p, vec3 l, vec3 v)
 {
-	vec3 n, u;
-
-	n = Normalize(VectorSub(p, l));
-	u = Normalize(CrossProduct(v, n));
-	v = CrossProduct(n, u);
-
+	vec3 n = Normalize(VectorSub(p, l));
+	vec3 u = Normalize(CrossProduct(v, n));
+	vec3 v2 = CrossProduct(n, u);
 	mat4 rot = {{ u.x, u.y, u.z, 0,
                       v.x, v.y, v.z, 0,
                       n.x, n.y, n.z, 0,
                       0,   0,   0,   1 }};
-	mat4 trans;
-	trans = T(-p.x, -p.y, -p.z);
+	mat4 trans = T(-p.x, -p.y, -p.z);
 	return Mult(rot, trans);
 }
 
@@ -691,7 +686,8 @@ mat4 frustum(float left, float right, float bottom, float top,
 // (For a more general inverse, try a gaussian elimination.)
 mat3 InvertMat3(mat3 in)
 {
-	float a11, a12, a13, a21, a22, a23, a31, a32, a33;
+	float a11, a12, a13, a21, a22, a23, a31, a32, a33, DET;
+	float NAN;
 	mat3 out;
 	
 	// Copying to internal variables both clarify the code and
@@ -705,7 +701,7 @@ mat3 InvertMat3(mat3 in)
 	a31 = in.m[6];
 	a32 = in.m[7];
 	a33 = in.m[8];
-	float DET = a11*(a33*a22-a32*a23)-a21*(a33*a12-a32*a13)+a31*(a23*a12-a22*a13);
+	DET = a11*(a33*a22-a32*a23)-a21*(a33*a12-a32*a13)+a31*(a23*a12-a22*a13);
 	if (DET != 0)
 	{
 		out.m[0] = (a33*a22-a32*a23)/DET;
@@ -734,7 +730,7 @@ mat3 InvertMat3(mat3 in)
 // inverts as mat3 (row-wise matrix) and returns the transpose
 mat3 InverseTranspose(mat4 in)
 {
-	float a11, a12, a13, a21, a22, a23, a31, a32, a33;
+	float a11, a12, a13, a21, a22, a23, a31, a32, a33, DET, NAN;
 	mat3 out;
 	
 	// Copying to internal variables
@@ -747,7 +743,7 @@ mat3 InverseTranspose(mat4 in)
 	a31 = in.m[8];
 	a32 = in.m[9];
 	a33 = in.m[10];
-	float DET = a11*(a33*a22-a32*a23)-a21*(a33*a12-a32*a13)+a31*(a23*a12-a22*a13);
+	DET = a11*(a33*a22-a32*a23)-a21*(a33*a12-a32*a13)+a31*(a23*a12-a22*a13);
 	if (DET != 0)
 	{
 		out.m[0] = (a33*a22-a32*a23)/DET;

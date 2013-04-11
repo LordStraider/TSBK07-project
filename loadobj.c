@@ -17,7 +17,6 @@
 
 #define PI 3.141592
 
-
 typedef struct Mesh
 {
 	GLfloat	*vertices;
@@ -57,7 +56,10 @@ static FILE *fp;
 
 static int intValue[3];
 static float floatValue[3];
-static int vertCount, texCount, normalsCount, coordCount;
+static int vertCount;
+static int texCount;
+static int normalsCount;
+static int coordCount;
 
 #ifndef false
 #define false 0
@@ -432,7 +434,7 @@ static struct Mesh * LoadOBJ(const char *filename)
 {
 	Mesh *theMesh;
 	
-	theMesh = malloc(sizeof(Mesh));
+	theMesh = (Mesh*)malloc(sizeof(Mesh));
 	theMesh->coordIndex = NULL;
 	theMesh->vertices = NULL;
 	// ProcessMesh may deal with these
@@ -452,7 +454,7 @@ static struct Mesh * LoadOBJ(const char *filename)
 	normalsCount=0;
 	coordCount=0;
 	
-	fp = fopen(filename, "rw");
+	fp = fopen(filename, "rb");
 	if (fp == NULL)
 	{
 		fprintf(stderr, "Unable to open file '%s'\n", filename);
@@ -464,17 +466,17 @@ static struct Mesh * LoadOBJ(const char *filename)
 
 	// Allocate arrays!
 	if (vertCount > 0)
-		theMesh->vertices = malloc(sizeof(GLfloat) * vertCount);
+		theMesh->vertices = (GLfloat*)malloc(sizeof(GLfloat) * vertCount);
 	if (texCount > 0)
-		theMesh->textureCoords = malloc(sizeof(GLfloat) * texCount);
+		theMesh->textureCoords = (GLfloat*)malloc(sizeof(GLfloat) * texCount);
 	if (normalsCount > 0)
-		theMesh->vertexNormals = malloc(sizeof(GLfloat) * normalsCount);
+		theMesh->vertexNormals = (GLfloat*)malloc(sizeof(GLfloat) * normalsCount);
 	if (hasPositionIndices)
-		theMesh->coordIndex = malloc(sizeof(int) * coordCount);
+		theMesh->coordIndex = (int*)malloc(sizeof(int) * coordCount);
 	if (hasNormalIndices)
-		theMesh->normalsIndex = malloc(sizeof(int) * coordCount);
+		theMesh->normalsIndex = (int*)malloc(sizeof(int) * coordCount);
 	if (hasTexCoordIndices)
-		theMesh->textureIndex = malloc(sizeof(int) * coordCount);
+		theMesh->textureIndex = (int*)malloc(sizeof(int) * coordCount);
 	
 	// Zero again
 	vertCount=0;
@@ -482,7 +484,7 @@ static struct Mesh * LoadOBJ(const char *filename)
 	normalsCount=0;
 	coordCount=0;
 
-	fp = fopen(filename, "rw");
+	fp = fopen(filename, "rb");
 	if (fp == NULL) return NULL;
 	ParseOBJ(theMesh);
 	fclose(fp);
@@ -500,14 +502,18 @@ static struct Mesh * LoadOBJ(const char *filename)
 
 void DecomposeToTriangles(struct Mesh *theMesh)
 {
-	int i, vertexCount, triangleCount;
-	int *newCoords, *newNormalsIndex, *newTextureIndex;
-	
+	int i;
+	int vertexCount = 0;
+	int triangleCount = 0;
+	int *newCoords;
+	int *newNormalsIndex;
+	int *newTextureIndex;
+	int newIndex = 0;
+	int first = 0;
+
 	// 1. Bygg om hela modellen till trianglar
 	// 1.1 Calculate how big the list will become
 	
-	vertexCount = 0; // Number of vertices in current polygon
-	triangleCount = 0; // Resulting number of triangles
 	for (i = 0; i < theMesh->coordCount; i++)
 	{
 		if (theMesh->coordIndex[i] == -1)
@@ -523,17 +529,21 @@ void DecomposeToTriangles(struct Mesh *theMesh)
 	
 	printf("Found %d triangles\n", triangleCount);
 	
-	newCoords = malloc(sizeof(int) * triangleCount * 3);
-	if (theMesh->normalsIndex != NULL)
-		newNormalsIndex = malloc(sizeof(int) * triangleCount * 3);
-	if (theMesh->textureIndex != NULL)
-		newTextureIndex = malloc(sizeof(int) * triangleCount * 3);
-	
+	newCoords = (int*)malloc(sizeof(int) * triangleCount * 3);
+	if (theMesh->normalsIndex != NULL){
+		newNormalsIndex = (int*)malloc(sizeof(int) * triangleCount * 3);
+	}
+	if (theMesh->textureIndex != NULL){
+		newTextureIndex = (int*)malloc(sizeof(int) * triangleCount * 3);
+	}
 	// 1.2 Loop through old list and write the new one
 	// Almost same loop but now it has space to write the result
+/*	vertexCount = 0;;
+	int newIndex = 0;; // Index in newCoords
+	int first = 0;;*/
+
 	vertexCount = 0;
-	int newIndex = 0; // Index in newCoords
-	int first = 0;
+
 	for (i = 0; i < theMesh->coordCount; i++)
 	{
 		if (theMesh->coordIndex[i] == -1)
@@ -594,12 +604,12 @@ static void generateNormals(Mesh* mesh)
 		int face;
 		int normalIndex;
 
-		mesh->vertexNormals = malloc(3 * sizeof(GLfloat) * mesh->vertexCount);
+		mesh->vertexNormals = (GLfloat*)malloc(3 * sizeof(GLfloat) * mesh->vertexCount);
 		memset(mesh->vertexNormals, 0, 3 * sizeof(GLfloat) * mesh->vertexCount);
 
 		mesh->normalsCount = mesh->vertexCount;
 
-		mesh->normalsIndex = malloc(sizeof(GLuint) * mesh->coordCount);
+		mesh->normalsIndex = (int*)malloc(sizeof(GLuint) * mesh->coordCount);
 		memcpy(mesh->normalsIndex, mesh->coordIndex,
 			sizeof(GLuint) * mesh->coordCount);
 
@@ -702,7 +712,7 @@ static Model* generateModel(Mesh* mesh)
 
 	int indexHashMapSize = (mesh->vertexCount * hashGap + mesh->coordCount);
 
-	IndexTriplet* indexHashMap = malloc(sizeof(IndexTriplet)
+	IndexTriplet* indexHashMap = (IndexTriplet*)malloc(sizeof(IndexTriplet)
 							* indexHashMapSize);
 
 	int numNewVertices = 0;
@@ -710,10 +720,10 @@ static Model* generateModel(Mesh* mesh)
 
 	int maxValue = 0;
 		
-	Model* model = malloc(sizeof(Model));
+	Model* model = (Model*)malloc(sizeof(Model));
 	memset(model, 0, sizeof(Model));
 
-	model->indexArray = malloc(sizeof(GLuint) * mesh->coordCount);
+	model->indexArray = (GLuint*)malloc(sizeof(GLuint) * mesh->coordCount);
 	model->numIndices = mesh->coordCount;
 
 	memset(indexHashMap, 0xff, sizeof(IndexTriplet) * indexHashMapSize);
@@ -761,11 +771,11 @@ static Model* generateModel(Mesh* mesh)
 	}
 
 	if (mesh->vertices)
-		model->vertexArray = malloc(sizeof(GLfloat) * 3 * numNewVertices);
+		model->vertexArray = (GLfloat*)malloc(sizeof(GLfloat) * 3 * numNewVertices);
 	if (mesh->vertexNormals)
-		model->normalArray = malloc(sizeof(GLfloat) * 3 * numNewVertices);
+		model->normalArray = (GLfloat*)malloc(sizeof(GLfloat) * 3 * numNewVertices);
 	if (mesh->textureCoords)
-		model->texCoordArray = malloc(sizeof(GLfloat) * 2 * numNewVertices);
+		model->texCoordArray = (GLfloat*)malloc(sizeof(GLfloat) * 2 * numNewVertices);
 	
 	model->numVertices = numNewVertices;
 
@@ -967,7 +977,7 @@ Model* LoadDataToModel(
 			int numVert,
 			int numInd)
 {
-	Model* m = malloc(sizeof(Model));
+	Model* m = (Model*)malloc(sizeof(Model));
 	memset(m, 0, sizeof(Model));
 	
 	m->vertexArray = vertices;

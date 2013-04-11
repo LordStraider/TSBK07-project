@@ -6,8 +6,8 @@
 	#include <OpenGL/glu.h>
 #else
 //	#include <GL/glee.h> Might be needed for Windows - not tested
-	#include <GL/gl.h>
-	#include <GL/glu.h>
+	#include <GL/glew.h>
+	#include <GL/glut.h>
 #endif
 
 #include <stdio.h>

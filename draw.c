@@ -1,13 +1,14 @@
 #include "draw.h"
 
 void display(void) {
+	GLfloat t;
     printError("pre display");
 
     /* clear the screen*/
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     
 
-    GLfloat t = (GLfloat)glutGet(GLUT_ELAPSED_TIME);
+    t = (GLfloat)glutGet(GLUT_ELAPSED_TIME);
 
     camPos += camMod;
 
@@ -41,6 +42,7 @@ void display(void) {
 
 
 void displaySingleColor(GLfloat t) {
+	int i;
     glUseProgram(programSingleColor);
     glUniformMatrix4fv(glGetUniformLocation(programSingleColor, "camMatrix"), 1, GL_TRUE, cam.m);
 
@@ -74,7 +76,7 @@ void displaySingleColor(GLfloat t) {
 */
 
 
-    int i;
+  
     for (i = 0; i < 4; i++) {
         trans = T(0, 7.4, 0);
         shear = S(0.5, 0.5, 0.5);
@@ -164,6 +166,7 @@ void displayShadows(GLfloat t) {
 }
 
 void displayNoLight() {
+	mat4 tmp;
     glUseProgram(programNoLight);
 
     /* Making skybox */
@@ -172,7 +175,7 @@ void displayNoLight() {
 
     trans = T(0, 0, 0);
     glBindTexture(GL_TEXTURE_2D, skyBoxTex);
-    mat4 tmp;
+
     tmp = cam;
     tmp.m[3] = 0;
     tmp.m[7] = 0;

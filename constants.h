@@ -1,13 +1,18 @@
 #ifdef __APPLE__
     #include <OpenGL/gl3.h>
     #include "MicroGlut.h"
+	#import <ApplicationServices/ApplicationServices.h>
 #endif
-#import <ApplicationServices/ApplicationServices.h>
+
 #include "GL_utilities.h"
 #include "loadobj.h"
 #include "VectorUtils3.h"
 
-
+#ifndef bool
+    #define bool int
+    #define false ((bool)0)
+    #define true  ((bool)1)
+#endif
 
 #ifndef M_PI
 #define M_PI           3.14159265358979323846

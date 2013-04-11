@@ -1,7 +1,5 @@
 #include "constants.h"
 
-
-
 mat4 rot, trans, shear, total, cam;
 
 
@@ -49,9 +47,6 @@ Model *blade;
 Model *windmillWalls;
 Model *windmillRoof;
 Model *windmillBalcony;
-
-
-
 
 void init(void) {
     /* GL inits*/

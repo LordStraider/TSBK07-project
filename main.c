@@ -1,13 +1,14 @@
 #ifdef __APPLE__
     #include <OpenGL/gl3.h>
     #include "MicroGlut.h"
-#else
-//  #include <GL/glee.h> Might be needed for Windows - not tested
-    #include <GL/gl.h>
-    #include <GL/glu.h>
-#endif
 
 #import <ApplicationServices/ApplicationServices.h>
+#else
+//  #include <GL/glee.h> Might be needed for Windows - not tested
+    #include <GL/glew.h>
+    #include <GL/glut.h>
+#endif
+
 #include "GL_utilities.h"
 #include "LoadTGA2.h"
 #include <math.h>
@@ -17,12 +18,6 @@
 #include "constants.h"
 #include "draw.h"
 #include "controller.h"
-
-/*
-#include <GLUT/glut.h>
-#include <OpenGL/gl.h>
-#include <OpenGL/glu.h>
-*/
 
 /* Globals*/
 
@@ -72,11 +67,24 @@ void OnTimer(int value) {
 }
 
 int main(int argc, char *argv[]) {
-    glutInitWindowPosition (100, 100);
+    GLenum err;
+
+	glutInitWindowPosition (100, 100);
     glutInitWindowSize (800, 640);
 
     glutInit(&argc, argv);
     glutCreateWindow ("TSBK07 - project");
+
+	//windows only...
+	#if defined(_WIN32)
+		err = glewInit();
+		if (GLEW_OK != err)
+		{
+		  /* Problem: glewInit failed, something is seriously wrong. */
+		  fprintf(stderr, "Error: %s\n", glewGetErrorString(err));
+		}
+	#endif
+
     glutDisplayFunc(display);
     initKeymapManager();
 //  glutPassiveMotionFunc(MouseController);

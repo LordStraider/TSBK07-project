@@ -1,8 +1,9 @@
 #ifdef __APPLE__
     #include <OpenGL/gl3.h>
     #include "MicroGlut.h"
-#endif
 #import <ApplicationServices/ApplicationServices.h>
+#endif
+
 #include "GL_utilities.h"
 #include "LoadTGA2.h"
 #include <math.h>
