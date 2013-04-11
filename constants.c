@@ -101,7 +101,7 @@ void init(void) {
 
 
     LoadTGATextureSimple("maskros512.tga", &bunnyTex);
-    LoadTGATextureSimple("SkyBox512.tga", &skyBoxTex);
+    LoadTGATextureSimple("skybox.tga", &skyBoxTex);
     LoadTGATextureSimple("dirt.tga", &dirtTex);
     LoadTGATextureSimple("grass.tga", &cubeTex);
 
