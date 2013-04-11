@@ -29,13 +29,13 @@ void MouseController(int x, int y){
         /*GLenum WinX = glutGet(GLUT_WINDOW_WIDTH);
         GLenum WinY = glutGet(GLUT_WINDOW_HEIGHT);
 
-        CGWarpMouseCursorPosition(CGPointMake(glutGet(GLUT_INIT_WINDOW_X) +
+        CGWarpMouseCursorPosition(CGPointMake(glutGet(GLUT_INIT_WINDOW_X) + 
         WinX / 2, glutGet(GLUT_INIT_WINDOW_Y) + WinY / 2));
         if (WinX / 2 < x) {
             xLookAt -= x / WinX;
         } else {
             xLookAt += x / WinX;
-        }
+        } 
 
         if (WinY / 2 < y) {
             yLookAt -= x / WinY;
@@ -48,7 +48,7 @@ void MouseController(int x, int y){
             xLookAt -= x*100;
         } else {
             xLookAt += x*100;
-        }
+        } 
 
         if (200 < y) {
             yLookAt -= y*100;

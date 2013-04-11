@@ -73,32 +73,32 @@ void init(void) {
     yCamPos = 2.0;
 
     /* Load and compile shader*/
-    program = loadShaders("resources/main.vert", "resources/main.frag");
-    programNoLight = loadShaders("resources/mainNoLight.vert", "resources/mainNoLight.frag");
-    programShadow = loadShaders("resources/mainShadow.vert", "resources/mainShadow.frag");
-    programSingleColor = loadShaders("resources/mainSingleColor.vert", "resources/mainSingleColor.frag");
-    programInvisible = loadShaders("resources/mainInvisible.vert", "resources/mainInvisible.frag");
+    program = loadShaders("main.vert", "main.frag");
+    programNoLight = loadShaders("mainNoLight.vert", "mainNoLight.frag");
+    programShadow = loadShaders("mainShadow.vert", "mainShadow.frag");
+    programSingleColor = loadShaders("mainSingleColor.vert", "mainSingleColor.frag");
+    programInvisible = loadShaders("mainInvisible.vert", "mainInvisible.frag");
 
     glUseProgram(program);
 
     printError("init shader");
 
 
-    bunny = LoadModelPlus("resources/bunnyplus.obj");
-    teapot = LoadModelPlus("resources/teapot.obj");
-    cube = LoadModelPlus("resources/cubeplus.obj");
-    skyBox = LoadModelPlus("resources/skybox.obj");
-    blade = LoadModelPlus("resources/blade.obj");
-    windmillBalcony = LoadModelPlus("resources/windmill-balcony.obj");
-    windmillRoof = LoadModelPlus("resources/windmill-roof.obj");
-    windmillWalls = LoadModelPlus("resources/windmill-walls.obj");
+    bunny = LoadModelPlus("bunnyplus.obj");
+    teapot = LoadModelPlus("teapot.obj");
+    cube = LoadModelPlus("cubeplus.obj");
+    skyBox = LoadModelPlus("skybox.obj");
+    blade = LoadModelPlus("blade.obj");
+    windmillBalcony = LoadModelPlus("windmill-balcony.obj");
+    windmillRoof = LoadModelPlus("windmill-roof.obj");
+    windmillWalls = LoadModelPlus("windmill-walls.obj");
 //    windmill2 = LoadModelPlus("windmill02.obj");
 
 
-    LoadTGATextureSimple("resources/maskros512.tga", &bunnyTex);
-    LoadTGATextureSimple("resources/skybox.tga", &skyBoxTex);
-    LoadTGATextureSimple("resources/dirt.tga", &dirtTex);
-    LoadTGATextureSimple("resources/grass.tga", &cubeTex);
+    LoadTGATextureSimple("maskros512.tga", &bunnyTex);
+    LoadTGATextureSimple("skybox.tga", &skyBoxTex);
+    LoadTGATextureSimple("dirt.tga", &dirtTex);
+    LoadTGATextureSimple("grass.tga", &cubeTex);
 
 
     /* End of upload of geometry*/
