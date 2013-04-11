@@ -16,5 +16,5 @@ void displaySingleColor(GLfloat t);
 void displayInvisible();
 void displayModels(GLfloat t);
 void displayShadows(GLfloat t);
-void displayNoLight();
+void displayNoLight(GLfloat t);
 void display();

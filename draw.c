@@ -6,7 +6,7 @@ void display(void) {
 
     /* clear the screen*/
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-    
+
 
     t = (GLfloat)glutGet(GLUT_ELAPSED_TIME);
 
@@ -26,14 +26,14 @@ void display(void) {
     cam = lookAtv(p, l, v);
 
 
-    displayNoLight();
+    displayNoLight(t);
     displaySingleColor(t);
     displayModels(t);
     displayShadows(t);
     displayInvisible();
 
     printError("display");
-    
+
     //glutSwapBuffers();
     glFlush();
 }
@@ -62,15 +62,15 @@ void displaySingleColor(GLfloat t) {
     trans = T(-3.9, 0, 0);
     shear = S(0.8, 0.8, 0.8);
     total = Mult(trans, shear);
-    glUniformMatrix4fv(glGetUniformLocation(programSingleColor, "mdlMatrix"), 1, GL_TRUE, total.m);    
+    glUniformMatrix4fv(glGetUniformLocation(programSingleColor, "mdlMatrix"), 1, GL_TRUE, total.m);
     DrawModel(windmillWalls, programSingleColor, "inPosition", "inNormal", "inTexCoord");
-    
+
 /*
 
     trans = T(-13.9, 0, 0);
     shear = S(0.8, 0.8, 0.8);
     total = Mult(trans, shear);
-    glUniformMatrix4fv(glGetUniformLocation(programSingleColor, "mdlMatrix"), 1, GL_TRUE, total.m);    
+    glUniformMatrix4fv(glGetUniformLocation(programSingleColor, "mdlMatrix"), 1, GL_TRUE, total.m);
     DrawModel(windmill2, programSingleColor, "inPosition", "inNormal", "inTexCoord");
 
 */
@@ -165,7 +165,8 @@ void displayShadows(GLfloat t) {
     DrawModel(teapot, program, "inPosition", "inNormal", "inTexCoord");
 }
 
-void displayNoLight() {
+
+void displayNoLight(Glfloat t) {
 	mat4 tmp;
     glUseProgram(programNoLight);
 
@@ -174,6 +175,9 @@ void displayNoLight() {
     glDisable(GL_CULL_FACE);
 
     trans = T(0, 0, 0);
+    rot = Ry(t/50000);
+    total = Mult(trans, rot);
+
     glBindTexture(GL_TEXTURE_2D, skyBoxTex);
 
     tmp = cam;
@@ -181,7 +185,7 @@ void displayNoLight() {
     tmp.m[7] = 0;
     tmp.m[11] = 0;
     glUniformMatrix4fv(glGetUniformLocation(programNoLight, "camMatrix"), 1, GL_TRUE, tmp.m);
-    glUniformMatrix4fv(glGetUniformLocation(programNoLight, "mdlMatrix"), 1, GL_TRUE, trans.m);
+    glUniformMatrix4fv(glGetUniformLocation(programNoLight, "mdlMatrix"), 1, GL_TRUE, total.m);
     DrawModel(skyBox, programNoLight, "inPosition", "inNormal", "inTexCoord");
 
     glEnable(GL_DEPTH_TEST);
