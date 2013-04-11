@@ -166,7 +166,7 @@ void displayShadows(GLfloat t) {
 }
 
 
-void displayNoLight(Glfloat t) {
+void displayNoLight(GLfloat t) {
 	mat4 tmp;
     glUseProgram(programNoLight);
 
