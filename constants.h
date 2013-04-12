@@ -12,6 +12,8 @@
 #ifndef INCLUDED
 #define INCLUDED
 #include "controller.h"
+#endif
+
 #ifndef bool
     #define bool int
     #define false ((bool)0)
