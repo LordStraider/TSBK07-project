@@ -9,8 +9,8 @@ extern "C" {
 	#include <OpenGL/gl3.h>
 	#include "MicroGlut.h"
 #else
-	#include <GL/glut.h>
-	#include <GL/gl.h>
+    #include <GL/glew.h>
+    #include <GL/glut.h>
 #endif
 
 void printError(const char *functionName);

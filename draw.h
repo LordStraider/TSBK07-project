@@ -1,8 +1,9 @@
 #ifdef __APPLE__
     #include <OpenGL/gl3.h>
     #include "MicroGlut.h"
+	#import <ApplicationServices/ApplicationServices.h>
 #endif
-#import <ApplicationServices/ApplicationServices.h>
+
 #include "GL_utilities.h"
 #include "LoadTGA2.h"
 #include <math.h>
@@ -17,5 +18,5 @@ void displaySingleColor(GLfloat t);
 void displayInvisible();
 void displayModels(GLfloat t);
 void displayShadows(GLfloat t);
-void displayNoLight();
+void displayNoLight(GLfloat t);
 void display();

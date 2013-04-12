@@ -3,6 +3,11 @@
     #include "MicroGlut.h"
     // Linking hint for Lightweight IDE
     // uses framework Cocoa
+#import <ApplicationServices/ApplicationServices.h>
+#else
+//  #include <GL/glee.h> Might be needed for Windows - not tested
+    #include <GL/glew.h>
+    #include <GL/glut.h>
 #endif
 #include "GL_utilities.h"
 #include "VectorUtils3.h"
@@ -11,6 +16,7 @@
 #include "controller.h"
 #include "constants.h"
 #include "draw.h"
+#include "controller.h"
 
 /* Globals*/
 
@@ -60,30 +66,28 @@ void OnTimer(int value) {
 }
 
 int main(int argc, char *argv[]) {
-    glutInit(&argc, argv);
-    glutInitDisplayMode(GLUT_DOUBLE | GLUT_DEPTH);
-    glutInitWindowSize (600, 600);
-    glutCreateWindow ("TSBK07 Lab 4");
-    glutDisplayFunc(display);
-    init ();
-    initKeymapManager();
-    glutTimerFunc(20, &OnTimer, 0);
-
-
-    glutMainLoop();
-    exit(0);
-    /*
     glutInitWindowPosition (100, 100);
     glutInitWindowSize (800, 640);
 
     glutInit(&argc, argv);
     glutInitDisplayMode(GLUT_DOUBLE | GLUT_DEPTH);
     glutCreateWindow ("TSBK07 - project");
+
+	//windows only...
+	#if defined(_WIN32)
+		err = glewInit();
+		if (GLEW_OK != err)
+		{
+		  /* Problem: glewInit failed, something is seriously wrong. */
+		  fprintf(stderr, "Error: %s\n", glewGetErrorString(err));
+		}
+	#endif
+
     glutDisplayFunc(display);
     initKeymapManager();
 //  glutPassiveMotionFunc(MouseController);
     glutTimerFunc(20, &OnTimer, 0);
     init ();
     glutMainLoop();
-    exit(0);*/
+    exit(0);
 }

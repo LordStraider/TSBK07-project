@@ -19,12 +19,12 @@
 
 // Shader loader
 
-char* readFile(char *file)
+char* readFile(char* file)
 {
 	FILE *fptr;
 	long length;
 	char *buf;
-
+	if(file == NULL) return NULL;
 	fptr = fopen(file, "rb"); /* Open file for reading */
 	if (!fptr) /* Return NULL on failure */
 		return NULL;

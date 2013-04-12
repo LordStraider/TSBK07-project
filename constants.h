@@ -1,8 +1,9 @@
 #ifdef __APPLE__
     #include <OpenGL/gl3.h>
     #include "MicroGlut.h"
+	#import <ApplicationServices/ApplicationServices.h>
 #endif
-#import <ApplicationServices/ApplicationServices.h>
+
 #include "GL_utilities.h"
 #include "loadobj.h"
 #include "LoadTGA2.h"
@@ -11,6 +12,10 @@
 #ifndef INCLUDED
 #define INCLUDED
 #include "controller.h"
+#ifndef bool
+    #define bool int
+    #define false ((bool)0)
+    #define true  ((bool)1)
 #endif
 
 #ifndef M_PI
