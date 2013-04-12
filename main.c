@@ -1,28 +1,16 @@
 #ifdef __APPLE__
     #include <OpenGL/gl3.h>
     #include "MicroGlut.h"
-#else
-//  #include <GL/glee.h> Might be needed for Windows - not tested
-    #include <GL/gl.h>
-    #include <GL/glu.h>
+    // Linking hint for Lightweight IDE
+    // uses framework Cocoa
 #endif
-
-#import <ApplicationServices/ApplicationServices.h>
 #include "GL_utilities.h"
-#include "LoadTGA2.h"
-#include <math.h>
-#include "loadobj.h"
 #include "VectorUtils3.h"
-#include <stdio.h>
+#include "loadobj.h"
+#include "LoadTGA2.h"
+#include "controller.h"
 #include "constants.h"
 #include "draw.h"
-#include "controller.h"
-
-/*
-#include <GLUT/glut.h>
-#include <OpenGL/gl.h>
-#include <OpenGL/glu.h>
-*/
 
 /* Globals*/
 
@@ -72,10 +60,24 @@ void OnTimer(int value) {
 }
 
 int main(int argc, char *argv[]) {
+    glutInit(&argc, argv);
+    glutInitDisplayMode(GLUT_DOUBLE | GLUT_DEPTH);
+    glutInitWindowSize (600, 600);
+    glutCreateWindow ("TSBK07 Lab 4");
+    glutDisplayFunc(display);
+    init ();
+    initKeymapManager();
+    glutTimerFunc(20, &OnTimer, 0);
+
+
+    glutMainLoop();
+    exit(0);
+    /*
     glutInitWindowPosition (100, 100);
     glutInitWindowSize (800, 640);
 
     glutInit(&argc, argv);
+    glutInitDisplayMode(GLUT_DOUBLE | GLUT_DEPTH);
     glutCreateWindow ("TSBK07 - project");
     glutDisplayFunc(display);
     initKeymapManager();
@@ -83,5 +85,5 @@ int main(int argc, char *argv[]) {
     glutTimerFunc(20, &OnTimer, 0);
     init ();
     glutMainLoop();
-    return 0;
+    exit(0);*/
 }

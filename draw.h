@@ -10,7 +10,9 @@
 #include "VectorUtils3.h"
 #include <stdio.h>
 #include "constants.h"
+#include "controller.h"
 
+void displayTexture();
 void displaySingleColor(GLfloat t);
 void displayInvisible();
 void displayModels(GLfloat t);

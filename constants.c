@@ -2,58 +2,31 @@
 
 
 
-mat4 rot, trans, shear, total, cam;
+mat4 rot, trans, shear, total, cam, proj, tmp;
 
+GLfloat camPos, yCamPos, camMod, xModify, xValue, yModify, yValue, zModify, zValue, teaY;
 
-GLfloat projMatrix[16] = { 2.0f*near/(right-left), 0.0f, (right+left)/(right-left), 0.0f,
-	                            0.0f, 2.0f*near/(top-bottom), (top+bottom)/(top-bottom), 0.0f,
-	                            0.0f, 0.0f, -(far + near)/(far - near), -2*far*near/(far - near),
-	                            0.0f, 0.0f, -1.0f, 0.0f };
-GLfloat camPos;
-GLfloat yCamPos;
-GLfloat camMod;
-GLfloat xModify;
-GLfloat xValue;
-GLfloat yModify;
-GLfloat yValue;
-GLfloat zModify;
-GLfloat zValue;
-
-float gravity;
-float angle;
-float angleMod;
-float rotate;
-float speed;
+float gravity, angle, angleMod, rotate, speed;
 bool menuPressed;
 
-Point3D p,l, v;
-GLuint program;
-GLuint programNoLight;
-GLuint programShadow;
-GLuint programSingleColor;
-GLuint programInvisible;
+Point3D p,l;
+GLuint program, programNoLight, programShadow, programSingleColor, programInvisible, programTerrain;
 
-GLuint bunnyTex;
-GLuint dirtTex;
-GLuint cubeTex;
-GLuint skyBoxTex;
+GLuint bunnyTex, dirtTex, cubeTex, skyBoxTex, tex1;
 
-Model *bunny;
-Model *bunnyShadow;
-Model *teapot;
-Model *teapotShadow;
-Model *cube;
-Model *skyBox;
-Model *blade;
+GLuint texWidth;
+GLfloat *vertexArray;
+GLuint *indexArray;
+
+Model *bunny, *bunnyShadow, *teapot, *teapotShadow, *cube, *skyBox, *blade, *windmillWalls, *windmillRoof, *windmillBalcony, *terrain;
 //Model *windmill2;
-Model *windmillWalls;
-Model *windmillRoof;
-Model *windmillBalcony;
 
 
+TextureData ttex; // terrain
 
 
 void init(void) {
+
     /* GL inits*/
     glClearColor(0.2,0.2,0.5,0);
     glEnable(GL_DEPTH_TEST);
@@ -64,12 +37,14 @@ void init(void) {
 
     printError("GL inits");
 
+    proj = frustum(left, right, bottom, top, near, far);
+
     xModify = 0.0;
     yModify = 0.0;
     zModify = 0.0;
-    xValue = 0.0;
-    yValue = 0.5;
-    zValue = -2.0;
+    xValue = 50.0;
+    yValue = 10.5;
+    zValue = 40.0;
     gravity = 0.0;
     rotate = M_PI / 2;
     angle = 0.0;
@@ -83,8 +58,7 @@ void init(void) {
     programShadow = loadShaders("mainShadow.vert", "mainShadow.frag");
     programSingleColor = loadShaders("mainSingleColor.vert", "mainSingleColor.frag");
     programInvisible = loadShaders("mainInvisible.vert", "mainInvisible.frag");
-
-    glUseProgram(program);
+    programTerrain = loadShaders("terrain.vert", "terrain.frag");
 
     printError("init shader");
 
@@ -107,15 +81,28 @@ void init(void) {
 
 
     /* End of upload of geometry*/
-    glUniformMatrix4fv(glGetUniformLocation(program, "projMatrix"), 1, GL_TRUE, projMatrix);
+    glUseProgram(program);
+    glUniformMatrix4fv(glGetUniformLocation(program, "projMatrix"), 1, GL_TRUE, proj.m);
     glUseProgram(programShadow);
-    glUniformMatrix4fv(glGetUniformLocation(programShadow, "projMatrix"), 1, GL_TRUE, projMatrix);
+    glUniformMatrix4fv(glGetUniformLocation(programShadow, "projMatrix"), 1, GL_TRUE, proj.m);
     glUseProgram(programNoLight);
-    glUniformMatrix4fv(glGetUniformLocation(programNoLight, "projMatrix"), 1, GL_TRUE, projMatrix);
+    glUniformMatrix4fv(glGetUniformLocation(programNoLight, "projMatrix"), 1, GL_TRUE, proj.m);
     glUseProgram(programSingleColor);
-    glUniformMatrix4fv(glGetUniformLocation(programSingleColor, "projMatrix"), 1, GL_TRUE, projMatrix);
+    glUniformMatrix4fv(glGetUniformLocation(programSingleColor, "projMatrix"), 1, GL_TRUE, proj.m);
     glUseProgram(programInvisible);
-    glUniformMatrix4fv(glGetUniformLocation(programInvisible, "projMatrix"), 1, GL_TRUE, projMatrix);
+    glUniformMatrix4fv(glGetUniformLocation(programInvisible, "projMatrix"), 1, GL_TRUE, proj.m);
+    glUseProgram(programTerrain);
+    glUniformMatrix4fv(glGetUniformLocation(programTerrain, "projMatrix"), 1, GL_TRUE, proj.m);
+    glUniform1i(glGetUniformLocation(programTerrain, "tex"), 0); // Texture unit 0
+
+    
+// Load terrain data
+    LoadTGATextureSimple("grass.tga", &tex1);
+    
+    LoadTGATexture("fft-terrain.tga", &ttex);
+    terrain = GenerateTerrain(&ttex);
+
+    teaY = findY(50, 40);
 
     printError("init arrays");
 }

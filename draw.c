@@ -1,5 +1,6 @@
 #include "draw.h"
 
+
 void display(void) {
     printError("pre display");
 
@@ -14,17 +15,20 @@ void display(void) {
     xValue += xModify * speed;
     yValue += yModify;
     zValue += zModify * speed;
+    yValue = findY(xValue, zValue) + 1;
 
-    if (yModify == 0) {
+/*    if (yModify == 0) {
         yCamPos = yValue+2;
-    }
-    p = SetVector(xValue + 5 * cos(camPos), yCamPos, zValue + 5 * sin(camPos));
-    l = SetVector(xValue, yCamPos + 0.5, zValue);
+    }*/
+    p = SetVector(xValue + 9 * cos(camPos), yValue+2, zValue + 9 * sin(camPos));
+    l = SetVector(xValue, yValue+3 + 2, zValue);
 
-    v = SetVector(0.0, 1.0, 0.0);
+    vec3 v = SetVector(0.0, 1.0, 0.0);
     cam = lookAtv(p, l, v);
 
-
+    // Build matrix
+    
+    displayTexture();
     displayNoLight();
     displaySingleColor(t);
     displayModels(t);
@@ -37,8 +41,27 @@ void display(void) {
     glFlush();
 }
 
+void displayTexture() {
+    glUseProgram(programTerrain);
 
+    p.y += 14;
+    int b = 1;
+    glUniform3fv(glGetUniformLocation(programTerrain, "camPos"), 1, &p);
+    glUniform1fv(glGetUniformLocation(programTerrain, "mode"), 1, &b);
 
+    // Build matrix
+    
+    
+
+    trans = IdentityMatrix();
+    total = Mult(cam, trans);
+    tmp = IdentityMatrix();
+    glUniformMatrix4fv(glGetUniformLocation(programTerrain, "camMatrix"), 1, GL_TRUE, tmp.m);
+    glUniformMatrix4fv(glGetUniformLocation(programTerrain, "mdlMatrix"), 1, GL_TRUE, total.m);
+
+    glBindTexture(GL_TEXTURE_2D, tex1);
+    DrawModel(terrain, program, "inPosition", "inNormal", "inTexCoord");
+}
 
 void displaySingleColor(GLfloat t) {
     glUseProgram(programSingleColor);
@@ -97,7 +120,6 @@ void displayInvisible() {
     total = Mult(trans, rot);
     shear = S(0.8, 0.83, 1.5);
     total = Mult(total, shear);
-    glBindTexture(GL_TEXTURE_2D, bunnyTex);
     glUniformMatrix4fv(glGetUniformLocation(programInvisible, "mdlMatrix"), 1, GL_TRUE, total.m);
     DrawModel(cube, programInvisible, "inPosition", "inNormal", "inTexCoord");
 
@@ -106,7 +128,6 @@ void displayInvisible() {
     trans = T(-3.9, 3, 0);
     shear = S(7, 15, 7);
     total = Mult(trans, shear);
-    glBindTexture(GL_TEXTURE_2D, bunnyTex);
     glUniformMatrix4fv(glGetUniformLocation(programInvisible, "mdlMatrix"), 1, GL_TRUE, total.m);
     DrawModel(cube, programInvisible, "inPosition", "inNormal", "inTexCoord");
 
@@ -120,14 +141,14 @@ void displayModels(GLfloat t) {
 
     /* Making the bunny */
     trans = T(xValue, yValue, zValue);
-    rot = Ry(rotate+angle);
+    rot = Ry(rotate + angle);
     total = Mult(trans, rot);
     glBindTexture(GL_TEXTURE_2D, bunnyTex);
     glUniformMatrix4fv(glGetUniformLocation(program, "mdlMatrix"), 1, GL_TRUE, total.m);
     DrawModel(bunny, program, "inPosition", "inNormal", "inTexCoord");
 
     /* Making the teapot */
-    trans = T(5, 8, -4);
+    trans = T(50, teaY + 8, 40);
     rot = Ry(-t/1000);
     total = Mult(trans, rot);
     rot = Rx(t/1000);
@@ -142,7 +163,7 @@ void displayShadows(GLfloat t) {
     glUniformMatrix4fv(glGetUniformLocation(programShadow, "camMatrix"), 1, GL_TRUE, cam.m);
 
     /* Making shadow under the bunny */
-    trans = T(xValue, 0.01, zValue);
+    trans = T(xValue, yValue + 13.01, zValue);
     shear = S(1/(yValue+0.5), 0, 1/(yValue+0.5));
     rot = Ry(rotate);
     total = Mult(trans, shear);
@@ -152,7 +173,7 @@ void displayShadows(GLfloat t) {
 
 
     /* Making shadow under the teapot */
-    trans = T(5, 0.01, -4);
+    trans = T(50, teaY + 0.01, 40);
     shear = S(1, 0, 1);
     total = Mult(trans, shear);
     rot = Ry(-t/1000);
@@ -172,7 +193,8 @@ void displayNoLight() {
 
     trans = T(0, 0, 0);
     glBindTexture(GL_TEXTURE_2D, skyBoxTex);
-    mat4 tmp;
+    
+
     tmp = cam;
     tmp.m[3] = 0;
     tmp.m[7] = 0;
@@ -186,15 +208,16 @@ void displayNoLight() {
 
 
     /* Making cube */
-    trans = T(0, 0, 0);
+/*    trans = T(0, 0, 0);
     shear = S(100,0, 100);
     total = Mult(trans, shear);
     glBindTexture(GL_TEXTURE_2D, cubeTex);
     glUniformMatrix4fv(glGetUniformLocation(programNoLight, "camMatrix"), 1, GL_TRUE, cam.m);
     glUniformMatrix4fv(glGetUniformLocation(programNoLight, "mdlMatrix"), 1, GL_TRUE, total.m);
     DrawModel(cube, programNoLight, "inPosition", "inNormal", "inTexCoord");
+*/
 
-
+    glUniformMatrix4fv(glGetUniformLocation(programNoLight, "camMatrix"), 1, GL_TRUE, cam.m);
     /* Making walls around the area */
     trans = T(0, 2.5, 50);
     shear = S(100, 5, 0);
@@ -202,7 +225,6 @@ void displayNoLight() {
     rot = Rz(M_PI/2);
     total = Mult(total, rot);
     glBindTexture(GL_TEXTURE_2D, dirtTex);
-    glUniformMatrix4fv(glGetUniformLocation(programNoLight, "camMatrix"), 1, GL_TRUE, cam.m);
     glUniformMatrix4fv(glGetUniformLocation(programNoLight, "mdlMatrix"), 1, GL_TRUE, total.m);
     DrawModel(cube, programNoLight, "inPosition", "inNormal", "inTexCoord");
     trans = T(0, 2.5, -50);
@@ -210,7 +232,6 @@ void displayNoLight() {
     total = Mult(trans, shear);
     rot = Rz(M_PI/2);
     total = Mult(total, rot);
-    glUniformMatrix4fv(glGetUniformLocation(programNoLight, "camMatrix"), 1, GL_TRUE, cam.m);
     glUniformMatrix4fv(glGetUniformLocation(programNoLight, "mdlMatrix"), 1, GL_TRUE, total.m);
     DrawModel(cube, programNoLight, "inPosition", "inNormal", "inTexCoord");
 
@@ -219,7 +240,6 @@ void displayNoLight() {
     total = Mult(trans, shear);
     rot = Rz(M_PI/2);
     total = Mult(total, rot);
-    glUniformMatrix4fv(glGetUniformLocation(programNoLight, "camMatrix"), 1, GL_TRUE, cam.m);
     glUniformMatrix4fv(glGetUniformLocation(programNoLight, "mdlMatrix"), 1, GL_TRUE, total.m);
     DrawModel(cube, programNoLight, "inPosition", "inNormal", "inTexCoord");
     trans = T(-50, 2.5, 0);
@@ -227,7 +247,8 @@ void displayNoLight() {
     total = Mult(trans, shear);
     rot = Rz(M_PI/2);
     total = Mult(total, rot);
-    glUniformMatrix4fv(glGetUniformLocation(programNoLight, "camMatrix"), 1, GL_TRUE, cam.m);
     glUniformMatrix4fv(glGetUniformLocation(programNoLight, "mdlMatrix"), 1, GL_TRUE, total.m);
     DrawModel(cube, programNoLight, "inPosition", "inNormal", "inTexCoord");
+
+    // Build matrix
 }
