@@ -4,7 +4,7 @@
 
 mat4 rot, trans, shear, total, cam, proj, tmp;
 
-GLfloat camPos, yCamPos, camMod, xModify, xValue, yModify, yValue, zModify, zValue, teaY;
+GLfloat camPos, yCamPos, camMod, xModify, xValue, yFind, yModify, yValue, zModify, zValue, teaY, windY;
 
 float gravity, angle, angleMod, rotate, speed;
 bool menuPressed;
@@ -43,7 +43,8 @@ void init(void) {
     yModify = 0.0;
     zModify = 0.0;
     xValue = 50.0;
-    yValue = 10.5;
+    yValue = 0.0;
+    yFind = 0.0;
     zValue = 40.0;
     gravity = 0.0;
     rotate = M_PI / 2;
@@ -103,6 +104,8 @@ void init(void) {
     terrain = GenerateTerrain(&ttex);
 
     teaY = findY(50, 40);
+
+    windY = findY(60, 30);
 
     printError("init arrays");
 }

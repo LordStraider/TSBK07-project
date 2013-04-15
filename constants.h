@@ -35,7 +35,7 @@ extern TextureData ttex; // terrain
 #define top 1.0
 #define bottom -1.0
 
-extern GLfloat camPos, yCamPos, camMod, xModify, xValue, yModify, yValue, zModify, zValue, teaY;
+extern GLfloat camPos, yCamPos, camMod, xModify, xValue, yFind, yModify, yValue, zModify, zValue, teaY, windY;
 
 extern GLuint texWidth;
 extern GLfloat *vertexArray;

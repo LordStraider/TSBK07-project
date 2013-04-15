@@ -16,7 +16,8 @@ void display(void) {
     xValue += xModify * speed;
     yValue += yModify;
     zValue += zModify * speed;
-    yValue = findY(xValue, zValue) + 1;
+    yFind = findY(xValue, zValue);
+    yValue += yModify;
 
 /*    if (yModify == 0) {
         yCamPos = yValue+2;
@@ -70,19 +71,19 @@ void displaySingleColor(GLfloat t) {
     glUniformMatrix4fv(glGetUniformLocation(programSingleColor, "camMatrix"), 1, GL_TRUE, cam.m);
 
 
-    trans = T(-3.9, 0, 0);
+    trans = T(60, windY, 30);
     shear = S(0.8, 0.8, 0.8);
     total = Mult(trans, shear);
     glUniformMatrix4fv(glGetUniformLocation(programSingleColor, "mdlMatrix"), 1, GL_TRUE, total.m);
     DrawModel(windmillRoof, programSingleColor, "inPosition", "inNormal", "inTexCoord");
 
-    trans = T(-3.9, 0, 0);
+    trans = T(60, windY, 30);
     shear = S(0.8, 0.8, 0.8);
     total = Mult(trans, shear);
     glUniformMatrix4fv(glGetUniformLocation(programSingleColor, "mdlMatrix"), 1, GL_TRUE, total.m);
     DrawModel(windmillBalcony, programSingleColor, "inPosition", "inNormal", "inTexCoord");
 
-    trans = T(-3.9, 0, 0);
+    trans = T(60, windY, 30);
     shear = S(0.8, 0.8, 0.8);
     total = Mult(trans, shear);
     glUniformMatrix4fv(glGetUniformLocation(programSingleColor, "mdlMatrix"), 1, GL_TRUE, total.m);
@@ -101,7 +102,7 @@ void displaySingleColor(GLfloat t) {
 
   
     for (i = 0; i < 4; i++) {
-        trans = T(0, 7.4, 0);
+        trans = T(60, windY + 7.4, 30);
         shear = S(0.5, 0.5, 0.5);
         total = Mult(trans, shear);
         rot = Rx(i * M_PI / 2 + t/1000);
@@ -127,8 +128,8 @@ void displayInvisible() {
 
 
 
-    trans = T(-3.9, 3, 0);
-    shear = S(7, 15, 7);
+    trans = T(60, windY+5, 30);
+    shear = S(7, 13, 7);
     total = Mult(trans, shear);
     glUniformMatrix4fv(glGetUniformLocation(programInvisible, "mdlMatrix"), 1, GL_TRUE, total.m);
     DrawModel(cube, programInvisible, "inPosition", "inNormal", "inTexCoord");
@@ -164,9 +165,11 @@ void displayShadows(GLfloat t) {
     glUseProgram(programShadow);
     glUniformMatrix4fv(glGetUniformLocation(programShadow, "camMatrix"), 1, GL_TRUE, cam.m);
 
+    GLfloat y = findY(xValue, zValue);
+
     /* Making shadow under the bunny */
-    trans = T(xValue, yValue + 13.01, zValue);
-    shear = S(1/(yValue+0.5), 0, 1/(yValue+0.5));
+    trans = T(xValue, yValue - 0.11, zValue);
+    shear = S(1/(yValue + 0.5 - y), 0, 1/(yValue + 0.5 - y));
     rot = Ry(rotate);
     total = Mult(trans, shear);
     total = Mult(total, rot);

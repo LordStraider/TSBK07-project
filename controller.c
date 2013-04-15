@@ -241,20 +241,20 @@ void keyController(){
         camMod = -M_PI / 60;
     }
 
-    if (keyIsDown(' ') && yValue == 0.5) { 
+    if (keyIsDown(' ') && yValue < yFind + 0.705) { 
         gravity = -0.18;
-        yValue = 0.55;
+        yValue += 0.35;
     }
 
-    if (gravity < 0 && yValue > 0.5) {
+    if (gravity < 0 && yValue > yFind + 0.5) {
         gravity += 0.035;
         yModify -= gravity;
-    } else if (yValue > 1.5) {
+    } else if (yValue > yFind + 1.1) {
         gravity += 0.01;
         yModify -= gravity;
     } else {
         yModify = 0;
-        yValue = 0.5;
+        yValue = yFind + 0.7;
         gravity = 0;
     }
 }
