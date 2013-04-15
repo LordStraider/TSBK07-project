@@ -30,8 +30,8 @@ void display(void) {
 
     // Build matrix
     
-    displayTexture();
     displayNoLight(t);
+    displayTexture();
     displaySingleColor(t);
     displayModels(t);
     displayShadows(t);
@@ -102,7 +102,7 @@ void displaySingleColor(GLfloat t) {
 
   
     for (i = 0; i < 4; i++) {
-        trans = T(60, windY + 7.4, 30);
+        trans = T(64, windY + 7.4, 30);
         shear = S(0.5, 0.5, 0.5);
         total = Mult(trans, shear);
         rot = Rx(i * M_PI / 2 + t/1000);
@@ -165,11 +165,10 @@ void displayShadows(GLfloat t) {
     glUseProgram(programShadow);
     glUniformMatrix4fv(glGetUniformLocation(programShadow, "camMatrix"), 1, GL_TRUE, cam.m);
 
-    GLfloat y = findY(xValue, zValue);
-
     /* Making shadow under the bunny */
-    trans = T(xValue, yValue - 0.11, zValue);
-    shear = S(1/(yValue + 0.5 - y), 0, 1/(yValue + 0.5 - y));
+    trans = T(xValue, yFind + 0.2, zValue);
+    shear = S(1, 0, 1);
+    //shear = S(1/(yValue - yFind + 0.1), 0, 1/(yValue - yFind + 0.1)); //Makes the shaddow smaller when jumping, perspective. Buggy.
     rot = Ry(rotate);
     total = Mult(trans, shear);
     total = Mult(total, rot);
