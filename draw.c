@@ -19,17 +19,12 @@ void display(void) {
     yFind = findY(xValue, zValue);
     yValue += yModify;
 
-/*    if (yModify == 0) {
-        yCamPos = yValue+2;
-    }*/
-    p = SetVector(xValue + 9 * cos(camPos), yValue+2, zValue + 9 * sin(camPos));
-    l = SetVector(xValue, yValue+3 + 2, zValue);
+    p = SetVector(xValue + 9 * cos(camPos), yFind + 3, zValue + 9 * sin(camPos));
+    l = SetVector(xValue, yFind + 3.7 + 2, zValue);
 
     vec3 v = SetVector(0.0, 1.0, 0.0);
     cam = lookAtv(p, l, v);
 
-    // Build matrix
-    
     displayNoLight(t);
     displayTexture();
     displaySingleColor(t);
@@ -88,17 +83,6 @@ void displaySingleColor(GLfloat t) {
     total = Mult(trans, shear);
     glUniformMatrix4fv(glGetUniformLocation(programSingleColor, "mdlMatrix"), 1, GL_TRUE, total.m);
     DrawModel(windmillWalls, programSingleColor, "inPosition", "inNormal", "inTexCoord");
-
-/*
-
-    trans = T(-13.9, 0, 0);
-    shear = S(0.8, 0.8, 0.8);
-    total = Mult(trans, shear);
-    glUniformMatrix4fv(glGetUniformLocation(programSingleColor, "mdlMatrix"), 1, GL_TRUE, total.m);
-    DrawModel(windmill2, programSingleColor, "inPosition", "inNormal", "inTexCoord");
-
-*/
-
 
   
     for (i = 0; i < 4; i++) {
@@ -213,17 +197,6 @@ void displayNoLight(GLfloat t) {
 
     glEnable(GL_DEPTH_TEST);
     glEnable(GL_CULL_FACE);
-
-
-    /* Making cube */
-/*    trans = T(0, 0, 0);
-    shear = S(100,0, 100);
-    total = Mult(trans, shear);
-    glBindTexture(GL_TEXTURE_2D, cubeTex);
-    glUniformMatrix4fv(glGetUniformLocation(programNoLight, "camMatrix"), 1, GL_TRUE, cam.m);
-    glUniformMatrix4fv(glGetUniformLocation(programNoLight, "mdlMatrix"), 1, GL_TRUE, total.m);
-    DrawModel(cube, programNoLight, "inPosition", "inNormal", "inTexCoord");
-*/
 
     glUniformMatrix4fv(glGetUniformLocation(programNoLight, "camMatrix"), 1, GL_TRUE, cam.m);
     /* Making walls around the area */
