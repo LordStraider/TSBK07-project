@@ -14,6 +14,7 @@ Model* GenerateTerrain(TextureData *tex)
     //ballY = malloc(sizeof(GLfloat) * 100);
     
     texWidth = tex->width;
+    texHeight = tex->height;
     GLfloat y;
 
     printf("bpp %d\n", tex->bpp);
@@ -150,6 +151,8 @@ GLfloat findY(int x, int z) {
     GLuint triangle2[3]; 
     GLfloat y = 0.0;
 
+
+
     triangle1[0] = indexArray[(x + z * (texWidth-1))*6 + 0] * 3; //x
     triangle1[1] = indexArray[(x + z * (texWidth-1))*6 + 1] * 3; //y
     triangle1[2] = indexArray[(x + z * (texWidth-1))*6 + 2] * 3; //z
@@ -184,6 +187,10 @@ GLfloat findY(int x, int z) {
     return y;
 }
 
+bool checkBoundaries(){
+    return xValue < 0 || xValue > texWidth || zValue < 0 || zValue > texHeight;
+}
+
 void keyController(){
 	float rotateFront = 0.0;
     float rotateSide = 0.0;
@@ -201,36 +208,41 @@ void keyController(){
         speed = 2.0;
     }
     
+    int direction = 1;
+    if (checkBoundaries()) {
+        direction = -1;
+    }
+    
     if (keyIsDown('w')){
-        xModify += -0.2 * cos(camPos);
-        zModify += -0.2 * sin(camPos);
+        xModify += direction * (-0.2 * cos(camPos));
+        zModify += direction * (-0.2 * sin(camPos));
     }
     if (keyIsDown('s')){
-        xModify += 0.2 * cos(camPos);
-        zModify += 0.2 * sin(camPos);
-        rotateFront = - M_PI;
+        xModify += direction * (0.2 * cos(camPos));
+        zModify += direction * (0.2 * sin(camPos));
+        rotateFront = direction * (- M_PI);
     }
     if (keyIsDown('a')){
-        xModify += -0.2 * sin(camPos);
-        zModify += 0.2 * cos(camPos);
-        rotateSide = - M_PI / 2;
+        xModify += direction * (-0.2 * sin(camPos));
+        zModify += direction * (0.2 * cos(camPos));
+        rotateSide = direction * (- M_PI / 2);
     }
     if (keyIsDown('d')){
-        xModify += 0.2 * sin(camPos);
-        zModify += -0.2 * cos(camPos);
-        rotateSide = M_PI / 2;
+        xModify += direction * (0.2 * sin(camPos));
+        zModify += direction * (-0.2 * cos(camPos));
+        rotateSide = direction * (M_PI / 2);
     } 
 
     if (keyIsDown('w') && keyIsDown('a')){
-        rotate += - M_PI / 4;
+        rotate += direction * (- M_PI / 4);
     } else if (keyIsDown('w') && keyIsDown('d')){
-        rotate += M_PI / 4;
+        rotate += direction * (M_PI / 4);
     } else if (keyIsDown('s') && keyIsDown('a')){
-        rotate += - 3 * M_PI / 4;
+        rotate += direction * (- 3 * M_PI / 4);
     } else if (keyIsDown('s') && keyIsDown('d')){
-        rotate += 3 * M_PI / 4;
+        rotate += direction * (3 * M_PI / 4);
     } else {
-        rotate += rotateFront + rotateSide;
+        rotate += direction * (rotateFront + rotateSide);
     }
 
     if (keyIsDown('e')) {
