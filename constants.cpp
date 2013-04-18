@@ -1,5 +1,7 @@
 #include "constants.h"
 
+using namespace std;
+
 mat4 rot, trans, shear, total, cam, proj, tmp;
 
 GLfloat camPos, yCamPos, camMod, xModify, xValue, yFind, yModify, yValue, zModify, zValue, teaY, windY;
@@ -21,7 +23,7 @@ Model *batmobil, *kingKong, *bunny, *bunnyShadow, *teapot, *teapotShadow, *cube,
 //Model *windmill2;
 
 
-//DrawableObjectVector allObjects;
+vector<DrawableObject*> allObjects;
 DrawableObject* bunnyObj;
 
 /*DrawableObjectVector::DrawableObjectVector() : std::vector<DrawableObject*>() {};
@@ -119,8 +121,8 @@ void init(void) {
     kingY = findY(kingX, kingZ);
     printError("init arrays");
 
-	bunnyObj = new DrawableObject(80, 0.7, 80, 0, &bunnyTex, bunny, &program);
-//	std::vector<DrawableObject*> allObjects;
-//	allObjects.push_back(bunnyObj);
-
+    for (int i = 0; i < 40; i++) {
+        bunnyObj = new DrawableObject(rand() % texWidth, 0, rand() % texHeight, 0, &bunnyTex, sphere, &program);
+    	allObjects.push_back(bunnyObj);
+    }
 }

@@ -18,7 +18,7 @@ public:
 
 	DrawableObject(vec3 position, GLfloat rotation, GLuint* tex, Model* model, GLuint* program);
 
-	void draw(GLfloat t);
+	void draw();
 
 	//overload this to add AI behaviour. return true to remove object from public vector.
 	bool update(GLfloat t);
@@ -44,3 +44,6 @@ private:
 	GLuint* program;
 	GLuint* tex;
 };
+
+
+void drawObj(DrawableObject* obj);

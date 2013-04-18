@@ -19,7 +19,7 @@ DrawableObject::DrawableObject(vec3 position, GLfloat rotation, GLuint* tex, Mod
 	setRotation(rotation);
 }
 
-void DrawableObject::draw(GLfloat t){
+void DrawableObject::draw(){
     glUseProgram(*program);
     glUniformMatrix4fv(glGetUniformLocation(*program, "camMatrix"), 1, GL_TRUE, cam.m);
 
@@ -73,4 +73,10 @@ vec3 DrawableObject::getCoords(){
 
 void DrawableObject::updateMatrices(){
 	total = Mult(trans, rot);
+}
+
+
+
+void drawObj(DrawableObject* obj) {
+	obj->draw();
 }

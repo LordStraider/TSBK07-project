@@ -1,6 +1,8 @@
 #include "draw.h"
 //#include <string>
 
+using namespace std;
+
 
 void display(void) {
 	GLfloat t;
@@ -61,7 +63,9 @@ void display(void) {
     displaySingleColor(t);
 //	printError("drawing single");
 	displayModels(t);
-    bunnyObj->draw(t);
+    
+    for_each(allObjects.begin(), allObjects.end(), drawObj);
+
 //	printError("drawing models");
     displayShadows(t);
 //	printError("drawing shadows");
