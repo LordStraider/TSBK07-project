@@ -5,7 +5,7 @@ mat4 rot, trans, shear, total, cam, proj, tmp;
 GLfloat camPos, yCamPos, camMod, xModify, xValue, yFind, yModify, yValue, zModify, zValue, teaY, windY;
 GLfloat kingX, kingY, kingZ;
 
-float gravity, angle, angleMod, rotation, speed;
+float gravity, angle, angleMod, rotation, speed, kingRotation;
 bool menuPressed;
 
 Point3D p,l;
@@ -17,7 +17,7 @@ GLuint texWidth, texHeight;
 GLfloat *vertexArray;
 GLuint *indexArray;
 
-Model *kingKong, *bunny, *bunnyShadow, *teapot, *teapotShadow, *cube, *skyBox, *blade, *windmillWalls, *windmillRoof, *windmillBalcony, *terrain, *sphere;
+Model *batmobil, *kingKong, *bunny, *bunnyShadow, *teapot, *teapotShadow, *cube, *skyBox, *blade, *windmillWalls, *windmillRoof, *windmillBalcony, *terrain, *sphere;
 //Model *windmill2;
 
 /*
@@ -59,6 +59,7 @@ void init(void) {
     camPos = M_PI / 2;
     menuPressed = false;
     yCamPos = 2.0;
+    kingRotation = 0;
 
     kingX = 20;
     kingY = 2;
@@ -76,6 +77,7 @@ void init(void) {
 
     bunny = LoadModelPlus("bunnyplus.obj");
     kingKong = LoadModelPlus("King_Kong.obj");
+    batmobil = LoadModelPlus("batmobile.obj");
     teapot = LoadModelPlus("teapot.obj");
     cube = LoadModelPlus("cubeplus.obj");
     skyBox = LoadModelPlus("skybox.obj");

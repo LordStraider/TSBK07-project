@@ -36,7 +36,8 @@ void display(void) {
     king = SetVector(kingX, kingY, kingZ);
     mod = VectorSub(player, king);
     mod = Normalize(mod);
-    mod /= 5;
+    kingRotation = DotProduct(mod, king);
+    mod /= 6.5;
     king = VectorAdd(king, mod);
     kingX = king.x;
     kingY = findY(king.x, king.z);
@@ -176,13 +177,23 @@ void displayModels(GLfloat t) {
     glUniformMatrix4fv(glGetUniformLocation(program, "mdlMatrix"), 1, GL_TRUE, total.m);
     DrawModel(bunny, program, "inPosition", "inNormal", "inTexCoord");
 
-    /* Making the bunny */
+    /* Making king kong */
     trans = T(kingX, kingY, kingZ);
     shear = S(0.6, 0.6, 0.6);
     total = Mult(trans, shear);
+    rot = Ry(rotation);
+    total = Mult(total, rot);
     glBindTexture(GL_TEXTURE_2D, bunnyTex);
     glUniformMatrix4fv(glGetUniformLocation(program, "mdlMatrix"), 1, GL_TRUE, total.m);
     DrawModel(kingKong, program, "inPosition", "inNormal", "inTexCoord");
+
+    /* Making batmobil */
+    trans = T(40, findY(40, 12), 12);
+    shear = S(0.1, 0.1, 0.1);
+    total = Mult(trans, shear);
+    glBindTexture(GL_TEXTURE_2D, bunnyTex);
+    glUniformMatrix4fv(glGetUniformLocation(program, "mdlMatrix"), 1, GL_TRUE, total.m);
+    DrawModel(batmobil, program, "inPosition", "inNormal", "inTexCoord");
 
     /* Making the teapot */
     trans = T(50, teaY + 18, 40);

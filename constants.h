@@ -37,7 +37,7 @@ extern GLuint texWidth, texHeight;
 extern GLfloat *vertexArray;
 extern GLuint *indexArray;
 
-extern float gravity, angle, angleMod, rotation, speed;
+extern float gravity, angle, angleMod, rotation, speed, kingRotation;
 extern bool menuPressed;
 
 extern Point3D p, l;
@@ -45,7 +45,7 @@ extern GLuint program, programNoLight, programShadow, programSingleColor, progra
 
 extern GLuint dirtTex, bunnyTex, skyBoxTex, grassTex;
 
-extern Model *kingKong, *bunny, *bunnyShadow, *teapot, *teapotShadow, *cube, *skyBox, *blade, *windmillWalls, *windmillRoof, *windmillBalcony, *terrain, *sphere;
+extern Model *batmobil, *kingKong, *bunny, *bunnyShadow, *teapot, *teapotShadow, *cube, *skyBox, *blade, *windmillWalls, *windmillRoof, *windmillBalcony, *terrain, *sphere;
 //extern Model *windmill2;
 
 std::vector<DrawableObject> test;
