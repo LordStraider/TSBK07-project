@@ -51,9 +51,10 @@ void display(void) {
 	printError("drawing invisible");
 
     printError("display");
-
+	#if defined(_WIN32)
     glutSwapBuffers();
-    //glFlush();
+	#endif
+    glFlush();
 }
 
 void displayTexture() {
