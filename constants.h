@@ -48,8 +48,6 @@ extern GLuint dirtTex, bunnyTex, skyBoxTex, grassTex;
 extern Model *batmobil, *kingKong, *bunny, *bunnyShadow, *teapot, *teapotShadow, *cube, *skyBox, *blade, *windmillWalls, *windmillRoof, *windmillBalcony, *terrain, *sphere;
 //extern Model *windmill2;
 
-std::vector<DrawableObject> test;
-
 void init();
 
 #endif
