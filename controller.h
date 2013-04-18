@@ -1,3 +1,6 @@
+#ifndef CONTROLLER_H
+#define CONTROLLER_H
+
 #ifdef __APPLE__
     #include <OpenGL/gl3.h>
     #include "MicroGlut.h"
@@ -21,3 +24,5 @@ bool checkBoundaries();
 bool checkCollisionBB();
 bool checkCollisionBS();
 bool checkCollisionSS();
+
+#endif

@@ -1,3 +1,6 @@
+#ifndef DRAW_H
+#define DRAW_H
+
 #ifdef __APPLE__
     #include <OpenGL/gl3.h>
     #include "MicroGlut.h"
@@ -20,3 +23,5 @@ void displayModels(GLfloat t);
 void displayShadows(GLfloat t);
 void displayNoLight(GLfloat t);
 void display();
+
+#endif
