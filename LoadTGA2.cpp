@@ -140,7 +140,6 @@ bool LoadTGATextureData(char *filename, TextureData *texture)	// Loads A TGA Fil
 	return true;				// Texture Building Went Ok, Return True
 }
 
-
 bool LoadTGATexture(char *filename, TextureData *texture)	// Loads A TGA File Into Memory and uploads to VRAM
 {
 	GLuint type = GL_RGBA;		// Set The Default GL Mode To RBGA (32 BPP)
@@ -148,8 +147,6 @@ bool LoadTGATexture(char *filename, TextureData *texture)	// Loads A TGA File In
 	bool result = LoadTGATextureData(filename, texture); // Loads A TGA File Into Memory
 	if (!result)
 		return result;
-	
-
 
 	w = 1;
 	while (w < texture->width) w = w << 1;

@@ -1,7 +1,5 @@
 #include "constants.h"
 
-
-
 mat4 rot, trans, shear, total, cam, proj, tmp;
 
 GLfloat camPos, yCamPos, camMod, xModify, xValue, yFind, yModify, yValue, zModify, zValue, teaY, windY;
@@ -26,11 +24,12 @@ TextureData ttex; // terrain
 
 
 void init(void) {
-
     /* GL inits*/
     glClearColor(0.2,0.2,0.5,0);
     glEnable(GL_DEPTH_TEST);
     glEnable(GL_CULL_FACE);
+	glCullFace(GL_BACK); //causes error 0x500
+
     glActiveTexture(GL_TEXTURE0);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
@@ -62,7 +61,6 @@ void init(void) {
 
     printError("init shader");
 
-
     bunny = LoadModelPlus("bunnyplus.obj");
     teapot = LoadModelPlus("teapot.obj");
     cube = LoadModelPlus("cubeplus.obj");
@@ -72,7 +70,6 @@ void init(void) {
     windmillRoof = LoadModelPlus("windmill-roof.obj");
     windmillWalls = LoadModelPlus("windmill-walls.obj");
 //    windmill2 = LoadModelPlus("windmill02.obj");
-
 
     LoadTGATextureSimple("maskros512.tga", &bunnyTex);
     LoadTGATextureSimple("skybox.tga", &skyBoxTex);
@@ -94,7 +91,7 @@ void init(void) {
     glUseProgram(programTerrain);
     glUniformMatrix4fv(glGetUniformLocation(programTerrain, "projMatrix"), 1, GL_TRUE, proj.m);
     glUniform1i(glGetUniformLocation(programTerrain, "tex"), 0); // Texture unit 0
-
+	printError("load objs");
     
 // Load terrain data
     LoadTGATextureSimple("grass.tga", &tex1);
