@@ -1,5 +1,4 @@
-#ifndef DRAWABLE_H
-#define DRAWABLE_H
+#pragma once
 
 #include "VectorUtils3.h"
 #include "GL_utilities.h"
@@ -12,11 +11,16 @@ public:
 	mat4 total;
 	~DrawableObject();
 	
+	DrawableObject();
+
 	DrawableObject(int x, int yOffset, int z, GLfloat rotation, GLuint* tex, Model* model, GLuint* program);
 
 	DrawableObject(vec3 position, GLfloat rotation, GLuint* tex, Model* model, GLuint* program);
 
 	void draw(GLfloat t);
+
+	//overload this to add AI behaviour. return true to remove object from public vector.
+	bool update(GLfloat t);
 
 	//Rotates an object (rotation += angle). See also: setRotation(GLfloat)
 	void rotate(GLfloat angle);
@@ -29,13 +33,13 @@ public:
 
 	//use NULL,0,NULL to set y = 0 while not affecting x or z. See also move()
 	void setCoords(int x, int y, int z);
+	vec3 getCoords();
+
 private:
 	void updateMatrices();
-	int x, z, yOffset; //yOffset is distance from ground
+	int x, z, y, yOffset; //yOffset is distance from ground
 	GLfloat rotation;
 	Model* model;
 	GLuint* program;
 	GLuint* tex;
 };
-
-#endif DRAWABLE_H

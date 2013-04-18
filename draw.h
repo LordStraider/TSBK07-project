@@ -18,7 +18,6 @@
 
 #include "drawable.h"
 #include "constants.h"
-#include "controller.h"
 
 
 void displayTexture();

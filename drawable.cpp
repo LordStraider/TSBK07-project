@@ -1,16 +1,21 @@
 #include "drawable.h"
 
+DrawableObject::DrawableObject(){
+
+}
+
 DrawableObject::DrawableObject(int x, int yOffset, int z, GLfloat rotation, GLuint* tex, Model* model, GLuint* program) : 
-	x(x), z(z), rotation(rotation), tex(tex), model(model), program(program) 
+	x(x), yOffset(y), z(z), rotation(rotation), tex(tex), model(model), program(program) 
 {
-	trans = T(x, findY(x,z), z);
+	//allocate space for model.
+	trans = T(x, y = yOffset + findY(x,z), z);
 	setRotation(rotation);
 }
 
 DrawableObject::DrawableObject(vec3 position, GLfloat rotation, GLuint* tex, Model* model, GLuint* program) :
 	x(position.x), z(position.z), yOffset(position.y), rotation(rotation), tex(tex), model(model), program(program) 
 {
-	trans = T(x, findY(x,z), z);
+	trans = T(x, y = yOffset + findY(x,z), z);
 	setRotation(rotation);
 }
 
@@ -18,6 +23,11 @@ void DrawableObject::draw(GLfloat t){
 	glBindTexture(GL_TEXTURE_2D, *tex);
 	glUniformMatrix4fv(glGetUniformLocation(*program, "mdlMatrix"), 1, GL_TRUE, total.m);
 	DrawModel(model, *program, "inPosition", "inNormal", "inTexCoord");
+}
+
+//overload this to add AI behaviour. return true to remove object from public vector.
+bool DrawableObject::update(GLfloat t){
+	return false;
 }
 
 //Rotates an object (rotation += angle). See also: setRotation(GLfloat)
@@ -39,14 +49,18 @@ void DrawableObject::setRotation(GLfloat angle){
 
 //use -1 if you don't want to change a value. Example: -1,0,-1 to set y = 0 while not affecting x or z
 void DrawableObject::setCoords(int x, int y, int z){
-	if(x==-1)
+	if(x!=-1)
 		this->x = x;
-	if(y==-1)
+	if(y!=-1)
 		this->yOffset = y;
-	if(z==-1)
+	if(z!=-1)
 		this->z = z;
-	trans = T(x, yOffset + findY(x,z), z);
+	trans = T(x, y = yOffset + findY(x,z), z);
 	updateMatrices();
+}
+
+vec3 DrawableObject::getCoords(){
+	return vec3(this->x, this->y, this->z);
 }
 
 void DrawableObject::updateMatrices(){
