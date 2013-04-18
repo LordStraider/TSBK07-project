@@ -14,7 +14,7 @@ uniform mat4 projMatrix;
 void main(void)
 {
 	exTexCoord = inTexCoord;
-	
+
 	mat3 normalMatrix = mat3(camMatrix * mdlMatrix);
 	exNormal = normalMatrix * inNormal;
 
