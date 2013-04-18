@@ -44,7 +44,7 @@ extern bool menuPressed;
 extern Point3D p, l;
 extern GLuint program, programNoLight, programShadow, programSingleColor, programInvisible, programTerrain;
 
-extern GLuint bunnyTex, dirtTex, cubeTex, skyBoxTex, tex1;
+extern GLuint dirtTex, bunnyTex, skyBoxTex, grassTex;
 
 extern Model *kingKong, *bunny, *bunnyShadow, *teapot, *teapotShadow, *cube, *skyBox, *blade, *windmillWalls, *windmillRoof, *windmillBalcony, *terrain, *sphere;
 //extern Model *windmill2;
