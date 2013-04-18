@@ -52,9 +52,8 @@ void display(void) {
 
     printError("display");
 
-
     #if defined(_WIN32)
-    glutSwapBuffers();
+		glutSwapBuffers();
     #endif
     glFlush();
 }
@@ -129,8 +128,6 @@ void displayInvisible() {
     total = Mult(total, shear);
     glUniformMatrix4fv(glGetUniformLocation(programInvisible, "mdlMatrix"), 1, GL_TRUE, total.m);
     DrawModel(cube, programInvisible, "inPosition", "inNormal", "inTexCoord");
-
-
 
     trans = T(60, windY+5, 30);
     shear = S(7, 13, 7);

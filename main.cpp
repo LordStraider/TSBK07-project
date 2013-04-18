@@ -13,11 +13,11 @@
 #include "VectorUtils3.h"
 #include "loadobj.h"
 #include "LoadTGA2.h"
+#include "drawable.h"
 #include "controller.h"
 #include "constants.h"
-#include "draw.h"
-#include "controller.h"
 
+#include "draw.h"
 /* Globals*/
 
 

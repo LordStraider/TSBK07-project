@@ -1,3 +1,6 @@
+#ifndef DRAWABLE_H
+#define DRAWABLE_H
+
 #include "VectorUtils3.h"
 #include "GL_utilities.h"
 #include "controller.h"
@@ -9,57 +12,30 @@ public:
 	mat4 total;
 	~DrawableObject();
 	
-	DrawableObject(int x, int yOffset, int z, GLfloat rotation, GLuint* tex, Model* model, GLuint* program) : 
-		x(x), z(z), rotation(rotation), tex(tex), model(model), program(program) {
-			trans = T(x, findY(x,z), z);
-			rotate(rotation);
-		}
+	DrawableObject(int x, int yOffset, int z, GLfloat rotation, GLuint* tex, Model* model, GLuint* program);
 
-	DrawableObject(vec3 position, GLfloat rotation, GLuint* tex, Model* model, GLuint* program) :
-		x(position.x), z(position.z), yOffset(position.y), rotation(rotation), tex(tex), model(model), program(program) {
-			trans = T(x, findY(x,z), z);
-			rotate(rotation);
-	}
+	DrawableObject(vec3 position, GLfloat rotation, GLuint* tex, Model* model, GLuint* program);
 
-	void draw(int t){
-		glBindTexture(GL_TEXTURE_2D, *tex);
-		glUniformMatrix4fv(glGetUniformLocation(*program, "mdlMatrix"), 1, GL_TRUE, total.m);
-		DrawModel(model, *program, "inPosition", "inNormal", "inTexCoord");
-	}
+	void draw(GLfloat t);
 
 	//Rotates an object (rotation += angle). See also: setRotation(GLfloat)
-	void rotate(GLfloat angle){
-		rot = Mult(Ry(angle), rot);
-		updateMatrices();
-	}
+	void rotate(GLfloat angle);
 	
-	//use 0,1,0 to move only along the y-axis
-	void move(int x, int y, int z){
-		setCoords(this->x+x, this->yOffset+y, this->z+z);
-	}
+	//use 0,1,0 to move only along the y-axis. See also: setCoords()
+	void move(int x, int y, int z);
 
 	//SETS rotation (rotation = angle). See also: rotate(GLfloat)
-	void setRotation(GLfloat angle){
-		rot = Ry(angle);
-		updateMatrices();
-	}
+	void setRotation(GLfloat angle);
 
-	//use NULL,0,NULL to set y = 0 while not affecting x or z
-	void setCoords(int x, int y, int z){
-		if(x!=NULL)
-			this->x = x;
-		if(z!=NULL)
-			this->z = z;
-		trans = T(x, findY(x,z), z);
-		updateMatrices();
-	}
+	//use NULL,0,NULL to set y = 0 while not affecting x or z. See also move()
+	void setCoords(int x, int y, int z);
 private:
-	void updateMatrices(){
-		total = Mult(trans, rot);
-	}
+	void updateMatrices();
 	int x, z, yOffset; //yOffset is distance from ground
 	GLfloat rotation;
 	Model* model;
 	GLuint* program;
 	GLuint* tex;
 };
+
+#endif DRAWABLE_H

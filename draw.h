@@ -11,15 +11,16 @@
 #include "LoadTGA2.h"
 #include <math.h>
 #include <vector>
+
 #include "loadobj.h"
 #include "VectorUtils3.h"
 #include <stdio.h>
+
+#include "drawable.h"
 #include "constants.h"
 #include "controller.h"
-#ifndef INCLUDED
-#define INCLUDED
-#include "drawable.h"
-#endif
+
+
 void displayTexture();
 void displaySingleColor(GLfloat t);
 void displayInvisible();
