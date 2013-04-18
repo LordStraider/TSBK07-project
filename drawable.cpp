@@ -4,7 +4,7 @@ DrawableObject::DrawableObject(){
 
 }
 
-DrawableObject::DrawableObject(int x, int yOffset, int z, GLfloat rotation, GLuint* tex, Model* model, GLuint* program) : 
+DrawableObject::DrawableObject(GLfloat x, GLfloat yOffset, GLfloat z, GLfloat rotation, GLuint* tex, Model* model, GLuint* program) : 
 	x(x), yOffset(y), z(z), rotation(rotation), tex(tex), model(model), program(program) 
 {
 	//allocate space for model.
@@ -20,8 +20,16 @@ DrawableObject::DrawableObject(vec3 position, GLfloat rotation, GLuint* tex, Mod
 }
 
 void DrawableObject::draw(GLfloat t){
+    glUseProgram(*program);
+    glUniformMatrix4fv(glGetUniformLocation(*program, "camMatrix"), 1, GL_TRUE, cam.m);
+
+
+    /* Making the bunny */
+    trans = T(x, y, z);
+
+
 	glBindTexture(GL_TEXTURE_2D, *tex);
-	glUniformMatrix4fv(glGetUniformLocation(*program, "mdlMatrix"), 1, GL_TRUE, total.m);
+	glUniformMatrix4fv(glGetUniformLocation(*program, "mdlMatrix"), 1, GL_TRUE, trans.m);
 	DrawModel(model, *program, "inPosition", "inNormal", "inTexCoord");
 }
 
@@ -37,7 +45,7 @@ void DrawableObject::rotate(GLfloat angle){
 }
 	
 //use 0,1,0 to move only along the y-axis
-void DrawableObject::move(int x, int y, int z){
+void DrawableObject::move(GLfloat x, GLfloat y, GLfloat z){
 	setCoords(this->x+x, this->yOffset+y, this->z+z);
 }
 
@@ -48,7 +56,7 @@ void DrawableObject::setRotation(GLfloat angle){
 }
 
 //use -1 if you don't want to change a value. Example: -1,0,-1 to set y = 0 while not affecting x or z
-void DrawableObject::setCoords(int x, int y, int z){
+void DrawableObject::setCoords(GLfloat x, GLfloat y, GLfloat z){
 	if(x!=-1)
 		this->x = x;
 	if(y!=-1)

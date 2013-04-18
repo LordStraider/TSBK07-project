@@ -16,8 +16,10 @@
 #include "drawable.h"
 
 #ifndef M_PI
-#define M_PI           3.14159265358979323846
+    #define M_PI           3.14159265358979323846
 #endif
+
+class DrawableObject;
 
 extern mat4 rot, trans, shear, total, cam, proj, tmp;
 
@@ -47,6 +49,9 @@ extern GLuint dirtTex, bunnyTex, skyBoxTex, grassTex;
 
 extern Model *batmobil, *kingKong, *bunny, *bunnyShadow, *teapot, *teapotShadow, *cube, *skyBox, *blade, *windmillWalls, *windmillRoof, *windmillBalcony, *terrain, *sphere;
 //extern Model *windmill2;
+
+//extern DrawableObjectVector allObjects;
+extern DrawableObject* bunnyObj;
 
 void init();
 

@@ -61,6 +61,7 @@ void display(void) {
     displaySingleColor(t);
 //	printError("drawing single");
 	displayModels(t);
+    bunnyObj->draw(t);
 //	printError("drawing models");
     displayShadows(t);
 //	printError("drawing shadows");
@@ -68,6 +69,7 @@ void display(void) {
 //	printError("drawing invisible");
 
     printError("display");
+
 
     #if defined(_WIN32)
 		glutSwapBuffers();

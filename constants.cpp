@@ -20,16 +20,17 @@ GLuint *indexArray;
 Model *batmobil, *kingKong, *bunny, *bunnyShadow, *teapot, *teapotShadow, *cube, *skyBox, *blade, *windmillWalls, *windmillRoof, *windmillBalcony, *terrain, *sphere;
 //Model *windmill2;
 
-/*
-DrawableObjectVector allObjects;
 
-DrawableObjectVector::DrawableObjectVector() : std::vector<DrawableObject*>() {};
+//DrawableObjectVector allObjects;
+DrawableObject* bunnyObj;
+
+/*DrawableObjectVector::DrawableObjectVector() : std::vector<DrawableObject*>() {};
 void DrawableObjectVector::drawAll(GLfloat t){
 	for_each(this->begin(), this->end(), [&t](DrawableObject* obj){
 		obj->draw(t);
 	});
-}
-*/
+}*/
+
 TextureData ttex; // terrain
 
 void init(void) {
@@ -118,8 +119,8 @@ void init(void) {
     kingY = findY(kingX, kingZ);
     printError("init arrays");
 
-	DrawableObject* bunnyObj = new DrawableObject(100,0,100,0,&bunnyTex,bunny,&program);
-	std::vector<DrawableObject*> allObjects;
-	allObjects.push_back(bunnyObj);
+	bunnyObj = new DrawableObject(80, 0.7, 80, 0, &bunnyTex, bunny, &program);
+//	std::vector<DrawableObject*> allObjects;
+//	allObjects.push_back(bunnyObj);
 
 }
