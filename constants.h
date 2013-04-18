@@ -31,6 +31,7 @@ extern TextureData ttex; // terrain
     #define bottom -1.0
 
 extern GLfloat camPos, yCamPos, camMod, xModify, xValue, yFind, yModify, yValue, zModify, zValue, teaY, windY;
+extern GLfloat kingX, kingY, kingZ;
 
 extern GLuint texWidth, texHeight;
 extern GLfloat *vertexArray;
@@ -42,9 +43,9 @@ extern bool menuPressed;
 extern Point3D p, l;
 extern GLuint program, programNoLight, programShadow, programSingleColor, programInvisible, programTerrain;
 
-extern GLuint bunnyTex, dirtTex, cubeTex, skyBoxTex, tex1;
+extern GLuint dirtTex, bunnyTex, skyBoxTex, grassTex;
 
-extern Model *bunny, *bunnyShadow, *teapot, *teapotShadow, *cube, *skyBox, *blade, *windmillWalls, *windmillRoof, *windmillBalcony, *terrain, *sphere;
+extern Model *kingKong, *bunny, *bunnyShadow, *teapot, *teapotShadow, *cube, *skyBox, *blade, *windmillWalls, *windmillRoof, *windmillBalcony, *terrain, *sphere;
 //extern Model *windmill2;
 
 void init();

@@ -3,6 +3,7 @@
 mat4 rot, trans, shear, total, cam, proj, tmp;
 
 GLfloat camPos, yCamPos, camMod, xModify, xValue, yFind, yModify, yValue, zModify, zValue, teaY, windY;
+GLfloat kingX, kingY, kingZ;
 
 float gravity, angle, angleMod, rotation, speed;
 bool menuPressed;
@@ -10,13 +11,13 @@ bool menuPressed;
 Point3D p,l;
 GLuint program, programNoLight, programShadow, programSingleColor, programInvisible, programTerrain;
 
-GLuint bunnyTex, dirtTex, cubeTex, skyBoxTex, tex1;
+GLuint dirtTex, bunnyTex, skyBoxTex, grassTex;
 
 GLuint texWidth, texHeight;
 GLfloat *vertexArray;
 GLuint *indexArray;
 
-Model *bunny, *bunnyShadow, *teapot, *teapotShadow, *cube, *skyBox, *blade, *windmillWalls, *windmillRoof, *windmillBalcony, *terrain, *sphere;
+Model *kingKong, *bunny, *bunnyShadow, *teapot, *teapotShadow, *cube, *skyBox, *blade, *windmillWalls, *windmillRoof, *windmillBalcony, *terrain, *sphere;
 //Model *windmill2;
 
 /*
@@ -59,6 +60,10 @@ void init(void) {
     menuPressed = false;
     yCamPos = 2.0;
 
+    kingX = 20;
+    kingY = 2;
+    kingZ = 20;
+
     /* Load and compile shader*/
     program = loadShaders("main.vert", "main.frag");
     programNoLight = loadShaders("mainNoLight.vert", "mainNoLight.frag");
@@ -70,6 +75,7 @@ void init(void) {
     printError("init shader");
 
     bunny = LoadModelPlus("bunnyplus.obj");
+    kingKong = LoadModelPlus("King_Kong.obj");
     teapot = LoadModelPlus("teapot.obj");
     cube = LoadModelPlus("cubeplus.obj");
     skyBox = LoadModelPlus("skybox.obj");
@@ -80,11 +86,10 @@ void init(void) {
     windmillWalls = LoadModelPlus("windmill-walls.obj");
 //    windmill2 = LoadModelPlus("windmill02.obj");
 
-    LoadTGATextureSimple("maskros512.tga", &bunnyTex);
     LoadTGATextureSimple("skybox.tga", &skyBoxTex);
     LoadTGATextureSimple("dirt.tga", &dirtTex);
-    LoadTGATextureSimple("grass.tga", &cubeTex);
-
+    LoadTGATextureSimple("fur.tga", &bunnyTex);
+    LoadTGATextureSimple("grass.tga", &grassTex);
 
     /* End of upload of geometry*/
     glUseProgram(program);
@@ -101,16 +106,18 @@ void init(void) {
     glUniformMatrix4fv(glGetUniformLocation(programTerrain, "projMatrix"), 1, GL_TRUE, proj.m);
     glUniform1i(glGetUniformLocation(programTerrain, "tex"), 0); // Texture unit 0
 	printError("load objs");
-    
+
 // Load terrain data
-    LoadTGATextureSimple("grass.tga", &tex1);
+
     LoadTGATexture("fft-terrain.tga", &ttex);
     terrain = GenerateTerrain(&ttex);
     teaY = findY(50, 40);
     windY = findY(60, 30);
+    kingY = findY(kingX, kingZ);
     printError("init arrays");
 
-	DrawableObject* bunnyObj = new DrawableObject(100,0,100,0,&tex1,bunny,&program);
+	DrawableObject* bunnyObj = new DrawableObject(100,0,100,0,&bunnyTex,bunny,&program);
 	std::vector<DrawableObject*> allObjects;
 	allObjects.push_back(bunnyObj);
+
 }

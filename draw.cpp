@@ -19,7 +19,7 @@ void display(void) {
     xValue += xModify * speed;
     yValue += yModify;
     zValue += zModify * speed;
-    
+
     if (checkBoundaries() || checkCollisionBS()) {
         xValue -= zModify * speed;
         zModify = -xModify;
@@ -30,6 +30,19 @@ void display(void) {
     yFind = findY(xValue, zValue);
     yValue += yModify;
 
+
+    Point3D mod, player, king;
+    player = SetVector(xValue, yValue, zValue);
+    king = SetVector(kingX, kingY, kingZ);
+    mod = VectorSub(player, king);
+    mod = Normalize(mod);
+    mod /= 5;
+    king = VectorAdd(king, mod);
+    kingX = king.x;
+    kingY = findY(king.x, king.z);
+    kingZ = king.z;
+
+
     p = SetVector(xValue + 9 * cos(camPos), yFind + 3, zValue + 9 * sin(camPos));
     l = SetVector(xValue, yFind + 3.7 + 2, zValue);
 
@@ -39,7 +52,7 @@ void display(void) {
     printError("pre light");
 
     displayNoLight(t);
-    
+
 //	printError("drawing no light");
 	displayTerrain();
 //	printError("drawing texture");
@@ -57,7 +70,7 @@ void display(void) {
     #if defined(_WIN32)
 		glutSwapBuffers();
     #endif
-    
+
     glFlush();
 }
 
@@ -77,7 +90,7 @@ void displayTerrain() {
     glUniformMatrix4fv(glGetUniformLocation(programTerrain, "camMatrix"), 1, GL_TRUE, tmp.m);
     glUniformMatrix4fv(glGetUniformLocation(programTerrain, "mdlMatrix"), 1, GL_TRUE, total.m);
 
-    glBindTexture(GL_TEXTURE_2D, tex1);
+    glBindTexture(GL_TEXTURE_2D, grassTex);
     DrawModel(terrain, program, "inPosition", "inNormal", "inTexCoord");
 
 
@@ -162,6 +175,14 @@ void displayModels(GLfloat t) {
     glBindTexture(GL_TEXTURE_2D, bunnyTex);
     glUniformMatrix4fv(glGetUniformLocation(program, "mdlMatrix"), 1, GL_TRUE, total.m);
     DrawModel(bunny, program, "inPosition", "inNormal", "inTexCoord");
+
+    /* Making the bunny */
+    trans = T(kingX, kingY, kingZ);
+    shear = S(0.6, 0.6, 0.6);
+    total = Mult(trans, shear);
+    glBindTexture(GL_TEXTURE_2D, bunnyTex);
+    glUniformMatrix4fv(glGetUniformLocation(program, "mdlMatrix"), 1, GL_TRUE, total.m);
+    DrawModel(kingKong, program, "inPosition", "inNormal", "inTexCoord");
 
     /* Making the teapot */
     trans = T(50, teaY + 18, 40);
