@@ -38,7 +38,7 @@ extern GLuint texWidth, texHeight;
 extern GLfloat *vertexArray;
 extern GLuint *indexArray;
 
-extern float gravity, angle, angleMod, rotation, speed;
+extern float gravity, angle, angleMod, rotation, speed, kingRotation;
 extern bool menuPressed;
 
 extern Point3D p, l;

@@ -36,7 +36,8 @@ void display(void) {
     king = SetVector(kingX, kingY, kingZ);
     mod = VectorSub(player, king);
     mod = Normalize(mod);
-    mod /= 5;
+    kingRotation = DotProduct(mod, king);
+    mod /= 6.5;
     king = VectorAdd(king, mod);
     kingX = king.x;
     kingY = findY(king.x, king.z);
@@ -180,6 +181,8 @@ void displayModels(GLfloat t) {
     trans = T(kingX, kingY, kingZ);
     shear = S(0.6, 0.6, 0.6);
     total = Mult(trans, shear);
+    rot = Ry(rotation);
+    total = Mult(total, rot);
     glBindTexture(GL_TEXTURE_2D, bunnyTex);
     glUniformMatrix4fv(glGetUniformLocation(program, "mdlMatrix"), 1, GL_TRUE, total.m);
     DrawModel(kingKong, program, "inPosition", "inNormal", "inTexCoord");
