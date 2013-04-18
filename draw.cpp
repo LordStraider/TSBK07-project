@@ -16,7 +16,7 @@ void display(void) {
     xValue += xModify * speed;
     yValue += yModify;
     zValue += zModify * speed;
-    
+
     if (checkBoundaries()) {
         xValue -= zModify * speed;
         zModify = -xModify;
@@ -36,7 +36,7 @@ void display(void) {
 	printError("pre light");
 
     displayNoLight(t);
-    
+
 	printError("drawing no light");
 	displayTexture();
 
@@ -52,13 +52,13 @@ void display(void) {
 
     printError("display");
 
-    glutSwapBuffers();
-    //glFlush();
+    //glutSwapBuffers();
+    glFlush();
 }
 
 void displayTexture() {
 	GLfloat b = 1;
-	GLfloat p_array[] = {p.x,p.y+=14,p.z}; 
+	GLfloat p_array[] = {p.x,p.y+=14,p.z};
 	glUseProgram(programTerrain);
 
 	glUniform3fv(glGetUniformLocation(programTerrain, "camPos"), 1, p_array);
@@ -75,7 +75,7 @@ void displayTexture() {
     glBindTexture(GL_TEXTURE_2D, tex1);
     DrawModel(terrain, program, "inPosition", "inNormal", "inTexCoord");
 
-	
+
 }
 
 void displaySingleColor(GLfloat t) {
@@ -101,7 +101,7 @@ void displaySingleColor(GLfloat t) {
     glUniformMatrix4fv(glGetUniformLocation(programSingleColor, "mdlMatrix"), 1, GL_TRUE, total.m);
     DrawModel(windmillWalls, programSingleColor, "inPosition", "inNormal", "inTexCoord");
 
-  
+
     for (i = 0; i < 4; i++) {
         trans = T(64, windY + 7.4, 30);
         shear = S(0.5, 0.5, 0.5);
