@@ -52,7 +52,10 @@ void display(void) {
 
     printError("display");
 
-    //glutSwapBuffers();
+
+    #if defined(_WIN32)
+    glutSwapBuffers();
+    #endif
     glFlush();
 }
 
