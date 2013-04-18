@@ -485,7 +485,10 @@ static struct Mesh * LoadOBJ(const char *filename)
 	coordCount=0;
 
 	fp = fopen(filename, "rb");
-	if (fp == NULL) return NULL;
+	if (fp == NULL) {
+		printf("Error at loadobj.c");
+		return NULL;
+	}
 	ParseOBJ(theMesh);
 	fclose(fp);
 	
@@ -991,11 +994,6 @@ Model* LoadDataToModel(
 	
 	return m;
 }
-
-
-
-
-
 
 // Old junk that is obsolete with new DrawModel/LoadModelPlus
 /*

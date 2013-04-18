@@ -1,9 +1,9 @@
 #include "draw.h"
 
-
 void display(void) {
 	GLfloat t;
-    printError("pre display");
+    vec3 v;
+	printError("pre display");
 
     /* clear the screen*/
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -30,33 +30,41 @@ void display(void) {
     p = SetVector(xValue + 9 * cos(camPos), yFind + 3, zValue + 9 * sin(camPos));
     l = SetVector(xValue, yFind + 3.7 + 2, zValue);
 
-    vec3 v = SetVector(0.0, 1.0, 0.0);
+    v = SetVector(0.0, 1.0, 0.0);
     cam = lookAtv(p, l, v);
 
+	printError("pre light");
+
     displayNoLight(t);
-    displayTexture();
+    
+	printError("drawing no light");
+	displayTexture();
+
+	printError("drawing texture");
     displaySingleColor(t);
-    displayModels(t);
+	printError("drawing single");
+	displayModels(t);
+	printError("drawing models");
     displayShadows(t);
+	printError("drawing shadows");
     displayInvisible();
+	printError("drawing invisible");
 
     printError("display");
 
-    //glutSwapBuffers();
-    glFlush();
+    glutSwapBuffers();
+    //glFlush();
 }
 
 void displayTexture() {
-    glUseProgram(programTerrain);
+	GLfloat b = 1;
+	GLfloat p_array[] = {p.x,p.y+=14,p.z}; 
+	glUseProgram(programTerrain);
 
-    p.y += 14;
-    int b = 1;
-    glUniform3fv(glGetUniformLocation(programTerrain, "camPos"), 1, &p);
+	glUniform3fv(glGetUniformLocation(programTerrain, "camPos"), 1, p_array);
     glUniform1fv(glGetUniformLocation(programTerrain, "mode"), 1, &b);
 
     // Build matrix
-    
-    
 
     trans = IdentityMatrix();
     total = Mult(cam, trans);
@@ -66,13 +74,14 @@ void displayTexture() {
 
     glBindTexture(GL_TEXTURE_2D, tex1);
     DrawModel(terrain, program, "inPosition", "inNormal", "inTexCoord");
+
+	
 }
 
 void displaySingleColor(GLfloat t) {
 	int i;
     glUseProgram(programSingleColor);
     glUniformMatrix4fv(glGetUniformLocation(programSingleColor, "camMatrix"), 1, GL_TRUE, cam.m);
-
 
     trans = T(60, windY, 30);
     shear = S(0.8, 0.8, 0.8);
@@ -105,7 +114,7 @@ void displaySingleColor(GLfloat t) {
 }
 
 void displayInvisible() {
-    glUseProgram(programInvisible);
+	glUseProgram(programInvisible);
     glEnable(GL_BLEND);
     glUniformMatrix4fv(glGetUniformLocation(programInvisible, "camMatrix"), 1, GL_TRUE, cam.m);
 
@@ -182,6 +191,7 @@ void displayShadows(GLfloat t) {
 
 
 void displayNoLight(GLfloat t) {
+
 	mat4 tmp;
     glUseProgram(programNoLight);
 
@@ -203,39 +213,22 @@ void displayNoLight(GLfloat t) {
     glUniformMatrix4fv(glGetUniformLocation(programNoLight, "mdlMatrix"), 1, GL_TRUE, total.m);
     DrawModel(skyBox, programNoLight, "inPosition", "inNormal", "inTexCoord");
 
+
+    tmp = cam;
+    tmp.m[3] = 0;
+    tmp.m[7] = 0;
+    tmp.m[11] = 0;
+    rot = Rz(M_PI);
+    total = Mult(trans, rot);
+    rot = Ry(-t/50000);
+    total = Mult(total, rot);
+    glUniformMatrix4fv(glGetUniformLocation(programNoLight, "camMatrix"), 1, GL_TRUE, tmp.m);
+    glUniformMatrix4fv(glGetUniformLocation(programNoLight, "mdlMatrix"), 1, GL_TRUE, total.m);
+    DrawModel(skyBox, programNoLight, "inPosition", "inNormal", "inTexCoord");
+
+
     glEnable(GL_DEPTH_TEST);
     glEnable(GL_CULL_FACE);
 
     glUniformMatrix4fv(glGetUniformLocation(programNoLight, "camMatrix"), 1, GL_TRUE, cam.m);
-    /* Making walls around the area */
-    trans = T(0, 2.5, 50);
-    shear = S(100, 5, 0);
-    total = Mult(trans, shear);
-    rot = Rz(M_PI/2);
-    total = Mult(total, rot);
-    glBindTexture(GL_TEXTURE_2D, dirtTex);
-    glUniformMatrix4fv(glGetUniformLocation(programNoLight, "mdlMatrix"), 1, GL_TRUE, total.m);
-    DrawModel(cube, programNoLight, "inPosition", "inNormal", "inTexCoord");
-    trans = T(0, 2.5, -50);
-    shear = S(100, 5, 0);
-    total = Mult(trans, shear);
-    rot = Rz(M_PI/2);
-    total = Mult(total, rot);
-    glUniformMatrix4fv(glGetUniformLocation(programNoLight, "mdlMatrix"), 1, GL_TRUE, total.m);
-    DrawModel(cube, programNoLight, "inPosition", "inNormal", "inTexCoord");
-
-    trans = T(50, 2.5, 0);
-    shear = S(0, 5, 100);
-    total = Mult(trans, shear);
-    rot = Rz(M_PI/2);
-    total = Mult(total, rot);
-    glUniformMatrix4fv(glGetUniformLocation(programNoLight, "mdlMatrix"), 1, GL_TRUE, total.m);
-    DrawModel(cube, programNoLight, "inPosition", "inNormal", "inTexCoord");
-    trans = T(-50, 2.5, 0);
-    shear = S(0, 5, 100);
-    total = Mult(trans, shear);
-    rot = Rz(M_PI/2);
-    total = Mult(total, rot);
-    glUniformMatrix4fv(glGetUniformLocation(programNoLight, "mdlMatrix"), 1, GL_TRUE, total.m);
-    DrawModel(cube, programNoLight, "inPosition", "inNormal", "inTexCoord");
 }

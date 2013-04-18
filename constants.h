@@ -4,7 +4,7 @@
 #ifdef __APPLE__
     #include <OpenGL/gl3.h>
     #include "MicroGlut.h"
-	#import <ApplicationServices/ApplicationServices.h>
+    #import <ApplicationServices/ApplicationServices.h>
 #endif
 
 #include "GL_utilities.h"
@@ -31,12 +31,14 @@ extern mat4 rot, trans, shear, total, cam, proj, tmp;
 
 extern TextureData ttex; // terrain
 
-#define near 1.0
-#define far 300.0
-#define right 1.0
-#define left -1.0
-#define top 1.0
-#define bottom -1.0
+#ifndef near
+    #define near 1.0
+    #define far 300.0
+    #define right 1.0
+    #define left -1.0
+    #define top 1.0
+    #define bottom -1.0
+#endif
 
 extern GLfloat camPos, yCamPos, camMod, xModify, xValue, yFind, yModify, yValue, zModify, zValue, teaY, windY;
 

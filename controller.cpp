@@ -6,16 +6,22 @@ Model* GenerateTerrain(TextureData *tex)
     int vertexCount = tex->width * tex->height;
     int triangleCount = (tex->width-1) * (tex->height-1) * 2;
     int x, z;
-    
-    vertexArray = malloc(sizeof(GLfloat) * 3 * vertexCount);
-    GLfloat *normalArray = malloc(sizeof(GLfloat) * 3 * vertexCount);
-    GLfloat *texCoordArray = malloc(sizeof(GLfloat) * 2 * vertexCount);
-    indexArray = malloc(sizeof(GLuint) * triangleCount*3);
+	Point3D p;
+	Point3D cross;
+	Point3D sum;
+	Point3D tmp;
+	Model* model; 
+	GLfloat y;
+	GLfloat *normalArray, *texCoordArray;
+
+    vertexArray = (GLfloat*)malloc(sizeof(GLfloat) * 3 * vertexCount);
+    normalArray = (GLfloat*)malloc(sizeof(GLfloat) * 3 * vertexCount);
+    texCoordArray = (GLfloat*)malloc(sizeof(GLfloat) * 2 * vertexCount);
+    indexArray = (GLuint*)malloc(sizeof(GLuint) * triangleCount*3);
     //ballY = malloc(sizeof(GLfloat) * 100);
     
     texWidth = tex->width;
     texHeight = tex->height;
-    GLfloat y;
 
     printf("bpp %d\n", tex->bpp);
     for (x = 0; x < tex->width; x++)
@@ -73,15 +79,13 @@ Point3D(vertexArray[((x+k) + (z+j) * tex->width)*3 + 0], vertexArray[((x+k) + (z
             normalArray[(x + z * tex->width)*3 + 2] = 0.0;
         }*/
 
-    Point3D p;
-    Point3D cross;
-    Point3D sum;
-    Point3D tmp;
-    int index;
+
     for (x = 1; x < tex->width - 1; x++)
         for (z = 1; z < tex->height - 1; z++)
         {
-            //vår punkt!
+			int index;
+			sum = SetVector(0,0,0);
+			//vår punkt!
             index = (x + z * tex->width)*3;
             p = SetVector(vertexArray[index + 0], vertexArray[index + 1], vertexArray[index + 2]);
 
@@ -110,7 +114,7 @@ Point3D(vertexArray[((x+k) + (z+j) * tex->width)*3 + 0], vertexArray[((x+k) + (z
     
     // Create Model and upload to GPU:
 
-    Model* model = LoadDataToModel(
+	model = LoadDataToModel(
             vertexArray,
             normalArray,
             texCoordArray,
@@ -150,6 +154,8 @@ GLfloat findY(int x, int z) {
     GLuint triangle1[3]; 
     GLuint triangle2[3]; 
     GLfloat y = 0.0;
+    GLfloat d; 
+	Point3D p, v1, v2, v3, norm;
 
 
 
@@ -159,15 +165,12 @@ GLfloat findY(int x, int z) {
     triangle2[0] = indexArray[(x + z * (texWidth-1))*6 + 3] * 3; //x
     triangle2[1] = indexArray[(x + z * (texWidth-1))*6 + 4] * 3; //y
     triangle2[2] = indexArray[(x + z * (texWidth-1))*6 + 5] * 3; //z
-
-    Point3D p, v1, v2, v3, norm;
-
+    
     p = SetVector(x, 0, z);
     v1 = SetVector(vertexArray[triangle1[0]], 0, vertexArray[triangle1[0] + 2]);
     v2 = SetVector(vertexArray[triangle1[1]], 0, vertexArray[triangle1[1] + 2]);
     v3 = SetVector(vertexArray[triangle1[2]], 0, vertexArray[triangle1[2] + 2]);
 
-    GLfloat d; 
     if (PointInTriangle(p, v1, v2, v3)) {
         v1 = SetVector(vertexArray[triangle1[0]], vertexArray[triangle1[0] + 1], vertexArray[triangle1[0] + 2]);
         v2 = SetVector(vertexArray[triangle1[1]], vertexArray[triangle1[1] + 1], vertexArray[triangle1[1] + 2]);

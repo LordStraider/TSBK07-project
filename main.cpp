@@ -66,7 +66,7 @@ void OnTimer(int value) {
 }
 
 int main(int argc, char *argv[]) {
-    glutInitWindowPosition (100, 100);
+	glutInitWindowPosition (100, 100);
     glutInitWindowSize (800, 640);
 
     glutInit(&argc, argv);
@@ -75,12 +75,14 @@ int main(int argc, char *argv[]) {
 
 	//windows only...
 	#if defined(_WIN32)
-		err = glewInit();
+	{
+		GLenum err = glewInit();
 		if (GLEW_OK != err)
 		{
 		  /* Problem: glewInit failed, something is seriously wrong. */
 		  fprintf(stderr, "Error: %s\n", glewGetErrorString(err));
 		}
+	}
 	#endif
 
     glutDisplayFunc(display);
