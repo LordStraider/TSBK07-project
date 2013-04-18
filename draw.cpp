@@ -213,39 +213,22 @@ void displayNoLight(GLfloat t) {
     glUniformMatrix4fv(glGetUniformLocation(programNoLight, "mdlMatrix"), 1, GL_TRUE, total.m);
     DrawModel(skyBox, programNoLight, "inPosition", "inNormal", "inTexCoord");
 
+
+    tmp = cam;
+    tmp.m[3] = 0;
+    tmp.m[7] = 0;
+    tmp.m[11] = 0;
+    rot = Rz(M_PI);
+    total = Mult(trans, rot);
+    rot = Ry(-t/50000);
+    total = Mult(total, rot);
+    glUniformMatrix4fv(glGetUniformLocation(programNoLight, "camMatrix"), 1, GL_TRUE, tmp.m);
+    glUniformMatrix4fv(glGetUniformLocation(programNoLight, "mdlMatrix"), 1, GL_TRUE, total.m);
+    DrawModel(skyBox, programNoLight, "inPosition", "inNormal", "inTexCoord");
+
+
     glEnable(GL_DEPTH_TEST);
     glEnable(GL_CULL_FACE);
 
     glUniformMatrix4fv(glGetUniformLocation(programNoLight, "camMatrix"), 1, GL_TRUE, cam.m);
-    /* Making walls around the area */
-    trans = T(0, 2.5, 50);
-    shear = S(100, 5, 0);
-    total = Mult(trans, shear);
-    rot = Rz(M_PI/2);
-    total = Mult(total, rot);
-    glBindTexture(GL_TEXTURE_2D, dirtTex);
-    glUniformMatrix4fv(glGetUniformLocation(programNoLight, "mdlMatrix"), 1, GL_TRUE, total.m);
-    DrawModel(cube, programNoLight, "inPosition", "inNormal", "inTexCoord");
-    trans = T(0, 2.5, -50);
-    shear = S(100, 5, 0);
-    total = Mult(trans, shear);
-    rot = Rz(M_PI/2);
-    total = Mult(total, rot);
-    glUniformMatrix4fv(glGetUniformLocation(programNoLight, "mdlMatrix"), 1, GL_TRUE, total.m);
-    DrawModel(cube, programNoLight, "inPosition", "inNormal", "inTexCoord");
-
-    trans = T(50, 2.5, 0);
-    shear = S(0, 5, 100);
-    total = Mult(trans, shear);
-    rot = Rz(M_PI/2);
-    total = Mult(total, rot);
-    glUniformMatrix4fv(glGetUniformLocation(programNoLight, "mdlMatrix"), 1, GL_TRUE, total.m);
-    DrawModel(cube, programNoLight, "inPosition", "inNormal", "inTexCoord");
-    trans = T(-50, 2.5, 0);
-    shear = S(0, 5, 100);
-    total = Mult(trans, shear);
-    rot = Rz(M_PI/2);
-    total = Mult(total, rot);
-    glUniformMatrix4fv(glGetUniformLocation(programNoLight, "mdlMatrix"), 1, GL_TRUE, total.m);
-    DrawModel(cube, programNoLight, "inPosition", "inNormal", "inTexCoord");
 }
