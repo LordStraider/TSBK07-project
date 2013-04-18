@@ -17,7 +17,7 @@ GLuint texWidth, texHeight;
 GLfloat *vertexArray;
 GLuint *indexArray;
 
-Model *kingKong, *bunny, *bunnyShadow, *teapot, *teapotShadow, *cube, *skyBox, *blade, *windmillWalls, *windmillRoof, *windmillBalcony, *terrain, *sphere;
+Model *batmobil, *kingKong, *bunny, *bunnyShadow, *teapot, *teapotShadow, *cube, *skyBox, *blade, *windmillWalls, *windmillRoof, *windmillBalcony, *terrain, *sphere;
 //Model *windmill2;
 
 /*
@@ -77,6 +77,7 @@ void init(void) {
 
     bunny = LoadModelPlus("bunnyplus.obj");
     kingKong = LoadModelPlus("King_Kong.obj");
+    batmobil = LoadModelPlus("batmobile.obj");
     teapot = LoadModelPlus("teapot.obj");
     cube = LoadModelPlus("cubeplus.obj");
     skyBox = LoadModelPlus("skybox.obj");
