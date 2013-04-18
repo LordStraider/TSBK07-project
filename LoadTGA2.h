@@ -14,18 +14,6 @@
 #include <stdlib.h>
 #include <string.h>
 
-#ifndef true
-#define true 1
-#endif
-
-#ifndef false
-#define false 0
-#endif
-
-#ifndef bool
-#define bool char
-#endif
-
 // Constants for SaveTGA
 #define	TGA_ERROR_FILE_OPEN				-5
 #define TGA_ERROR_READING_FILE			-4

@@ -19,6 +19,7 @@ GLuint *indexArray;
 Model *bunny, *bunnyShadow, *teapot, *teapotShadow, *cube, *skyBox, *blade, *windmillWalls, *windmillRoof, *windmillBalcony, *terrain;
 //Model *windmill2;
 
+vector<DrawableObject*> allObjects;
 
 TextureData ttex; // terrain
 
@@ -95,13 +96,12 @@ void init(void) {
     
 // Load terrain data
     LoadTGATextureSimple("grass.tga", &tex1);
-    
     LoadTGATexture("fft-terrain.tga", &ttex);
     terrain = GenerateTerrain(&ttex);
-
     teaY = findY(50, 40);
-
     windY = findY(60, 30);
-
     printError("init arrays");
+
+	//DrawableObject* bunny = new DrawableObject(100,0,100,0,tex1,bunny,program);
+
 }
