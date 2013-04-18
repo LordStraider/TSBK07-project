@@ -4,14 +4,14 @@ DrawableObject::DrawableObject(int x, int yOffset, int z, GLfloat rotation, GLui
 	x(x), z(z), rotation(rotation), tex(tex), model(model), program(program) 
 {
 	trans = T(x, findY(x,z), z);
-	rotate(rotation);
+	setRotation(rotation);
 }
 
 DrawableObject::DrawableObject(vec3 position, GLfloat rotation, GLuint* tex, Model* model, GLuint* program) :
 	x(position.x), z(position.z), yOffset(position.y), rotation(rotation), tex(tex), model(model), program(program) 
 {
 	trans = T(x, findY(x,z), z);
-	rotate(rotation);
+	setRotation(rotation);
 }
 
 void DrawableObject::draw(GLfloat t){
@@ -37,13 +37,13 @@ void DrawableObject::setRotation(GLfloat angle){
 	updateMatrices();
 }
 
-//use NULL,0,NULL to set y = 0 while not affecting x or z
+//use -1 if you don't want to change a value. Example: -1,0,-1 to set y = 0 while not affecting x or z
 void DrawableObject::setCoords(int x, int y, int z){
-	if(x!=NULL)
+	if(x==-1)
 		this->x = x;
-	if(y!=NULL)
+	if(y==-1)
 		this->yOffset = y;
-	if(z!=NULL)
+	if(z==-1)
 		this->z = z;
 	trans = T(x, yOffset + findY(x,z), z);
 	updateMatrices();
