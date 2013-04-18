@@ -18,6 +18,7 @@ GLuint *indexArray;
 
 Model *bunny, *bunnyShadow, *teapot, *teapotShadow, *cube, *skyBox, *blade, *windmillWalls, *windmillRoof, *windmillBalcony, *terrain, *sphere;
 //Model *windmill2;
+
 /*
 DrawableObjectVector allObjects;
 
@@ -110,5 +111,6 @@ void init(void) {
     printError("init arrays");
 
 	DrawableObject* bunnyObj = new DrawableObject(100,0,100,0,&tex1,bunny,&program);
-	//allObjects.push_back(bunnyObj);
+	std::vector<DrawableObject*> allObjects;
+	allObjects.push_back(bunnyObj);
 }

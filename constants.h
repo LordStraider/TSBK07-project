@@ -14,7 +14,6 @@
 #include "LoadTGA2.h"
 #include "VectorUtils3.h"
 #include "drawable.h"
-#include "controller.h"
 
 #ifndef M_PI
 #define M_PI           3.14159265358979323846
@@ -48,14 +47,6 @@ extern GLuint bunnyTex, dirtTex, cubeTex, skyBoxTex, tex1;
 extern Model *bunny, *bunnyShadow, *teapot, *teapotShadow, *cube, *skyBox, *blade, *windmillWalls, *windmillRoof, *windmillBalcony, *terrain, *sphere;
 //extern Model *windmill2;
 
-//extern DrawableObjectVector allObjects;
-/*
-class DrawableObjectVector : public std::vector<DrawableObject*>{
-public:
-	DrawableObjectVector();
-	void drawAll(GLfloat t);
-};
-*/
 void init();
 
 #endif
