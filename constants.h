@@ -11,11 +11,7 @@
 #include "loadobj.h"
 #include "LoadTGA2.h"
 #include "VectorUtils3.h"
-
-#ifndef INCLUDED
-#define INCLUDED
 #include "controller.h"
-#endif
 
 #ifndef bool
     #define bool int
