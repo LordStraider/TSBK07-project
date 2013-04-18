@@ -27,7 +27,9 @@ void display(void) {
     }
 
     yFind = findY(xValue, zValue);
-    yValue += yModify;
+    if (yFind != 1.5) {
+        yValue += yModify;        
+    }
 
 
     Point3D mod, player, king;
@@ -210,15 +212,16 @@ void displayShadows(GLfloat t) {
     glUniformMatrix4fv(glGetUniformLocation(programShadow, "camMatrix"), 1, GL_TRUE, cam.m);
 
     /* Making shadow under the bunny */
-    trans = T(xValue, yFind + 0.2, zValue);
-    shear = S(1, 0, 1);
-    //shear = S(1/(yValue - yFind + 0.1), 0, 1/(yValue - yFind + 0.1)); //Makes the shaddow smaller when jumping, perspective. Buggy.
-    rot = Ry(rotation);
-    total = Mult(trans, shear);
-    total = Mult(total, rot);
-    glUniformMatrix4fv(glGetUniformLocation(programShadow, "mdlMatrix"), 1, GL_TRUE, total.m);
-    DrawModel(bunny, programShadow, "inPosition", "inNormal", "inTexCoord");
-
+    if (yFind != 1.5) {
+        trans = T(xValue, yFind + 0.2, zValue);
+        shear = S(1, 0, 1);
+        //shear = S(1/(yValue - yFind + 0.1), 0, 1/(yValue - yFind + 0.1)); //Makes the shaddow smaller when jumping, perspective. Buggy.
+        rot = Ry(rotation);
+        total = Mult(trans, shear);
+        total = Mult(total, rot);
+        glUniformMatrix4fv(glGetUniformLocation(programShadow, "mdlMatrix"), 1, GL_TRUE, total.m);
+        DrawModel(bunny, programShadow, "inPosition", "inNormal", "inTexCoord");
+    }
 
     /* Making shadow under the teapot */
     trans = T(50, teaY + 0.01, 40);

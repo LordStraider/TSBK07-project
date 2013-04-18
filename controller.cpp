@@ -347,7 +347,12 @@ void keyController(){
         yModify -= gravity;
     } else {
         yModify = 0;
-        yValue = yFind + 0.7;
         gravity = 0;
+
+        if (yFind == 1.5) {
+            yValue = 1.4;
+        } else {
+            yValue = yFind + 0.7;
+        }
     }
 }
