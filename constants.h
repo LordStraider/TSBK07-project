@@ -40,7 +40,7 @@ extern TextureData ttex; // terrain
 
 extern GLfloat camPos, yCamPos, camMod, xModify, xValue, yFind, yModify, yValue, zModify, zValue, teaY, windY;
 
-extern GLuint texWidth;
+extern GLuint texWidth, texHeight;
 extern GLfloat *vertexArray;
 extern GLuint *indexArray;
 

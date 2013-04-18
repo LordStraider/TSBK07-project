@@ -16,6 +16,14 @@ void display(void) {
     xValue += xModify * speed;
     yValue += yModify;
     zValue += zModify * speed;
+    
+    if (checkBoundaries()) {
+        xValue -= zModify * speed;
+        zModify = -xModify;
+        zValue -= xModify * speed;
+        xModify = -zModify;
+    }
+
     yFind = findY(xValue, zValue);
     yValue += yModify;
 

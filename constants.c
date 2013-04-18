@@ -14,7 +14,7 @@ GLuint program, programNoLight, programShadow, programSingleColor, programInvisi
 
 GLuint bunnyTex, dirtTex, cubeTex, skyBoxTex, tex1;
 
-GLuint texWidth;
+GLuint texWidth, texHeight;
 GLfloat *vertexArray;
 GLuint *indexArray;
 
@@ -31,7 +31,6 @@ void init(void) {
     glClearColor(0.2,0.2,0.5,0);
     glEnable(GL_DEPTH_TEST);
     glEnable(GL_CULL_FACE);
-    glCullFace(GL_TRUE);
     glActiveTexture(GL_TEXTURE0);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
