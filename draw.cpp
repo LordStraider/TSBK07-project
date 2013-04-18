@@ -19,7 +19,7 @@ void display(void) {
     xValue += xModify * speed;
     yValue += yModify;
     zValue += zModify * speed;
-    
+
     if (checkBoundaries() || checkCollisionBS()) {
         xValue -= zModify * speed;
         zModify = -xModify;
@@ -53,7 +53,7 @@ void display(void) {
     printError("pre light");
 
     displayNoLight(t);
-    
+
 //	printError("drawing no light");
 	displayTerrain();
 //	printError("drawing texture");
@@ -71,7 +71,7 @@ void display(void) {
     #if defined(_WIN32)
 		glutSwapBuffers();
     #endif
-    
+
     glFlush();
 }
 
@@ -91,7 +91,7 @@ void displayTerrain() {
     glUniformMatrix4fv(glGetUniformLocation(programTerrain, "camMatrix"), 1, GL_TRUE, tmp.m);
     glUniformMatrix4fv(glGetUniformLocation(programTerrain, "mdlMatrix"), 1, GL_TRUE, total.m);
 
-    glBindTexture(GL_TEXTURE_2D, tex1);
+    glBindTexture(GL_TEXTURE_2D, grassTex);
     DrawModel(terrain, program, "inPosition", "inNormal", "inTexCoord");
 
 
