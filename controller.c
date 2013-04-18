@@ -187,6 +187,21 @@ GLfloat findY(int x, int z) {
     return y;
 }
 
+/*
+void checkCollision() {
+
+    trans = T(xValue, yValue, zValue);
+    rot = Ry(rotate + angle);
+    total = Mult(trans, rot);
+    shear = S(0.8, 0.83, 1.5);
+
+    trans = T(60, windY+5, 30);
+    shear = S(7, 13, 7);
+
+
+}
+*/
+
 bool checkBoundaries(){
     return xValue < 0 || xValue > texWidth || zValue < 0 || zValue > texHeight;
 }

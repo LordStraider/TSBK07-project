@@ -33,6 +33,8 @@ void display(void) {
     vec3 v = SetVector(0.0, 1.0, 0.0);
     cam = lookAtv(p, l, v);
 
+    //checkCollision();
+
     displayNoLight(t);
     displayTexture();
     displaySingleColor(t);
