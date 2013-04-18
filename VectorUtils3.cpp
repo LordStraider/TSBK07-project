@@ -67,6 +67,13 @@
 
 char transposed = 0;
 
+#ifdef WIN32
+    #ifndef NAN
+        static const unsigned long __nan[2] = {0xffffffff, 0x7fffffff};
+        #define NAN (*(const float *) __nan)
+    #endif
+#endif
+
 // Should be obsolete // Will probably be removed
 //	void CopyVector(Point3D *v, Point3D *dest)
 //	{
@@ -687,9 +694,6 @@ mat4 frustum(float left, float right, float bottom, float top,
 mat3 InvertMat3(mat3 in)
 {
 	float a11, a12, a13, a21, a22, a23, a31, a32, a33, DET;
-    #ifndef __APPLE__
-	float NAN;
-    #endif
 	mat3 out;
 
 	// Copying to internal variables both clarify the code and
@@ -733,9 +737,6 @@ mat3 InvertMat3(mat3 in)
 mat3 InverseTranspose(mat4 in)
 {
 	float a11, a12, a13, a21, a22, a23, a31, a32, a33, DET;
-    #ifndef __APPLE__
-    float NAN;
-    #endif
 	mat3 out;
 
 	// Copying to internal variables

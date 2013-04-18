@@ -24,10 +24,14 @@ char* readFile(char* file)
 	FILE *fptr;
 	long length;
 	char *buf;
-	if(file == NULL) return NULL;
-	fptr = fopen(file, "rb"); /* Open file for reading */
-	if (!fptr) /* Return NULL on failure */
+	if(file==NULL) {
 		return NULL;
+	}
+	fptr = fopen(file, "rb"); /* Open file for reading */
+	if (!fptr) /* Return NULL on failure */{
+		printf("File not found\n");
+		return NULL;
+	}
 	fseek(fptr, 0, SEEK_END); /* Seek to the end of the file */
 	length = ftell(fptr); /* Find out how many bytes into the file we are */
 	buf = (char*)malloc(length+1); /* Allocate a buffer for the entire length of the file and a null terminator */
@@ -219,7 +223,7 @@ void CHECK_FRAMEBUFFER_STATUS()
 // FP buffer, suitable for HDR
 FBOstruct *initFBO(int width, int height, int int_method)
 {
-	FBOstruct *fbo = malloc(sizeof(FBOstruct));
+	FBOstruct *fbo = (FBOstruct*)malloc(sizeof(FBOstruct));
 
 	fbo->width = width;
 	fbo->height = height;
@@ -262,7 +266,7 @@ FBOstruct *initFBO(int width, int height, int int_method)
 // Integer buffer, not suitable for HDR!
 FBOstruct *initFBO2(int width, int height, int int_method, int create_depthimage)
 {
-    FBOstruct *fbo = malloc(sizeof(FBOstruct));
+    FBOstruct *fbo = (FBOstruct*)malloc(sizeof(FBOstruct));
 
     fbo->width = width;
     fbo->height = height;

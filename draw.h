@@ -13,9 +13,9 @@
 #include "constants.h"
 #include "controller.h"
 
-void displayTexture();
+void displayTerrain();
 void displaySingleColor(GLfloat t);
-void displayInvisible();
+void displayInvisible(GLfloat t);
 void displayModels(GLfloat t);
 void displayShadows(GLfloat t);
 void displayNoLight(GLfloat t);

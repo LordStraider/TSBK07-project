@@ -43,7 +43,7 @@ extern GLuint texWidth, texHeight;
 extern GLfloat *vertexArray;
 extern GLuint *indexArray;
 
-extern float gravity, angle, angleMod, rotate, speed;
+extern float gravity, angle, angleMod, rotation, speed;
 extern bool menuPressed;
 
 extern Point3D p, l;
@@ -51,7 +51,7 @@ extern GLuint program, programNoLight, programShadow, programSingleColor, progra
 
 extern GLuint bunnyTex, dirtTex, cubeTex, skyBoxTex, tex1;
 
-extern Model *bunny, *bunnyShadow, *teapot, *teapotShadow, *cube, *skyBox, *blade, *windmillWalls, *windmillRoof, *windmillBalcony, *terrain;
+extern Model *bunny, *bunnyShadow, *teapot, *teapotShadow, *cube, *skyBox, *blade, *windmillWalls, *windmillRoof, *windmillBalcony, *terrain, *sphere;
 //extern Model *windmill2;
 
 void init();
