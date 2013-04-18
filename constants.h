@@ -1,3 +1,6 @@
+#ifndef CONSTANTS_H
+#define CONSTANTS_H
+
 #ifdef __APPLE__
     #include <OpenGL/gl3.h>
     #include "MicroGlut.h"
@@ -54,4 +57,4 @@ extern Model *bunny, *bunnyShadow, *teapot, *teapotShadow, *cube, *skyBox, *blad
 
 void init();
 
-
+#endif

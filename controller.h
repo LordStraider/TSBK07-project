@@ -1,3 +1,6 @@
+#ifndef CONTROLLER_H
+#define CONTROLLER_H
+
 #ifdef __APPLE__
     #include <OpenGL/gl3.h>
     #include "MicroGlut.h"
@@ -17,3 +20,5 @@ bool SameSide(Point3D p1, Point3D p2, Point3D a, Point3D b);
 bool PointInTriangle(Point3D p, Point3D a, Point3D b, Point3D c);
 GLfloat findY(int x, int z);
 void keyController();
+
+#endif
