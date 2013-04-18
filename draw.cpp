@@ -1,6 +1,5 @@
 #include "draw.h"
 //#include <string>
-#include <math.h>
 
 
 void display(void) {
@@ -218,7 +217,7 @@ void displayShadows(GLfloat t) {
     total = Mult(trans, shear);
     total = Mult(total, rot);
     glUniformMatrix4fv(glGetUniformLocation(programShadow, "mdlMatrix"), 1, GL_TRUE, total.m);
-    DrawModel(bunny, program, "inPosition", "inNormal", "inTexCoord");
+    DrawModel(bunny, programShadow, "inPosition", "inNormal", "inTexCoord");
 
 
     /* Making shadow under the teapot */
@@ -230,7 +229,7 @@ void displayShadows(GLfloat t) {
     rot = Rx(t/1000);
     total = Mult(total, rot);
     glUniformMatrix4fv(glGetUniformLocation(programShadow, "mdlMatrix"), 1, GL_TRUE, total.m);
-    DrawModel(teapot, program, "inPosition", "inNormal", "inTexCoord");
+    DrawModel(teapot, programShadow, "inPosition", "inNormal", "inTexCoord");
 }
 
 

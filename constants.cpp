@@ -77,7 +77,7 @@ void init(void) {
 
     bunny = LoadModelPlus("bunnyplus.obj");
     kingKong = LoadModelPlus("King_Kong.obj");
-    batmobil = LoadModelPlus("batmobile.obj");
+	batmobil = LoadModelPlus("batmobile.obj");
     teapot = LoadModelPlus("teapot.obj");
     cube = LoadModelPlus("cubeplus.obj");
     skyBox = LoadModelPlus("skybox.obj");
