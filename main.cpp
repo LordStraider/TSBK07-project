@@ -20,7 +20,6 @@
 #include "draw.h"
 /* Globals*/
 
-
 void MouseController(int x, int y){
     //CGDisplayMoveCursorToPoint(CGDirectDisplayID display, CGPoint point);
 //  CGDisplayMoveCursorToPoint(200,200);

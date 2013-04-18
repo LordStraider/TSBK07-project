@@ -6,13 +6,13 @@ Model* GenerateTerrain(TextureData *tex)
     int vertexCount = tex->width * tex->height;
     int triangleCount = (tex->width-1) * (tex->height-1) * 2;
     int x, z;
-	Point3D p;
-	Point3D cross;
-	Point3D sum;
-	Point3D tmp;
-	Model* model; 
-	GLfloat y;
-	GLfloat *normalArray, *texCoordArray;
+    Point3D p;
+    Point3D cross;
+    Point3D sum;
+    Point3D tmp;
+    Model* model; 
+    GLfloat y;
+    GLfloat *normalArray, *texCoordArray;
 
     vertexArray = (GLfloat*)malloc(sizeof(GLfloat) * 3 * vertexCount);
     normalArray = (GLfloat*)malloc(sizeof(GLfloat) * 3 * vertexCount);
@@ -85,9 +85,9 @@ Point3D(vertexArray[((x+k) + (z+j) * tex->width)*3 + 0], vertexArray[((x+k) + (z
     for (x = 1; x < tex->width - 1; x++)
         for (z = 1; z < tex->height - 1; z++)
         {
-			int index;
-			sum = SetVector(0,0,0);
-			//vår punkt!
+            int index;
+            sum = SetVector(0,0,0);
+            //vår punkt!
             index = (x + z * tex->width)*3;
             p = SetVector(vertexArray[index + 0], vertexArray[index + 1], vertexArray[index + 2]);
 
@@ -116,7 +116,7 @@ Point3D(vertexArray[((x+k) + (z+j) * tex->width)*3 + 0], vertexArray[((x+k) + (z
     
     // Create Model and upload to GPU:
 
-	model = LoadDataToModel(
+    model = LoadDataToModel(
             vertexArray,
             normalArray,
             texCoordArray,
@@ -157,7 +157,7 @@ GLfloat findY(int x, int z) {
     GLuint triangle2[3]; 
     GLfloat y = 0.0;
     GLfloat d; 
-	Point3D p, v1, v2, v3, norm;
+    Point3D p, v1, v2, v3, norm;
 
 
 
@@ -192,19 +192,95 @@ GLfloat findY(int x, int z) {
     return y;
 }
 
-bool checkBoundaries(){
+
+bool checkCollisionBB() {
+//    printf("x1: %f, y1: %f, y2: %f, z1: %f \n", xValue, yValue, windY+5, zValue);
+
+    if (xValue + 0.75 > 60 - 3.5 && xValue < 60 + 3.5) {
+  //      printf("inside x");
+
+        if (yValue + 0.42 > windY - 6.5 && yValue < windY + 5 + 6.5) {
+//            printf(", inside y");
+
+            if (zValue + 1.5 > 30 - 3.5 && zValue < 30 + 3.5){
+//                printf(", collide!!\n");
+                return true;
+            }
+        }
+    }
+  //  printf("\n");
+    return false;
+
+/*    trans = T(xValue, yValue, zValue);
+    shear = S(1.5, 0.83, 1.5);
+
+    trans = T(60, windY+5, 30);
+    shear = S(7, 13, 7);*/
+
+}
+
+bool checkCollisionBS() {
+    Point3D center, closest, result;
+    center = SetVector(xValue, yValue - 1, zValue);
+
+    //printf("cx: %f, cy: %f, cz: %f, windY: %f \n", center.x, center.y, center.z, windY);
+
+    if(center.x < 60 - 3.5)
+        closest.x = 60 - 3.5;
+    else if(center.x > 60 + 3.5)
+        closest.x = 60 + 3.5;
+    else
+        closest.x = center.x;
+
+
+    if(center.y < windY - 6.5)
+        closest.y = windY - 6.5;
+    else if(center.y > windY + 6.5)
+        closest.y = windY + 6.5;
+    else
+        closest.y = center.y;
+
+
+    if(center.z < 30 - 3.5)
+        closest.z = 30 - 3.5;
+    else if(center.z > 30 + 3.5)
+        closest.z = 30 + 3.5;
+    else
+        closest.z = center.z;
+
+
+    result = VectorSub(closest, center);
+
+    if (sqrt(result.x * result.x + result.y * result.y + result.z * result.z) < 0.8)
+        return true;
+    return false;
+}
+
+bool checkCollisionSS() {
+    Point3D center1, center2, result;
+    center1 = SetVector(xValue, yValue+0.5, zValue);
+    center2 = SetVector(10, 0.5, 10);
+
+    result = VectorSub(center2, center1);
+
+    if (sqrt(result.x * result.x + result.y * result.y + result.z * result.z) < 1.97)
+        return true;
+    return false;
+}
+
+bool checkBoundaries() {
     return xValue < 0 || xValue > texWidth || zValue < 0 || zValue > texHeight;
 }
 
 void keyController(){
-	float rotateFront = 0.0;
+    float rotateFront = 0.0;
     float rotateSide = 0.0;
     
-	xModify = 0.0;
+    xModify = 0.0;
     zModify = 0.0;
     angleMod = 0.0;
     camMod = 0.0;
-    rotate = camPos + M_PI / 2;
+    rotation = camPos + M_PI / 2;
 
     speed = 1.0;
 
@@ -214,7 +290,7 @@ void keyController(){
     }
     
     int direction = 1;
-    if (checkBoundaries()) {
+    if (checkBoundaries() || checkCollisionBS()) {
         direction = -1;
     }
     
@@ -239,15 +315,15 @@ void keyController(){
     } 
 
     if (keyIsDown('w') && keyIsDown('a')){
-        rotate += direction * (- M_PI / 4);
+        rotation += direction * (- M_PI / 4);
     } else if (keyIsDown('w') && keyIsDown('d')){
-        rotate += direction * (M_PI / 4);
+        rotation += direction * (M_PI / 4);
     } else if (keyIsDown('s') && keyIsDown('a')){
-        rotate += direction * (- 3 * M_PI / 4);
+        rotation += direction * (- 3 * M_PI / 4);
     } else if (keyIsDown('s') && keyIsDown('d')){
-        rotate += direction * (3 * M_PI / 4);
+        rotation += direction * (3 * M_PI / 4);
     } else {
-        rotate += direction * (rotateFront + rotateSide);
+        rotation += direction * (rotateFront + rotateSide);
     }
 
     if (keyIsDown('e')) {

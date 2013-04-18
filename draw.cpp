@@ -1,4 +1,7 @@
 #include "draw.h"
+//#include <string>
+#include <math.h>
+
 
 void display(void) {
 	GLfloat t;
@@ -16,8 +19,8 @@ void display(void) {
     xValue += xModify * speed;
     yValue += yModify;
     zValue += zModify * speed;
-
-    if (checkBoundaries()) {
+    
+    if (checkBoundaries() || checkCollisionBS()) {
         xValue -= zModify * speed;
         zModify = -xModify;
         zValue -= xModify * speed;
@@ -33,32 +36,32 @@ void display(void) {
     v = SetVector(0.0, 1.0, 0.0);
     cam = lookAtv(p, l, v);
 
-	printError("pre light");
+    printError("pre light");
 
     displayNoLight(t);
-
-	printError("drawing no light");
-	displayTexture();
-
-	printError("drawing texture");
+    
+//	printError("drawing no light");
+	displayTerrain();
+//	printError("drawing texture");
     displaySingleColor(t);
-	printError("drawing single");
+//	printError("drawing single");
 	displayModels(t);
-	printError("drawing models");
+//	printError("drawing models");
     displayShadows(t);
-	printError("drawing shadows");
-    displayInvisible();
-	printError("drawing invisible");
+//	printError("drawing shadows");
+    displayInvisible(t);
+//	printError("drawing invisible");
 
     printError("display");
 
     #if defined(_WIN32)
 		glutSwapBuffers();
     #endif
+    
     glFlush();
 }
 
-void displayTexture() {
+void displayTerrain() {
 	GLfloat b = 1;
 	GLfloat p_array[] = {p.x,p.y+=14,p.z};
 	glUseProgram(programTerrain);
@@ -115,25 +118,34 @@ void displaySingleColor(GLfloat t) {
     }
 }
 
-void displayInvisible() {
+void displayInvisible(GLfloat t) {
 	glUseProgram(programInvisible);
     glEnable(GL_BLEND);
     glUniformMatrix4fv(glGetUniformLocation(programInvisible, "camMatrix"), 1, GL_TRUE, cam.m);
 
     /* Making a collision cube */
-    trans = T(xValue, yValue, zValue);
-    rot = Ry(rotate + angle);
-    total = Mult(trans, rot);
-    shear = S(0.8, 0.83, 1.5);
-    total = Mult(total, shear);
+/*    trans = T(xValue, yValue, zValue);
+//    rot = Ry(rotation + angle);
+//    total = Mult(trans, rot);
+    shear = S(1.6, 0.83, 1.5);
+    total = Mult(trans, shear);
     glUniformMatrix4fv(glGetUniformLocation(programInvisible, "mdlMatrix"), 1, GL_TRUE, total.m);
     DrawModel(cube, programInvisible, "inPosition", "inNormal", "inTexCoord");
+*/
 
     trans = T(60, windY+5, 30);
     shear = S(7, 13, 7);
     total = Mult(trans, shear);
     glUniformMatrix4fv(glGetUniformLocation(programInvisible, "mdlMatrix"), 1, GL_TRUE, total.m);
     DrawModel(cube, programInvisible, "inPosition", "inNormal", "inTexCoord");
+
+
+    trans = T(xValue, yValue-1, zValue);
+    shear = S(0.8, 0.8, 0.8);
+    total = Mult(trans, shear);
+    glUniformMatrix4fv(glGetUniformLocation(programInvisible, "mdlMatrix"), 1, GL_TRUE, total.m);
+    DrawModel(sphere, programInvisible, "inPosition", "inNormal", "inTexCoord");
+
 
     glDisable(GL_BLEND);
 }
@@ -145,14 +157,14 @@ void displayModels(GLfloat t) {
 
     /* Making the bunny */
     trans = T(xValue, yValue, zValue);
-    rot = Ry(rotate + angle);
+    rot = Ry(rotation + angle);
     total = Mult(trans, rot);
     glBindTexture(GL_TEXTURE_2D, bunnyTex);
     glUniformMatrix4fv(glGetUniformLocation(program, "mdlMatrix"), 1, GL_TRUE, total.m);
     DrawModel(bunny, program, "inPosition", "inNormal", "inTexCoord");
 
     /* Making the teapot */
-    trans = T(50, teaY + 8, 40);
+    trans = T(50, teaY + 18, 40);
     rot = Ry(-t/1000);
     total = Mult(trans, rot);
     rot = Rx(t/1000);
@@ -170,7 +182,7 @@ void displayShadows(GLfloat t) {
     trans = T(xValue, yFind + 0.2, zValue);
     shear = S(1, 0, 1);
     //shear = S(1/(yValue - yFind + 0.1), 0, 1/(yValue - yFind + 0.1)); //Makes the shaddow smaller when jumping, perspective. Buggy.
-    rot = Ry(rotate);
+    rot = Ry(rotation);
     total = Mult(trans, shear);
     total = Mult(total, rot);
     glUniformMatrix4fv(glGetUniformLocation(programShadow, "mdlMatrix"), 1, GL_TRUE, total.m);
@@ -191,7 +203,6 @@ void displayShadows(GLfloat t) {
 
 
 void displayNoLight(GLfloat t) {
-
 	mat4 tmp;
     glUseProgram(programNoLight);
 
@@ -204,6 +215,10 @@ void displayNoLight(GLfloat t) {
     total = Mult(trans, rot);
 
     glBindTexture(GL_TEXTURE_2D, skyBoxTex);
+
+/*    string s1 = "inPosition";
+    string s2 = "inNormal";
+    string s3 = "inTexCoord";*/
 
     tmp = cam;
     tmp.m[3] = 0;
