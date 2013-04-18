@@ -18,10 +18,17 @@ GLuint *indexArray;
 
 Model *bunny, *bunnyShadow, *teapot, *teapotShadow, *cube, *skyBox, *blade, *windmillWalls, *windmillRoof, *windmillBalcony, *terrain, *sphere;
 //Model *windmill2;
+/*
+DrawableObjectVector allObjects;
 
-
+DrawableObjectVector::DrawableObjectVector() : std::vector<DrawableObject*>() {};
+void DrawableObjectVector::drawAll(GLfloat t){
+	for_each(this->begin(), this->end(), [&t](DrawableObject* obj){
+		obj->draw(t);
+	});
+}
+*/
 TextureData ttex; // terrain
-
 
 void init(void) {
     /* GL inits*/
@@ -96,13 +103,12 @@ void init(void) {
     
 // Load terrain data
     LoadTGATextureSimple("grass.tga", &tex1);
-    
     LoadTGATexture("fft-terrain.tga", &ttex);
     terrain = GenerateTerrain(&ttex);
-
     teaY = findY(50, 40);
-
     windY = findY(60, 30);
-
     printError("init arrays");
+
+	DrawableObject* bunnyObj = new DrawableObject(100,0,100,0,&tex1,bunny,&program);
+	//allObjects.push_back(bunnyObj);
 }

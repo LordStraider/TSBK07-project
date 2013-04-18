@@ -13,7 +13,9 @@
 #include "loadobj.h"
 #include "VectorUtils3.h"
 #include <stdio.h>
+#include "drawable.h"
 #include "constants.h"
+
 
 Model* GenerateTerrain(TextureData *tex);
 bool SameSide(Point3D p1, Point3D p2, Point3D a, Point3D b);

@@ -61,16 +61,6 @@ static int texCount;
 static int normalsCount;
 static int coordCount;
 
-#ifndef false
-#define false 0
-#endif
-#ifndef true
-#define true 1
-#endif
-#ifndef bool
-#define bool char
-#endif
-
 static bool hasPositionIndices;
 static bool hasNormalIndices;
 static bool hasTexCoordIndices;

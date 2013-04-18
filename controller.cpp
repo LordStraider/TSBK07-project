@@ -21,7 +21,9 @@ Model* GenerateTerrain(TextureData *tex)
     //ballY = malloc(sizeof(GLfloat) * 100);
     
     texWidth = tex->width;
+
     texHeight = tex->height;
+
 
     printf("bpp %d\n", tex->bpp);
     for (x = 0; x < tex->width; x++)
