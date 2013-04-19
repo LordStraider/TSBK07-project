@@ -159,8 +159,6 @@ GLfloat findY(int x, int z) {
     GLfloat d; 
     Point3D p, v1, v2, v3, norm;
 
-
-
     triangle1[0] = indexArray[(x + z * (texWidth-1))*6 + 0] * 3; //x
     triangle1[1] = indexArray[(x + z * (texWidth-1))*6 + 1] * 3; //y
     triangle1[2] = indexArray[(x + z * (texWidth-1))*6 + 2] * 3; //z

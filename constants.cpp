@@ -19,7 +19,7 @@ GLuint texWidth, texHeight;
 GLfloat *vertexArray;
 GLuint *indexArray;
 
-Model *batmobil, *kingKong, *bunny, *bunnyShadow, *teapot, *teapotShadow, *cube, *skyBox, *blade, *windmillWalls, *windmillRoof, *windmillBalcony, *terrain, *sphere;
+Model *batmobil, *kingKong, *bunny, *bunnyShadow, *teapot, *teapotShadow, *cube, *skyBox, *blade, *windmillWalls, *windmillRoof, *windmillBalcony, *terrain, *sphere, *lowResTree, *highResTree;
 //Model *windmill2;
 
 
@@ -85,7 +85,8 @@ void init(void) {
     cube = LoadModelPlus("cubeplus.obj");
     skyBox = LoadModelPlus("skybox.obj");
     blade = LoadModelPlus("blade.obj");
-	Model* tree = LoadModelPlus("Tree.obj");
+	lowResTree = LoadModelPlus("tree_oak.obj");
+	highResTree = LoadModelPlus("Tree.obj");
     sphere = LoadModelPlus("groundsphere.obj");
     windmillBalcony = LoadModelPlus("windmill-balcony.obj");
     windmillRoof = LoadModelPlus("windmill-roof.obj");
@@ -129,7 +130,7 @@ void init(void) {
     bunnyObj = new DrawableObject(xValue, yValue, zValue, 0, &bunnyTex, bunny, &program, true);
     allObjects.push_back(bunnyObj);
     for (int i = 0; i < 99; i++) {
-        bunnyObj = new Tree(rand() % texWidth, 0, rand() % texHeight, 0, 0.1, &dirtTex, tree, &program);
+        bunnyObj = new Tree(rand() % texWidth, 0, rand() % texHeight, 0, 1, &dirtTex, highResTree, &program);
     	allObjects.push_back(bunnyObj);
     }
 }

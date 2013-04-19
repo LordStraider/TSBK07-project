@@ -118,8 +118,24 @@ void DrawableObject::stayInBounds(){
 }
 
 bool Tree::update(){
+	vec3 coords = getCoords();
+	GLfloat distToCam = sqrt(pow(xValue - coords.x, 2) + pow(zValue - coords.z, 2));
+	if(distToCam > 100){
+		if(scale < 1){
+			scale = 1;
+			updateMatrices();
+		}
+		model = lowResTree;
+	}
+	else{
+		if(scale >= 1){
+			scale = 0.1;
+			updateMatrices();
+		}
+		model = highResTree;
+	}
 	return false;
-}	
+}
 
 void drawObj(DrawableObject* obj) {
 	obj->draw();

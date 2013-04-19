@@ -38,7 +38,7 @@ public:
 	void setCoords(GLfloat x, GLfloat y, GLfloat z);
 	vec3 getCoords();
 
-private:
+protected:
 	void updateMatrices();
 	void stayInBounds();
 	GLfloat x, z, y, yOffset, rotation, scale; //yOffset is distance from ground
