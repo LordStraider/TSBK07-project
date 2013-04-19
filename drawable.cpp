@@ -41,10 +41,21 @@ void DrawableObject::draw(){
 	}
 }
 
+//returns random float between min and max. 
+float randomFloat(float Min, float Max)
+{
+	return ((float(rand()) / float(RAND_MAX)) * (Max - Min)) + Min;
+}
+
 //overload this to add AI behaviour. return true to remove object from public vector.
 bool DrawableObject::update(){
+	if(rand() > RAND_MAX-10) {
+		allObjects.push_back(new DrawableObject(rand() % texWidth, 0, rand() % texHeight, 0, &bunnyTex, sphere, program));
+		printf("amount of objects now: %d\n", allObjects.size());
+	}
+	if(rand() > RAND_MAX-1000) move(randomFloat(-2,2), 0, randomFloat(-2,2));
 	rotate(0.05);
-	if(rand() > RAND_MAX-100) return true; // randomly remove objects to test deletion of objects (pick ups, dead enemies, etc)
+	if(rand() > RAND_MAX-10) return true; // randomly remove objects to test deletion of objects (pick ups, dead enemies, etc)
 	return false;
 }
 
@@ -73,6 +84,9 @@ void DrawableObject::setCoords(GLfloat x, GLfloat y, GLfloat z){
 		this->yOffset = y;
 	if(z!=-1)
 		this->z = z;
+
+	stayInBounds();
+
 	trans = T(x, y = yOffset + findY(x,z), z);
 	updateMatrices();
 }
@@ -85,7 +99,12 @@ void DrawableObject::updateMatrices(){
 	total = Mult(trans, rot);
 }
 
-
+void DrawableObject::stayInBounds(){
+	if(x < 0) x = 0;
+	if(x > texWidth) x = texWidth;
+	if(z < 0) z = 0;
+	if(z > texHeight) z = texHeight;
+}
 
 void drawObj(DrawableObject* obj) {
 	obj->draw();

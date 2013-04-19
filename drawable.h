@@ -38,6 +38,7 @@ public:
 
 private:
 	void updateMatrices();
+	void stayInBounds();
 	GLfloat x, z, y, yOffset; //yOffset is distance from ground
 	GLfloat rotation;
 	Model* model;

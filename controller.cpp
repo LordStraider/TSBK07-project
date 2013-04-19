@@ -269,7 +269,11 @@ bool checkCollisionSS() {
 }
 
 bool checkBoundaries() {
-    return xValue < 0 || xValue > texWidth || zValue < 0 || zValue > texHeight;
+    return checkBoundaries(xValue, zValue);
+}
+
+bool checkBoundaries(int x, int z) {
+    return x < 0 || x > texWidth || z < 0 || z > texHeight;
 }
 
 void keyController(){
