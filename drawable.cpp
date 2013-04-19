@@ -4,16 +4,16 @@ DrawableObject::DrawableObject(){
 
 }
 
-DrawableObject::DrawableObject(GLfloat x, GLfloat yOffset, GLfloat z, GLfloat rotation, GLuint* tex, Model* model, GLuint* program) : 
-	x(x), yOffset(y), z(z), rotation(rotation), tex(tex), model(model), program(program) 
+DrawableObject::DrawableObject(GLfloat x, GLfloat yOffset, GLfloat z, GLfloat rotation, GLuint* tex, Model* model, GLuint* program, bool shadow) : 
+	x(x), yOffset(y), z(z), rotation(rotation), tex(tex), model(model), program(program), shadow(shadow) 
 {
 	//allocate space for model.
 	trans = T(x, y = yOffset + findY(x,z), z);
 	setRotation(rotation);
 }
 
-DrawableObject::DrawableObject(vec3 position, GLfloat rotation, GLuint* tex, Model* model, GLuint* program) :
-	x(position.x), z(position.z), yOffset(position.y), rotation(rotation), tex(tex), model(model), program(program) 
+DrawableObject::DrawableObject(vec3 position, GLfloat rotation, GLuint* tex, Model* model, GLuint* program, bool shadow) :
+	x(position.x), z(position.z), yOffset(position.y), rotation(rotation), tex(tex), model(model), program(program), shadow(shadow) 
 {
 	trans = T(x, y = yOffset + findY(x,z), z);
 	setRotation(rotation);
@@ -23,14 +23,29 @@ void DrawableObject::draw(){
     glUseProgram(*program);
     glUniformMatrix4fv(glGetUniformLocation(*program, "camMatrix"), 1, GL_TRUE, cam.m);
 
+    GLfloat t = (GLfloat)glutGet(GLUT_ELAPSED_TIME);
 
-    /* Making the bunny */
+
     trans = T(x, y, z);
 
 
 	glBindTexture(GL_TEXTURE_2D, *tex);
 	glUniformMatrix4fv(glGetUniformLocation(*program, "mdlMatrix"), 1, GL_TRUE, trans.m);
 	DrawModel(model, *program, "inPosition", "inNormal", "inTexCoord");
+
+	if (shadow) {
+	    glUseProgram(programShadow);
+	    glUniformMatrix4fv(glGetUniformLocation(programShadow, "camMatrix"), 1, GL_TRUE, cam.m);
+
+
+	    trans = T(x, y+0.01, z);
+	    shear = S(1,0,1);
+	    total = Mult(trans, shear);
+
+
+		glUniformMatrix4fv(glGetUniformLocation(programShadow, "mdlMatrix"), 1, GL_TRUE, total.m);
+		DrawModel(model, programShadow, "inPosition", "inNormal", "inTexCoord");
+	}
 }
 
 //overload this to add AI behaviour. return true to remove object from public vector.

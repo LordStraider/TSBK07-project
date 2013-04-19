@@ -62,12 +62,12 @@ void display(void) {
 //	printError("drawing texture");
     displaySingleColor(t);
 //	printError("drawing single");
-	displayModels(t);
-    
+	//displayModels(t);
+
     for_each(allObjects.begin(), allObjects.end(), drawObj);
 
 //	printError("drawing models");
-    displayShadows(t);
+    //displayShadows(t);
 //	printError("drawing shadows");
     displayInvisible(t);
 //	printError("drawing invisible");

@@ -121,7 +121,13 @@ void init(void) {
     kingY = findY(kingX, kingZ);
     printError("init arrays");
 
-    for (int i = 0; i < 40; i++) {
+    bunnyObj = new DrawableObject(rand() % texWidth, 0, rand() % texHeight, 0, &dirtTex, teapot, &program, true);
+    allObjects.push_back(bunnyObj);
+    bunnyObj = new DrawableObject(rand() % texWidth, 0, rand() % texHeight, 0, &bunnyTex, kingKong, &program, true);
+    allObjects.push_back(bunnyObj);
+    bunnyObj = new DrawableObject(xValue, yValue, zValue, 0, &bunnyTex, bunny, &program, true);
+    allObjects.push_back(bunnyObj);
+    for (int i = 0; i < 99; i++) {
         bunnyObj = new DrawableObject(rand() % texWidth, 0, rand() % texHeight, 0, &bunnyTex, sphere, &program);
     	allObjects.push_back(bunnyObj);
     }

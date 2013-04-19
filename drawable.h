@@ -14,9 +14,9 @@ public:
 	
 	DrawableObject();
 
-	DrawableObject(GLfloat x, GLfloat yOffset, GLfloat z, GLfloat rotation, GLuint* tex, Model* model, GLuint* program);
+	DrawableObject(GLfloat x, GLfloat yOffset, GLfloat z, GLfloat rotation, GLuint* tex, Model* model, GLuint* program, bool shadow = false);
 
-	DrawableObject(vec3 position, GLfloat rotation, GLuint* tex, Model* model, GLuint* program);
+	DrawableObject(vec3 position, GLfloat rotation, GLuint* tex, Model* model, GLuint* program, bool shadow = false);
 
 	void draw();
 
@@ -43,6 +43,7 @@ private:
 	Model* model;
 	GLuint* program;
 	GLuint* tex;
+	bool shadow;
 };
 
 
