@@ -85,6 +85,7 @@ void init(void) {
     cube = LoadModelPlus("cubeplus.obj");
     skyBox = LoadModelPlus("skybox.obj");
     blade = LoadModelPlus("blade.obj");
+	Model* tree = LoadModelPlus("Tree.obj");
     sphere = LoadModelPlus("groundsphere.obj");
     windmillBalcony = LoadModelPlus("windmill-balcony.obj");
     windmillRoof = LoadModelPlus("windmill-roof.obj");
@@ -128,7 +129,7 @@ void init(void) {
     bunnyObj = new DrawableObject(xValue, yValue, zValue, 0, &bunnyTex, bunny, &program, true);
     allObjects.push_back(bunnyObj);
     for (int i = 0; i < 99; i++) {
-        bunnyObj = new DrawableObject(rand() % texWidth, 0, rand() % texHeight, 0, &bunnyTex, sphere, &program);
+        bunnyObj = new Tree(rand() % texWidth, 0, rand() % texHeight, 0, 0.1, &dirtTex, tree, &program);
     	allObjects.push_back(bunnyObj);
     }
 }

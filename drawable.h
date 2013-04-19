@@ -18,10 +18,12 @@ public:
 
 	DrawableObject(vec3 position, GLfloat rotation, GLuint* tex, Model* model, GLuint* program, bool shadow = false);
 
-	void draw();
+	DrawableObject(GLfloat x, GLfloat yOffset, GLfloat z, GLfloat rotation, GLfloat scale, GLuint* tex, Model* model, GLuint* program, bool shadow = false);
+
+	virtual void draw();
 
 	//overload this to add AI behaviour. return true to remove object from public vector.
-	bool update();
+	virtual bool update();
 
 	//Rotates an object (rotation += angle). See also: setRotation(GLfloat)
 	void rotate(GLfloat angle);
@@ -39,13 +41,20 @@ public:
 private:
 	void updateMatrices();
 	void stayInBounds();
-	GLfloat x, z, y, yOffset; //yOffset is distance from ground
-	GLfloat rotation;
+	GLfloat x, z, y, yOffset, rotation, scale; //yOffset is distance from ground
 	Model* model;
 	GLuint* program;
 	GLuint* tex;
 	bool shadow;
 };
 
+class Tree : public DrawableObject{
+public:
+	Tree(GLfloat x, GLfloat yOffset, GLfloat z, GLfloat rotation, GLfloat scale, GLuint* tex, Model* model, GLuint* program, bool shadow = false) :
+		DrawableObject(x, yOffset, z, rotation, scale, tex, model, program, shadow) {};
+
+	//overload this to add AI behaviour. return true to remove object from public vector.
+	virtual bool update() override;
+};
 
 void drawObj(DrawableObject* obj);
