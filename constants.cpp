@@ -19,7 +19,7 @@ GLuint texWidth, texHeight;
 GLfloat *vertexArray;
 GLuint *indexArray;
 
-Model *batmobil, *kingKong, *bunny, *bunnyShadow, *teapot, *teapotShadow, *cube, *skyBox, *blade, *windmillWalls, *windmillRoof, *windmillBalcony, *terrain, *sphere, *lowResTree, *highResTree;
+Model *batmobil, *kingKong, *bunny, *bunnyShadow, *teapot, *teapotShadow, *cube, *skyBox, *blade, *windmillWalls, *windmillRoof, *windmillBalcony, *terrain, *sphere, *lowResTree, *highResTree, *billBoard;
 //Model *windmill2;
 
 
@@ -91,6 +91,7 @@ void init(void) {
     windmillBalcony = LoadModelPlus("windmill-balcony.obj");
     windmillRoof = LoadModelPlus("windmill-roof.obj");
     windmillWalls = LoadModelPlus("windmill-walls.obj");
+	billBoard = LoadModelPlus("quadplus.obj");
 //    windmill2 = LoadModelPlus("windmill02.obj");
 
     LoadTGATextureSimple("skybox.tga", &skyBoxTex);
@@ -132,10 +133,9 @@ void init(void) {
 	for (int i = 0; i < 50; i++) {
         bunnyObj = new DrawableObject(rand() % texWidth, 0, rand() % texHeight, 0, 1, &dirtTex, sphere, &program);
     	allObjects.push_back(bunnyObj);
-    }
-	
-	for (int i = 0; i < 99; i++) {
-        bunnyObj = new Tree(rand() % texWidth, 0, rand() % texHeight, 0, 1, &dirtTex, highResTree, &program);
+		bunnyObj = new Tree(rand() % texWidth, 0, rand() % texHeight, 0, 1, &grassTex, highResTree, &program);
     	allObjects.push_back(bunnyObj);
+		allObjects.push_back(new Billboard(rand() % texWidth, 10, rand() % texHeight, 10, &skyBoxTex, &program));
     }
+
 }

@@ -66,4 +66,11 @@ public:
 	virtual bool update() override;
 };
 
+class Billboard : public DrawableObject{
+public:
+	Billboard(GLfloat x, GLfloat yOffset, GLfloat z, GLfloat scale, GLuint* tex, GLuint* program);
+	//overload this to add AI behaviour. return true to remove object from public vector.
+	virtual bool update() override;
+};
+
 void drawObj(DrawableObject* obj);

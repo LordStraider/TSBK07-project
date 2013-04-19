@@ -35,7 +35,7 @@ void DrawableObject::draw(){
 	glUniformMatrix4fv(glGetUniformLocation(*program, "mdlMatrix"), 1, GL_TRUE, total.m);
 	DrawModel(model, *program, "inPosition", "inNormal", "inTexCoord");
 	
-	if (true || shadow) { //temporary
+	if (shadow) {
 	    glUseProgram(programShadow);
 	    glUniformMatrix4fv(glGetUniformLocation(programShadow, "camMatrix"), 1, GL_TRUE, cam.m);
 
@@ -151,6 +151,19 @@ bool Enemy::update(){
 	}
 	return false;
 }
+
+//use width and height rather than scale
+Billboard::Billboard(GLfloat x, GLfloat yOffset, GLfloat z, GLfloat scale, GLuint* tex, GLuint* program) :
+		DrawableObject(x, yOffset, z, 0, scale, tex, billBoard, program, false) {};
+
+bool Billboard::update(){
+	vec3 direction = Normalize(VectorSub(vec3(xValue, 0, zValue), getCoords()));
+	float angle = atan2f(direction.z, direction.x);
+	angle -= M_PI / 2; // depends on how the model is rotated.
+	setRotation(angle);
+	return false;
+}
+
 
 void drawObj(DrawableObject* obj) {
 	obj->draw();
