@@ -130,12 +130,12 @@ void init(void) {
     allObjects.push_back(bunnyObj);
     bunnyObj = new DrawableObject(xValue, yValue, zValue, 0, &bunnyTex, bunny, &program, true);
     allObjects.push_back(bunnyObj);
-	for (int i = 0; i < 50; i++) {
+	for (int i = 0; i < 100; i++) {
         bunnyObj = new DrawableObject(rand() % texWidth, 0, rand() % texHeight, 0, 1, &dirtTex, sphere, &program);
     	allObjects.push_back(bunnyObj);
 		bunnyObj = new Tree(rand() % texWidth, 0, rand() % texHeight, 0, 1, &grassTex, highResTree, &program);
     	allObjects.push_back(bunnyObj);
-		allObjects.push_back(new Billboard(rand() % texWidth, 10, rand() % texHeight, 10, &skyBoxTex, &program));
+		allObjects.push_back(new Billboard(rand() % (texWidth-1), 10, rand() % (texHeight-1), 10, &skyBoxTex, &program));
     }
 
 }

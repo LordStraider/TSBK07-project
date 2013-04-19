@@ -5,24 +5,25 @@ DrawableObject::DrawableObject(){
 }
 
 DrawableObject::DrawableObject(GLfloat x, GLfloat yOffset, GLfloat z, GLfloat rotation, GLuint* tex, Model* model, GLuint* program, bool shadow) : 
-	x(x), yOffset(y), z(z), rotation(rotation), scale(1), tex(tex), model(model), program(program), shadow(shadow) 
+	rotation(rotation), scale(1), tex(tex), model(model), program(program), shadow(shadow) 
 {
-	trans = T(x, y = yOffset + findY(x,z), z);
+	setCoords(x,yOffset,z);
 	setRotation(rotation);
 }
 
 DrawableObject::DrawableObject(GLfloat x, GLfloat yOffset, GLfloat z, GLfloat rotation, GLfloat scale, GLuint* tex, Model* model, GLuint* program, bool shadow) : 
-	x(x), yOffset(y), z(z), rotation(rotation), scale(scale), tex(tex), model(model), program(program), shadow(shadow) 
+	rotation(rotation), scale(scale), tex(tex), model(model), program(program), shadow(shadow) 
 {
-	trans = T(x, y = yOffset + findY(x,z), z);
+	setCoords(x,yOffset,z);
 	setRotation(rotation);
 }
 
 DrawableObject::DrawableObject(vec3 position, GLfloat rotation, GLuint* tex, Model* model, GLuint* program, bool shadow) :
 	x(position.x), z(position.z), yOffset(position.y), rotation(rotation), tex(tex), model(model), program(program), shadow(shadow) 
 {
-	trans = T(x, y = yOffset + findY(x,z), z);
+	setCoords(x,yOffset,z);
 	setRotation(rotation);
+
 }
 
 void DrawableObject::draw(){
@@ -39,9 +40,9 @@ void DrawableObject::draw(){
 	    glUseProgram(programShadow);
 	    glUniformMatrix4fv(glGetUniformLocation(programShadow, "camMatrix"), 1, GL_TRUE, cam.m);
 
-	    mat4 shadowTrans = T(x, y+0.01, z); //doesn't really do anything
+	    mat4 shadowTrans = T(x, y+0.01, z); //doesn't work for all models
 	    mat4 sub = Mult(rot, S(scale,0,scale));
-	    mat4 shadowTotal = Mult(shadowTrans, sub); //need rotation matrix as well
+	    mat4 shadowTotal = Mult(shadowTrans, sub);
 
 		glUniformMatrix4fv(glGetUniformLocation(programShadow, "mdlMatrix"), 1, GL_TRUE, shadowTotal.m);
 		DrawModel(model, programShadow, "inPosition", "inNormal", "inTexCoord");
@@ -97,7 +98,7 @@ void DrawableObject::setCoords(GLfloat x, GLfloat y, GLfloat z){
 
 	stayInBounds();
 
-	trans = T(x, y = yOffset + findY(x,z), z);
+	trans = T(x, this->y = yOffset + findY(x,z), z);
 	updateMatrices();
 }
 
