@@ -26,17 +26,17 @@ public:
 	virtual bool update();
 
 	//Rotates an object (rotation += angle). See also: setRotation(GLfloat)
-	void rotate(GLfloat angle);
+	virtual void rotate(GLfloat angle);
 	
 	//use 0,1,0 to move only along the y-axis. See also: setCoords()
-	void move(GLfloat x, GLfloat y, GLfloat z);
+	virtual void move(GLfloat x, GLfloat y, GLfloat z);
 
 	//SETS rotation (rotation = angle). See also: rotate(GLfloat)
-	void setRotation(GLfloat angle);
+	virtual void setRotation(GLfloat angle);
 
 	//use NULL,0,NULL to set y = 0 while not affecting x or z. See also move()
-	void setCoords(GLfloat x, GLfloat y, GLfloat z);
-	vec3 getCoords();
+	virtual void setCoords(GLfloat x, GLfloat y, GLfloat z);
+	virtual vec3 getCoords();
 
 protected:
 	void updateMatrices();
@@ -51,6 +51,15 @@ protected:
 class Tree : public DrawableObject{
 public:
 	Tree(GLfloat x, GLfloat yOffset, GLfloat z, GLfloat rotation, GLfloat scale, GLuint* tex, Model* model, GLuint* program, bool shadow = false) :
+		DrawableObject(x, yOffset, z, rotation, scale, tex, model, program, shadow) {};
+
+	//overload this to add AI behaviour. return true to remove object from public vector.
+	virtual bool update() override;
+};
+
+class Enemy : public DrawableObject{
+public:
+	Enemy(GLfloat x, GLfloat yOffset, GLfloat z, GLfloat rotation, GLfloat scale, GLuint* tex, Model* model, GLuint* program, bool shadow = false) :
 		DrawableObject(x, yOffset, z, rotation, scale, tex, model, program, shadow) {};
 
 	//overload this to add AI behaviour. return true to remove object from public vector.

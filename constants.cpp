@@ -125,11 +125,16 @@ void init(void) {
 
     bunnyObj = new DrawableObject(rand() % texWidth, 0, rand() % texHeight, 0, &dirtTex, teapot, &program, true);
     allObjects.push_back(bunnyObj);
-    bunnyObj = new DrawableObject(rand() % texWidth, 0, rand() % texHeight, 0, &bunnyTex, kingKong, &program, true);
+    bunnyObj = new Enemy(rand() % texWidth, 0, rand() % texHeight, 0, 1, &bunnyTex, kingKong, &program, true);
     allObjects.push_back(bunnyObj);
     bunnyObj = new DrawableObject(xValue, yValue, zValue, 0, &bunnyTex, bunny, &program, true);
     allObjects.push_back(bunnyObj);
-    for (int i = 0; i < 99; i++) {
+	for (int i = 0; i < 50; i++) {
+        bunnyObj = new DrawableObject(rand() % texWidth, 0, rand() % texHeight, 0, 1, &dirtTex, sphere, &program);
+    	allObjects.push_back(bunnyObj);
+    }
+	
+	for (int i = 0; i < 99; i++) {
         bunnyObj = new Tree(rand() % texWidth, 0, rand() % texHeight, 0, 1, &dirtTex, highResTree, &program);
     	allObjects.push_back(bunnyObj);
     }

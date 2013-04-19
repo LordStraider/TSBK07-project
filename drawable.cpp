@@ -118,21 +118,36 @@ void DrawableObject::stayInBounds(){
 }
 
 bool Tree::update(){
-	vec3 coords = getCoords();
-	GLfloat distToCam = sqrt(pow(xValue - coords.x, 2) + pow(zValue - coords.z, 2));
+	GLfloat distToCam = sqrt(pow(xValue - x, 2) + pow(zValue - z, 2));
 	if(distToCam > 100){
-		if(scale < 1){
-			scale = 1;
+		if(scale < 0.9){
+			scale = 0.9;
 			updateMatrices();
 		}
+		//would be awesome to use a billboard version of the high res tree here!
 		model = lowResTree;
 	}
 	else{
-		if(scale >= 1){
+		if(scale > 0.1){
 			scale = 0.1;
 			updateMatrices();
 		}
 		model = highResTree;
+	}
+	return false;
+}
+
+bool Enemy::update(){
+	vec3 direction = Normalize(VectorSub(vec3(xValue, 0, zValue), getCoords()));
+	GLfloat distToCam = sqrt(pow(direction.x, 2) + pow(direction.z,2));
+	float angle = atan2f(direction.z, direction.x);
+	angle -= M_PI / 2; // depends on how the model is rotated.
+	if(distToCam < 50){
+		setRotation(angle);
+		move(direction.x*0.1, 0, direction.z*0.1);
+	}
+	else{
+		this->DrawableObject::update();		
 	}
 	return false;
 }
