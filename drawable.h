@@ -21,7 +21,7 @@ public:
 	void draw();
 
 	//overload this to add AI behaviour. return true to remove object from public vector.
-	bool update(GLfloat t);
+	bool update();
 
 	//Rotates an object (rotation += angle). See also: setRotation(GLfloat)
 	void rotate(GLfloat angle);

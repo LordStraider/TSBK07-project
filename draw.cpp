@@ -64,9 +64,21 @@ void display(void) {
 //	printError("drawing single");
 	//displayModels(t);
 
-    for_each(allObjects.begin(), allObjects.end(), drawObj);
+	struct ObjectUpdater
+	{
+		ObjectUpdater() {}
+		
+		bool operator()(DrawableObject* obj) const
+		{
+			bool erase = obj->update();
+			if(!erase) obj->draw();
+			return erase;
+		}
+	};
 
-//	printError("drawing models");
+	allObjects.erase(std::remove_if(allObjects.begin(), allObjects.end(), ObjectUpdater()), allObjects.end());
+
+	//	printError("drawing models");
     //displayShadows(t);
 //	printError("drawing shadows");
     displayInvisible(t);

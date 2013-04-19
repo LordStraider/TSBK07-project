@@ -7,7 +7,6 @@ DrawableObject::DrawableObject(){
 DrawableObject::DrawableObject(GLfloat x, GLfloat yOffset, GLfloat z, GLfloat rotation, GLuint* tex, Model* model, GLuint* program, bool shadow) : 
 	x(x), yOffset(y), z(z), rotation(rotation), tex(tex), model(model), program(program), shadow(shadow) 
 {
-	//allocate space for model.
 	trans = T(x, y = yOffset + findY(x,z), z);
 	setRotation(rotation);
 }
@@ -25,31 +24,27 @@ void DrawableObject::draw(){
 
     GLfloat t = (GLfloat)glutGet(GLUT_ELAPSED_TIME);
 
-
-    trans = T(x, y, z);
-
-
 	glBindTexture(GL_TEXTURE_2D, *tex);
-	glUniformMatrix4fv(glGetUniformLocation(*program, "mdlMatrix"), 1, GL_TRUE, trans.m);
+	glUniformMatrix4fv(glGetUniformLocation(*program, "mdlMatrix"), 1, GL_TRUE, total.m);
 	DrawModel(model, *program, "inPosition", "inNormal", "inTexCoord");
-
-	if (shadow) {
+	
+	if (true || shadow) { //temporary
 	    glUseProgram(programShadow);
 	    glUniformMatrix4fv(glGetUniformLocation(programShadow, "camMatrix"), 1, GL_TRUE, cam.m);
 
+	    mat4 shadowTrans = T(x, y+0.01, z); //doesn't really do anything
+	    mat4 sub = Mult(rot, S(1,0,1));
+	    mat4 shadowTotal = Mult(shadowTrans, sub); //need rotation matrix as well
 
-	    trans = T(x, y+0.01, z);
-	    shear = S(1,0,1);
-	    total = Mult(trans, shear);
-
-
-		glUniformMatrix4fv(glGetUniformLocation(programShadow, "mdlMatrix"), 1, GL_TRUE, total.m);
+		glUniformMatrix4fv(glGetUniformLocation(programShadow, "mdlMatrix"), 1, GL_TRUE, shadowTotal.m);
 		DrawModel(model, programShadow, "inPosition", "inNormal", "inTexCoord");
 	}
 }
 
 //overload this to add AI behaviour. return true to remove object from public vector.
-bool DrawableObject::update(GLfloat t){
+bool DrawableObject::update(){
+	rotate(0.05);
+	if(rand() > RAND_MAX-100) return true; // randomly remove objects to test deletion of objects (pick ups, dead enemies, etc)
 	return false;
 }
 
