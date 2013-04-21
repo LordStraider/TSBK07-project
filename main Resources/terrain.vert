@@ -17,9 +17,7 @@ void main(void)
 {
 	texCoord = inTexCoord;
 	exPos = inPosition;
-	
-	mat3 normalMatrix = mat3(mdlMatrix);
-	exNormal = normalMatrix * inNormal;
+	exNormal = inNormal;
 
 	gl_Position = projMatrix * camMatrix * mdlMatrix * vec4(inPosition, 1.0);
 }

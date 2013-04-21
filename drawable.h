@@ -5,12 +5,20 @@
 #include "controller.h"
 #include "constants.h"
 
+class LightSource {
+public:
+	vec3 position, direction, color;
+//	~LightSource();
+	LightSource();
+	LightSource(vec3 position, vec3 direction, vec3 color);
+};
+
 class DrawableObject {
 public:
 	mat4 trans;
 	mat4 rot;
 	mat4 total;
-	~DrawableObject();
+//	~DrawableObject();
 	
 	DrawableObject();
 
@@ -71,6 +79,13 @@ public:
 	Billboard(GLfloat x, GLfloat yOffset, GLfloat z, GLfloat scale, GLuint* tex, GLuint* program);
 	//overload this to add AI behaviour. return true to remove object from public vector.
 	virtual bool update() override;
+};
+
+class Light : public DrawableObject{
+public:
+	LightSource* source;
+	Light(GLfloat x, GLfloat yOffset, GLfloat z, vec3 rotation, GLfloat scale, GLuint* tex, Model* model, GLuint* program, bool shadow = false);
+	//overload this to add AI behaviour. return true to remove object from public vector.
 };
 
 void drawObj(DrawableObject* obj);

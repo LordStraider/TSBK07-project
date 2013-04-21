@@ -1,5 +1,8 @@
 #include "drawable.h"
 
+LightSource::LightSource(){}
+LightSource::LightSource(vec3 position, vec3 direction, vec3 color) : position(position), direction(direction), color(color) {}
+
 DrawableObject::DrawableObject(){
 
 }
@@ -28,9 +31,8 @@ DrawableObject::DrawableObject(vec3 position, GLfloat rotation, GLuint* tex, Mod
 
 void DrawableObject::draw(){
     glUseProgram(*program);
-    glUniformMatrix4fv(glGetUniformLocation(*program, "camMatrix"), 1, GL_TRUE, cam.m);
-
-    GLfloat t = (GLfloat)glutGet(GLUT_ELAPSED_TIME);
+   
+	GLfloat t = (GLfloat)glutGet(GLUT_ELAPSED_TIME);
 
 	glBindTexture(GL_TEXTURE_2D, *tex);
 	glUniformMatrix4fv(glGetUniformLocation(*program, "mdlMatrix"), 1, GL_TRUE, total.m);
@@ -38,8 +40,7 @@ void DrawableObject::draw(){
 	
 	if (shadow) {
 	    glUseProgram(programShadow);
-	    glUniformMatrix4fv(glGetUniformLocation(programShadow, "camMatrix"), 1, GL_TRUE, cam.m);
-
+	    
 	    mat4 shadowTrans = T(x, y+0.01, z); //doesn't work for all models
 	    mat4 sub = Mult(rot, S(scale,0,scale));
 	    mat4 shadowTotal = Mult(shadowTrans, sub);
@@ -121,16 +122,16 @@ void DrawableObject::stayInBounds(){
 bool Tree::update(){
 	GLfloat distToCam = sqrt(pow(xValue - x, 2) + pow(zValue - z, 2));
 	if(distToCam > 100){
-		if(scale < 0.9){
-			scale = 0.9;
+		if(scale < 1.5){
+			scale = 1.5;
 			updateMatrices();
 		}
 		//would be awesome to use a billboard version of the high res tree here!
 		model = lowResTree;
 	}
 	else{
-		if(scale > 0.1){
-			scale = 0.1;
+		if(scale > 0.3){
+			scale = 0.3;
 			updateMatrices();
 		}
 		model = highResTree;
@@ -165,6 +166,12 @@ bool Billboard::update(){
 	return false;
 }
 
+Light::Light(GLfloat x, GLfloat yOffset, GLfloat z, vec3 rotation, GLfloat scale, GLuint* tex, Model* model, GLuint* program, bool shadow) :
+		DrawableObject(x, yOffset, z, 0, scale, tex, model, program, shadow) 
+	{
+		rot = Mult(Mult(Rx(rotation.x), Ry(rotation.y)), Ry(rotation.z)); //not this simple, is it?
+		source = new LightSource(vec3(x, y = findY(x,z) + yOffset, z), rotation, vec3(1,1,1));
+	};
 
 void drawObj(DrawableObject* obj) {
 	obj->draw();

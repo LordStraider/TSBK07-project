@@ -22,8 +22,9 @@ GLuint *indexArray;
 Model *batmobil, *kingKong, *bunny, *bunnyShadow, *teapot, *teapotShadow, *cube, *skyBox, *blade, *windmillWalls, *windmillRoof, *windmillBalcony, *terrain, *sphere, *lowResTree, *highResTree, *billBoard;
 //Model *windmill2;
 
-
+vector<GLuint*> programs;
 vector<DrawableObject*> allObjects;
+vector<DrawableObject*> lightSources;
 DrawableObject* bunnyObj;
 
 /*DrawableObjectVector::DrawableObjectVector() : std::vector<DrawableObject*>() {};
@@ -115,6 +116,12 @@ void init(void) {
     glUniform1i(glGetUniformLocation(programTerrain, "tex"), 0); // Texture unit 0
 	printError("load objs");
 
+	programs.push_back(&program);
+	programs.push_back(&programShadow);
+	programs.push_back(&programSingleColor);
+	programs.push_back(&programInvisible);
+	programs.push_back(&programTerrain);
+
 // Load terrain data
 
     LoadTGATexture("fft-terrain.tga", &ttex);
@@ -130,12 +137,18 @@ void init(void) {
     allObjects.push_back(bunnyObj);
     bunnyObj = new DrawableObject(xValue, yValue, zValue, 0, &bunnyTex, bunny, &program, true);
     allObjects.push_back(bunnyObj);
-	for (int i = 0; i < 100; i++) {
-        bunnyObj = new DrawableObject(rand() % texWidth, 0, rand() % texHeight, 0, 1, &dirtTex, sphere, &program);
+	for (int i = 0; i < 20; i++) {
+        bunnyObj = new DrawableObject(rand() % (texWidth-1), 0, rand() % (texHeight-1), 0, 1, &dirtTex, sphere, &program);
     	allObjects.push_back(bunnyObj);
-		bunnyObj = new Tree(rand() % texWidth, 0, rand() % texHeight, 0, 1, &grassTex, highResTree, &program);
+		bunnyObj = new Tree(rand() % (texWidth-1), 0, rand() % (texHeight-1), 0, 1, &grassTex, highResTree, &program);
     	allObjects.push_back(bunnyObj);
 		allObjects.push_back(new Billboard(rand() % (texWidth-1), 10, rand() % (texHeight-1), 10, &skyBoxTex, &program));
     }
+	for (int i = 0; i < 8; i++){
+		bunnyObj = new Light(20, 5, 20, vec3(rand() % 6, rand() % 6, rand() % 6), 3, &skyBoxTex, sphere, &program);
+		lightSources.push_back(bunnyObj);
+		//when lightSources works: only push to allObjects, let constructor take care of its LightSource.
+		allObjects.push_back(bunnyObj);
+	}
 
 }

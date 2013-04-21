@@ -50,7 +50,11 @@ extern GLuint dirtTex, bunnyTex, skyBoxTex, grassTex;
 extern Model *batmobil, *kingKong, *bunny, *bunnyShadow, *teapot, *teapotShadow, *cube, *skyBox, *blade, *windmillWalls, *windmillRoof, *windmillBalcony, *terrain, *sphere, *lowResTree, *highResTree, *billBoard;
 //extern Model *windmill2;
 
+extern std::vector<GLuint*> programs;
 extern std::vector<DrawableObject*> allObjects;
+
+//should be: std::vector<LightSource*> lightSources, but I can't get that to work
+extern std::vector<DrawableObject*> lightSources;
 extern DrawableObject* bunnyObj;
 
 void init();
