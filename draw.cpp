@@ -3,17 +3,16 @@
 
 using namespace std;
 
-
 struct ObjectUpdater
 {
 	ObjectUpdater() {}
-		
+
 	bool operator()(DrawableObject* obj) const
 	{
 		bool erase = obj->update();
 		if(!erase) obj->draw();
 		return erase;
-	}
+	} 
 };
 
 void display(void) {
@@ -42,7 +41,7 @@ void display(void) {
 
     yFind = findY(xValue, zValue);
     if (yFind != 1.5) {
-        yValue += yModify;        
+        yValue += yModify;
     }
 
 
@@ -75,7 +74,6 @@ void display(void) {
     displaySingleColor(t);
 //	printError("drawing single");
 	//displayModels(t);
-
 	for_each(programs.begin(), programs.end(), [](GLuint* program){
 		glUseProgram(*program);
 		//glEnable(GL_LIGHTING);

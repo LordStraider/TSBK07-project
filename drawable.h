@@ -18,6 +18,7 @@ public:
 	mat4 trans;
 	mat4 rot;
 	mat4 total;
+
 //	~DrawableObject();
 	
 	DrawableObject();
@@ -35,7 +36,7 @@ public:
 
 	//Rotates an object (rotation += angle). See also: setRotation(GLfloat)
 	virtual void rotate(GLfloat angle);
-	
+
 	//use 0,1,0 to move only along the y-axis. See also: setCoords()
 	virtual void move(GLfloat x, GLfloat y, GLfloat z);
 
@@ -58,27 +59,29 @@ protected:
 
 class Tree : public DrawableObject{
 public:
-	Tree(GLfloat x, GLfloat yOffset, GLfloat z, GLfloat rotation, GLfloat scale, GLuint* tex, Model* model, GLuint* program, bool shadow = false) :
+	Tree(GLfloat x, GLfloat yOffset, GLfloat z, GLfloat rotation, GLfloat scale,
+         GLuint* tex, Model* model, GLuint* program, bool shadow = false) :
 		DrawableObject(x, yOffset, z, rotation, scale, tex, model, program, shadow) {};
 
 	//overload this to add AI behaviour. return true to remove object from public vector.
-	virtual bool update() override;
+	virtual bool update();
 };
 
 class Enemy : public DrawableObject{
 public:
-	Enemy(GLfloat x, GLfloat yOffset, GLfloat z, GLfloat rotation, GLfloat scale, GLuint* tex, Model* model, GLuint* program, bool shadow = false) :
+	Enemy(GLfloat x, GLfloat yOffset, GLfloat z, GLfloat rotation, GLfloat scale,
+          GLuint* tex, Model* model, GLuint* program, bool shadow = false) :
 		DrawableObject(x, yOffset, z, rotation, scale, tex, model, program, shadow) {};
 
 	//overload this to add AI behaviour. return true to remove object from public vector.
-	virtual bool update() override;
+	virtual bool update();
 };
 
 class Billboard : public DrawableObject{
 public:
 	Billboard(GLfloat x, GLfloat yOffset, GLfloat z, GLfloat scale, GLuint* tex, GLuint* program);
 	//overload this to add AI behaviour. return true to remove object from public vector.
-	virtual bool update() override;
+	virtual bool update();
 };
 
 class Light : public DrawableObject{
