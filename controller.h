@@ -4,7 +4,6 @@
 #ifdef __APPLE__
     #include <OpenGL/gl3.h>
     #include "MicroGlut.h"
-#import <ApplicationServices/ApplicationServices.h>
 #endif
 
 #include "GL_utilities.h"

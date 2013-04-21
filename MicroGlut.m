@@ -47,17 +47,17 @@ void MakeContext(NSView *view)
 {
 	NSOpenGLPixelFormat *fmt;
 	int zdepth, sdepth;
-	
+
 	if (gContextInitMode & GLUT_DEPTH)
 		zdepth = 32;
 	else
 		zdepth = 0;
-	
+
 	if (gContextInitMode & GLUT_STENCIL)
 		sdepth = 32;
 	else
 		sdepth = 0;
-	
+
 	NSOpenGLPixelFormatAttribute attrs[] =
 	{
 		NSOpenGLPFAOpenGLProfile, NSOpenGLProfileVersion3_2Core,
@@ -69,10 +69,10 @@ void MakeContext(NSView *view)
 
 	// Save view (should be packaged with context for multi-window application - to do)
 	theView = view;
-	
+
 	// Init GL context
 	fmt = [[NSOpenGLPixelFormat alloc] initWithAttributes: &attrs[0]];
-	
+
 	m_context = [[NSOpenGLContext alloc] initWithFormat: fmt shareContext: nil];
 	[fmt release];
 	[m_context makeCurrentContext];
@@ -101,7 +101,7 @@ void MakeContext(NSView *view)
 -(void) mouseMoved:(NSEvent *)theEvent
 {
 	NSPoint p;
-	
+
 //	printf("Mouse moved\n");
 	if (gMouseMoved != nil)
 	{
@@ -114,7 +114,7 @@ void MakeContext(NSView *view)
 -(void) mouseDragged:(NSEvent *)theEvent
 {
 	NSPoint p;
-	
+
 //	printf("Mouse dragged\n");
 	if (gMouseDragged != nil)
 	{
@@ -127,7 +127,7 @@ void MakeContext(NSView *view)
 -(void) mouseDown:(NSEvent *)theEvent
 {
 	NSPoint p;
-	
+
 //	printf("Mouse down\n");
 	if (gMouseFunc != nil)
 	{
@@ -141,7 +141,7 @@ void MakeContext(NSView *view)
 -(void) mouseUp:(NSEvent *)theEvent
 {
 	NSPoint p;
-	
+
 	if (gMouseFunc != nil)
 	{
 		// Convert location in window to location in view
@@ -154,7 +154,7 @@ void MakeContext(NSView *view)
 -(void) rightMouseDown:(NSEvent *)theEvent
 {
 	NSPoint p;
-	
+
 	if (gMouseFunc != nil)
 	{
 		// Convert location in window to location in view
@@ -167,7 +167,7 @@ void MakeContext(NSView *view)
 -(void) rightMouseUp:(NSEvent *)theEvent
 {
 	NSPoint p;
-	
+
 	if (gMouseFunc != nil)
 	{
 		// Convert location in window to location in view
@@ -180,7 +180,7 @@ void MakeContext(NSView *view)
 -(void)keyDown:(NSEvent *)theEvent
 {
 	char *chars;
-	
+
 //	printf("Key down\n");
 	if (gKey != NULL)
 	{
@@ -193,7 +193,7 @@ void MakeContext(NSView *view)
 -(void)keyUp:(NSEvent *)theEvent
 {
 	char *chars;
-	
+
 //	printf("Key up\n");
 	if (gKeyUp != NULL)
 	{
@@ -215,23 +215,23 @@ void MakeContext(NSView *view)
 	{
 		lastWidth = [theView frame].size.width;
 		lastHeight = [theView frame].size.height;
-		
+
 		// Only needed on resize:
 		[m_context clearDrawable];
 //		glViewport(0, 0, [theView frame].size.width, [theView frame].size.height);
-		
+
 		if (gReshape != NULL)
 			gReshape([theView frame].size.width, [theView frame].size.height);
 	}
-	
+
 	[m_context setView: theView];
 	[m_context makeCurrentContext];
-	
+
 	// Draw
 	if (gDisplay != NULL)
 		gDisplay();
 	updatePending = 0;
-	
+
 	[m_context flushBuffer];
 	[NSOpenGLContext clearCurrentContext];
 }
@@ -271,7 +271,7 @@ NSView	*view;
 -(void)timerFireMethod:(NSTimer *)t;
 {
 	TimerInfoRec *tr;
-	
+
 	if (t.userInfo != nil) // One-shot timer with a TimerInfoRec
 	{
 		tr = t.userInfo;
@@ -345,35 +345,35 @@ void CreateMenu()
 	mainMenu = NSMenu.alloc;
 	[mainMenu initWithTitle: @""];
 	[NSApp setMainMenu: mainMenu];
-	
+
 	// Create the custom menu
 	theMiniMenu = NSMenu.alloc;
 	[theMiniMenu initWithTitle: @"The MiniMenu"];
-	
+
 	// Create a menu item with standard message
 	menuItem2 = NSMenuItem.alloc;
 	[menuItem2 initWithTitle: @"Hide" action: @selector(hide:) keyEquivalent: @"h"];
 	[menuItem2 setKeyEquivalentModifierMask: NSCommandKeyMask];
 	[theMiniMenu addItem: menuItem2];
-	
+
 	// Create a menu item with standard message
 	menuItem2 = NSMenuItem.alloc;
 	[menuItem2 initWithTitle: @"Hide others" action: @selector(hideOtherApplications:) keyEquivalent: @"h"];
 	[menuItem2 setKeyEquivalentModifierMask: NSCommandKeyMask | NSAlternateKeyMask];
 	[theMiniMenu addItem: menuItem2];
-	
+
 	// Create a menu item with standard message
 	menuItem2 = NSMenuItem.alloc;
 	[menuItem2 initWithTitle: @"Show all" action: @selector(unhideAllApplications:) keyEquivalent: @"h"];
 	[menuItem2 setKeyEquivalentModifierMask: NSCommandKeyMask | NSControlKeyMask];
 	[theMiniMenu addItem: menuItem2];
-	
+
 	// Create a menu item with standard message
 	menuItem2 = NSMenuItem.alloc;
 	[menuItem2 initWithTitle: @"Quit" action: @selector(terminate:) keyEquivalent: @"q"];
 	[menuItem2 setKeyEquivalentModifierMask: NSCommandKeyMask];
 	[theMiniMenu addItem: menuItem2];
-	
+
 	// Adding a menu is done with a dummy item to connect the menu to its parent
 	dummyItem = NSMenuItem.alloc;
 	[dummyItem initWithTitle: @"" action: nil keyEquivalent: @""];
@@ -413,13 +413,13 @@ void glutCreateWindow (char *windowTitle)
 {
 // To do: Should get screen height instead of 1000
 	NSRect frame = NSMakeRect(gWindowPosX, 1000 - gWindowPosY, gWindowWidth, gWindowHeight);
-	
+
 	window = [NSWindow alloc];
 	[window initWithContentRect:frame
 					styleMask:NSTitledWindowMask | NSClosableWindowMask | NSMiniaturizableWindowMask
 					backing:NSBackingStoreBuffered
 					defer:false];
-	
+
 	[window setTitle: [[NSString alloc] initWithCString:windowTitle
 				encoding:NSMacOSRomanStringEncoding]];
 
@@ -452,17 +452,17 @@ void glutMainLoop()
 	{
 		[pool release];
 		pool = [NSAutoreleasePool new];
-		
+
 		event = [myApp nextEventMatchingMask: NSAnyEventMask
 //							untilDate: [NSDate dateWithTimeIntervalSinceNow: 0.0]
 							untilDate: [NSDate distantFuture]
 							inMode: NSDefaultRunLoopMode
 							dequeue: true
 							];
-		
+
 		[myApp sendEvent: event];
 		[myApp updateWindows];
-	
+
 		if (gIdle != NULL)
 			if (!updatePending)
 				gIdle();
@@ -473,11 +473,11 @@ void glutMainLoop()
 void glutCheckLoop()
 {
 	[myApp runOnce];
-	
+
 	if (gIdle != NULL)
 		if (!updatePending)
 			gIdle();
-	
+
 	[pool release];
 	pool = [NSAutoreleasePool new];
 }
@@ -551,7 +551,7 @@ void glutSwapBuffers()
 int glutGet(int type)
 {
 	struct timeval tv;
-	
+
 	gettimeofday(&tv, NULL);
 	return (tv.tv_usec - timeStart.tv_usec) / 1000 + (tv.tv_sec - timeStart.tv_sec)*1000;
 }

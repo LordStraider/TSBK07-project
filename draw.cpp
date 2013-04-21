@@ -4,6 +4,18 @@
 using namespace std;
 
 
+struct ObjectUpdater
+{
+ ObjectUpdater() {}
+
+ bool operator()(DrawableObject* obj) const
+ {
+     bool erase = obj->update();
+     if(!erase) obj->draw();
+     return erase;
+ }
+};
+
 void display(void) {
 	GLfloat t;
     vec3 v;
@@ -30,7 +42,7 @@ void display(void) {
 
     yFind = findY(xValue, zValue);
     if (yFind != 1.5) {
-        yValue += yModify;        
+        yValue += yModify;
     }
 
 
@@ -63,18 +75,6 @@ void display(void) {
     displaySingleColor(t);
 //	printError("drawing single");
 	//displayModels(t);
-
-	struct ObjectUpdater
-	{
-		ObjectUpdater() {}
-		
-		bool operator()(DrawableObject* obj) const
-		{
-			bool erase = obj->update();
-			if(!erase) obj->draw();
-			return erase;
-		}
-	};
 
 	allObjects.erase(std::remove_if(allObjects.begin(), allObjects.end(), ObjectUpdater()), allObjects.end());
 
