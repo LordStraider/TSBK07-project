@@ -87,7 +87,8 @@ void DrawableObject::draw() {
 	glUniformMatrix4fv(glGetUniformLocation(*program, "mdlMatrix"), 1, GL_TRUE, total.m);
 	DrawModel(model, *program, "inPosition", "inNormal", "inTexCoord");
 
-	if (shadow) {
+	vec3 coords = getCoords();
+	if (shadow && findY(coords.x, coords.z) != 1.5) {
 	    glUseProgram(programShadow);
 	    glUniformMatrix4fv(glGetUniformLocation(programShadow, "camMatrix"), 1, GL_TRUE, cam.m);
 
@@ -249,6 +250,15 @@ bool Player::update() {
 	return gameOver;
 }
 
+bool Shot::update() {
+	vec3 newCoord = vec3(0.1,0,0.1) + getCoords();
+   	setCoords(newCoord.x, 1, newCoord.z);
+
+	for_each(allObjects.begin(), allObjects.end(), CollisionChecker(this));
+	
+	return getDel();
+}
+
 //use width and height rather than scale
 Billboard::Billboard(GLfloat x, GLfloat yOffset, GLfloat z, GLfloat scale, GLuint* tex, GLuint* program, vec3 dimensions, int collisionMode) :
 		DrawableObject(x, yOffset, z, 0, scale, tex, billBoard, program, dimensions, collisionMode, false) {};
@@ -281,8 +291,13 @@ void Enemy::collisionHandler(DrawableObject* obj) {
 }
 
 void Player::collisionHandler(DrawableObject* obj) {
+	Shot *s = dynamic_cast<Shot*>(obj);
+	if (s != NULL) {
+		return;
+	}
+
 	if (obj->getCollisionMode() == SPHERE) {
-		obj->toggleDel();
+		obj->setDel(true);
 	    addAmmo();
 	} else {
 	    xValue -= zModify * speed;
@@ -293,6 +308,23 @@ void Player::collisionHandler(DrawableObject* obj) {
 	    direction = -1;
 
 		setCoords(xValue, yValue, zValue);
+	}
+}
+
+void Shot::collisionHandler(DrawableObject* obj) {
+	Player *p = dynamic_cast<Player*>(obj);
+	if (p != NULL) {
+		return;
+	}
+
+	setDel(true);
+	if (obj->getCollisionMode() == SPHERE) {
+		obj->setDel(true);
+	}
+
+	Enemy *e = dynamic_cast<Enemy*>(obj);
+	if (e != NULL) {
+		obj->setDel(true);
 	}
 }
 

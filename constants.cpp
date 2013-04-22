@@ -26,7 +26,7 @@ Model *kingKong, *bunny, *bunnyShadow, *teapot, *teapotShadow, *cube, *skyBox, *
 
 
 vector<DrawableObject*> allObjects;
-DrawableObject* bunnyObj;
+Player* bunnyObj;
 
 /*DrawableObjectVector::DrawableObjectVector() : std::vector<DrawableObject*>() {};
 void DrawableObjectVector::drawAll(GLfloat t){
@@ -142,7 +142,8 @@ void init(void) {
     allObjects.push_back(new Enemy(rand() % texWidth, 0, rand() % texHeight, 0, 1, &bunnyTex, kingKong, &program, vec3(5.1, 40, 5.1), BOX, true));
 
     /* Bunny */
-    allObjects.push_back(new Player(xValue, 0.7, zValue, 0, 1, &bunnyTex, bunny, &program, vec3(0.8, 0.8, 0.8), SPHERE, true));
+    bunnyObj = new Player(xValue, 0.7, zValue, 0, 1, &bunnyTex, bunny, &program, vec3(0.8, 0.8, 0.8), SPHERE, true);
+    allObjects.push_back(bunnyObj);
 
 	for (int i = 0; i < 100; i++) {
         /* Spheres */

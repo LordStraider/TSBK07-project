@@ -19,6 +19,7 @@
 #endif
 
 class DrawableObject;
+class Player;
 
 extern mat4 rot, trans, shear, total, cam, proj, tmp;
 
@@ -55,7 +56,7 @@ extern Model *kingKong, *bunny, *bunnyShadow, *teapot, *teapotShadow, *cube, *sk
 //extern Model *windmill2;
 
 extern std::vector<DrawableObject*> allObjects;
-extern DrawableObject* bunnyObj;
+extern Player* bunnyObj;
 
 void init();
 
