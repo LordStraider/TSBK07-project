@@ -4,8 +4,7 @@
 using namespace std;
 
 
-struct ObjectUpdater
-{
+struct ObjectUpdater {
  ObjectUpdater() {}
 
  bool operator()(DrawableObject* obj) const
@@ -33,12 +32,12 @@ void display(void) {
     yValue += yModify;
     zValue += zModify * speed;
 
-    if (checkBoundaries() || checkCollisionBS()) {
+    /*if (checkBoundaries() || checkCollisionBS()) {
         xValue -= zModify * speed;
         zModify = -xModify;
         zValue -= xModify * speed;
         xModify = -zModify;
-    }
+    }*/
 
     yFind = findY(xValue, zValue);
     if (yFind != 1.5) {
@@ -76,12 +75,12 @@ void display(void) {
 //	printError("drawing single");
 	//displayModels(t);
 
-	allObjects.erase(std::remove_if(allObjects.begin(), allObjects.end(), ObjectUpdater()), allObjects.end());
+	allObjects.erase(remove_if(allObjects.begin(), allObjects.end(), ObjectUpdater()), allObjects.end());
 
 	//	printError("drawing models");
     //displayShadows(t);
 //	printError("drawing shadows");
-    displayInvisible(t);
+//    displayInvisible(t);
 //	printError("drawing invisible");
 
     printError("display");
@@ -190,7 +189,7 @@ void displayModels(GLfloat t) {
 
     /* Making the bunny */
     trans = T(xValue, yValue, zValue);
-    rot = Ry(rotation + angle);
+    rot = Ry(bunnyRotation + angle);
     total = Mult(trans, rot);
     glBindTexture(GL_TEXTURE_2D, bunnyTex);
     glUniformMatrix4fv(glGetUniformLocation(program, "mdlMatrix"), 1, GL_TRUE, total.m);
@@ -200,7 +199,7 @@ void displayModels(GLfloat t) {
     trans = T(kingX, kingY, kingZ);
     shear = S(0.6, 0.6, 0.6);
     total = Mult(trans, shear);
-    rot = Ry(rotation);
+    rot = Ry(bunnyRotation);
     total = Mult(total, rot);
     glBindTexture(GL_TEXTURE_2D, bunnyTex);
     glUniformMatrix4fv(glGetUniformLocation(program, "mdlMatrix"), 1, GL_TRUE, total.m);
@@ -234,7 +233,7 @@ void displayShadows(GLfloat t) {
         trans = T(xValue, yFind + 0.2, zValue);
         shear = S(1, 0, 1);
         //shear = S(1/(yValue - yFind + 0.1), 0, 1/(yValue - yFind + 0.1)); //Makes the shaddow smaller when jumping, perspective. Buggy.
-        rot = Ry(rotation);
+        rot = Ry(bunnyRotation);
         total = Mult(trans, shear);
         total = Mult(total, rot);
         glUniformMatrix4fv(glGetUniformLocation(programShadow, "mdlMatrix"), 1, GL_TRUE, total.m);

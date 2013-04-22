@@ -14,11 +14,11 @@ public:
 
 	DrawableObject();
 
-	DrawableObject(GLfloat x, GLfloat yOffset, GLfloat z, GLfloat rotation, GLuint* tex, Model* model, GLuint* program, bool shadow = false);
+	DrawableObject(GLfloat x, GLfloat yOffset, GLfloat z, GLfloat rotation, GLuint* tex, Model* model, GLuint* program, vec3 dimensions, bool shadow = false);
 
-	DrawableObject(vec3 position, GLfloat rotation, GLuint* tex, Model* model, GLuint* program, bool shadow = false);
+	DrawableObject(vec3 position, GLfloat rotation, GLuint* tex, Model* model, GLuint* program, vec3 dimensions, bool shadow = false);
 
-	DrawableObject(GLfloat x, GLfloat yOffset, GLfloat z, GLfloat rotation, GLfloat scale, GLuint* tex, Model* model, GLuint* program, bool shadow = false);
+	DrawableObject(GLfloat x, GLfloat yOffset, GLfloat z, GLfloat rotation, GLfloat scale, GLuint* tex, Model* model, GLuint* program, vec3 dimensions, bool shadow = false);
 
 	virtual void draw();
 
@@ -37,11 +37,13 @@ public:
 	//use NULL,0,NULL to set y = 0 while not affecting x or z. See also move()
 	virtual void setCoords(GLfloat x, GLfloat y, GLfloat z);
 	virtual vec3 getCoords();
+	virtual vec3 getDimensons();
 
 protected:
 	void updateMatrices();
 	void stayInBounds();
 	GLfloat x, z, y, yOffset, rotation, scale; //yOffset is distance from ground
+	vec3 dimensions;
 	Model* model;
 	GLuint* program;
 	GLuint* tex;
@@ -51,8 +53,8 @@ protected:
 class Tree : public DrawableObject{
 public:
 	Tree(GLfloat x, GLfloat yOffset, GLfloat z, GLfloat rotation, GLfloat scale,
-         GLuint* tex, Model* model, GLuint* program, bool shadow = false) :
-		DrawableObject(x, yOffset, z, rotation, scale, tex, model, program, shadow) {};
+         GLuint* tex, Model* model, GLuint* program, vec3 dimensions, bool shadow = false) :
+		DrawableObject(x, yOffset, z, rotation, scale, tex, model, program, dimensions, shadow) {};
 
 	//overload this to add AI behaviour. return true to remove object from public vector.
 	virtual bool update();
@@ -61,8 +63,18 @@ public:
 class Enemy : public DrawableObject{
 public:
 	Enemy(GLfloat x, GLfloat yOffset, GLfloat z, GLfloat rotation, GLfloat scale,
-          GLuint* tex, Model* model, GLuint* program, bool shadow = false) :
-		DrawableObject(x, yOffset, z, rotation, scale, tex, model, program, shadow) {};
+          GLuint* tex, Model* model, GLuint* program, vec3 dimensions, bool shadow = false) :
+		DrawableObject(x, yOffset, z, rotation, scale, tex, model, program, dimensions, shadow) {};
+
+	//overload this to add AI behaviour. return true to remove object from public vector.
+	virtual bool update();
+};
+
+class Player : public DrawableObject{
+public:
+	Player(GLfloat x, GLfloat yOffset, GLfloat z, GLfloat rotation, GLfloat scale,
+          GLuint* tex, Model* model, GLuint* program, vec3 dimensions, bool shadow = false) :
+		DrawableObject(x, yOffset, z, rotation, scale, tex, model, program, dimensions, shadow) {};
 
 	//overload this to add AI behaviour. return true to remove object from public vector.
 	virtual bool update();
@@ -70,7 +82,7 @@ public:
 
 class Billboard : public DrawableObject{
 public:
-	Billboard(GLfloat x, GLfloat yOffset, GLfloat z, GLfloat scale, GLuint* tex, GLuint* program);
+	Billboard(GLfloat x, GLfloat yOffset, GLfloat z, GLfloat scale, GLuint* tex, GLuint* program, vec3 dimensions);
 	//overload this to add AI behaviour. return true to remove object from public vector.
 	virtual bool update();
 };

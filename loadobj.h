@@ -24,6 +24,7 @@ typedef struct
   // Space for saving VBO and VAO IDs
   GLuint vao; // VAO
   GLuint vb, ib, nb, tb; // VBOs
+
 } Model;
 
 Model* LoadModel(char* name);

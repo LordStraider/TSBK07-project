@@ -191,37 +191,28 @@ GLfloat findY(int x, int z) {
 }
 
 
-bool checkCollisionBB() {
-//    printf("x1: %f, y1: %f, y2: %f, z1: %f \n", xValue, yValue, windY+5, zValue);
+bool checkCollisionBB(DrawableObject* obj1, DrawableObject* obj2) {
+    vec3 obj1pos = obj1->getCoords();
+    vec3 obj2pos = obj2->getCoords();
+    vec3 obj1dim = obj1->getDimensons();
+    vec3 obj2dim = obj2->getDimensons();
 
-    if (xValue + 0.75 > 60 - 3.5 && xValue < 60 + 3.5) {
-  //      printf("inside x");
+    GLfloat y1 = findY(obj1pos.x, obj1pos.z) + obj1pos.y;
+    GLfloat y2 = findY(obj2pos.x, obj2pos.z) + obj2pos.y;
 
-        if (yValue + 0.42 > windY - 6.5 && yValue < windY + 5 + 6.5) {
-//            printf(", inside y");
-
-            if (zValue + 1.5 > 30 - 3.5 && zValue < 30 + 3.5){
-//                printf(", collide!!\n");
+    if (obj1pos.x + obj1dim.x > obj2pos.x - obj2dim.x && obj1pos.x < obj2pos.x + obj2dim.x) {
+        if (y1 + obj1dim.y > obj2pos.y && obj1pos.y < obj2pos.y + obj2pos.y) {
+            if (obj1pos.z + obj1dim.z > obj2pos.z - obj2dim.z && obj1pos.z < obj2pos.z + obj2dim.z){
                 return true;
             }
         }
     }
-  //  printf("\n");
     return false;
-
-/*    trans = T(xValue, yValue, zValue);
-    shear = S(1.5, 0.83, 1.5);
-
-    trans = T(60, windY+5, 30);
-    shear = S(7, 13, 7);*/
-
 }
 
-bool checkCollisionBS() {
+bool checkCollisionBS(DrawableObject* obj1, DrawableObject* obj2) {
     Point3D center, closest, result;
     center = SetVector(xValue, yValue - 1, zValue);
-
-    //printf("cx: %f, cy: %f, cz: %f, windY: %f \n", center.x, center.y, center.z, windY);
 
     if(center.x < 60 - 3.5)
         closest.x = 60 - 3.5;
@@ -254,7 +245,7 @@ bool checkCollisionBS() {
     return false;
 }
 
-bool checkCollisionSS() {
+bool checkCollisionSS(DrawableObject* obj1, DrawableObject* obj2) {
     Point3D center1, center2, result;
     center1 = SetVector(xValue, yValue+0.5, zValue);
     center2 = SetVector(10, 0.5, 10);
@@ -282,7 +273,7 @@ void keyController(){
     zModify = 0.0;
     angleMod = 0.0;
     camMod = 0.0;
-    rotation = camPos + M_PI / 2;
+    bunnyRotation = camPos + M_PI / 2;
 
     speed = 1.0;
 
@@ -292,9 +283,9 @@ void keyController(){
     }
     
     int direction = 1;
-    if (checkBoundaries() || checkCollisionBS()) {
+    /*if (checkBoundaries() || checkCollisionBS()) {
         direction = -1;
-    }
+    }*/
     
     if (keyIsDown('w')){
         xModify += direction * (-0.2 * cos(camPos));
@@ -317,15 +308,15 @@ void keyController(){
     } 
 
     if (keyIsDown('w') && keyIsDown('a')){
-        rotation += direction * (- M_PI / 4);
+        bunnyRotation += direction * (- M_PI / 4);
     } else if (keyIsDown('w') && keyIsDown('d')){
-        rotation += direction * (M_PI / 4);
+        bunnyRotation += direction * (M_PI / 4);
     } else if (keyIsDown('s') && keyIsDown('a')){
-        rotation += direction * (- 3 * M_PI / 4);
+        bunnyRotation += direction * (- 3 * M_PI / 4);
     } else if (keyIsDown('s') && keyIsDown('d')){
-        rotation += direction * (3 * M_PI / 4);
+        bunnyRotation += direction * (3 * M_PI / 4);
     } else {
-        rotation += direction * (rotateFront + rotateSide);
+        bunnyRotation += direction * (rotateFront + rotateSide);
     }
 
     if (keyIsDown('e')) {
@@ -341,20 +332,20 @@ void keyController(){
         yValue += 0.35;
     }
 
-    if (gravity < 0 && yValue > yFind + 0.5) {
-        gravity += 0.035;
+    if (gravity < 0 && yValue > 0.5) {
+        gravity += 0.1;
         yModify -= gravity;
-    } else if (yValue > yFind + 1.1) {
-        gravity += 0.01;
+    } else if (yValue > 1.1) {
+        gravity += 0.1;
         yModify -= gravity;
     } else {
         yModify = 0;
         gravity = 0;
 
         if (yFind == 1.5) {
-            yValue = 1.4;
+            yValue = 0;
         } else {
-            yValue = yFind + 0.7;
+            yValue = 0.7;
         }
     }
 }

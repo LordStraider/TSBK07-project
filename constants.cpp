@@ -7,7 +7,7 @@ mat4 rot, trans, shear, total, cam, proj, tmp;
 GLfloat camPos, yCamPos, camMod, xModify, xValue, yFind, yModify, yValue, zModify, zValue, teaY, windY;
 GLfloat kingX, kingY, kingZ;
 
-float gravity, angle, angleMod, rotation, speed, kingRotation;
+float gravity, angle, angleMod, bunnyRotation, speed, kingRotation;
 bool menuPressed;
 
 Point3D p,l;
@@ -57,7 +57,7 @@ void init(void) {
     yFind = 0.0;
     zValue = 40.0;
     gravity = 0.0;
-    rotation = M_PI / 2;
+    bunnyRotation = M_PI / 2;
     angle = 0.0;
     camPos = M_PI / 2;
     menuPressed = false;
@@ -124,18 +124,18 @@ void init(void) {
     kingY = findY(kingX, kingZ);
     printError("init arrays");
 
-    bunnyObj = new DrawableObject(rand() % texWidth, 0, rand() % texHeight, 0, &dirtTex, teapot, &program, true);
+    bunnyObj = new DrawableObject(rand() % texWidth, 0, rand() % texHeight, 0, &dirtTex, teapot, &program, vec3(10, 20, 10), true);
     allObjects.push_back(bunnyObj);
-    bunnyObj = new Enemy(rand() % texWidth, 0, rand() % texHeight, 0, 1, &bunnyTex, kingKong, &program, true);
+    bunnyObj = new Enemy(rand() % texWidth, 0, rand() % texHeight, 0, 1, &bunnyTex, kingKong, &program, vec3(5.1, 40, 5.1), true);
     allObjects.push_back(bunnyObj);
-    bunnyObj = new DrawableObject(xValue, 0.7, zValue, 0, &bunnyTex, bunny, &program, true);
+    bunnyObj = new Player(xValue, 0.7, zValue, 0, 1, &bunnyTex, bunny, &program, vec3(1.6, 0.83, 1.5), true);
     allObjects.push_back(bunnyObj);
 	for (int i = 0; i < 100; i++) {
-        bunnyObj = new DrawableObject(rand() % texWidth, 0, rand() % texHeight, 0, 1, &dirtTex, sphere, &program);
+        bunnyObj = new DrawableObject(rand() % texWidth, 0, rand() % texHeight, 0, 1, &dirtTex, sphere, &program, vec3(1.9, 3.9, 1.9));
     	allObjects.push_back(bunnyObj);
-		bunnyObj = new Tree(rand() % texWidth, 0, rand() % texHeight, 0, 1, &grassTex, highResTree, &program);
+		bunnyObj = new Tree(rand() % texWidth, 0, rand() % texHeight, 0, 1, &grassTex, highResTree, &program, vec3(0.5, 10, 0.5));
     	allObjects.push_back(bunnyObj);
-		allObjects.push_back(new Billboard(rand() % (texWidth-1), 10, rand() % (texHeight-1), 10, &skyBoxTex, &program));
+		allObjects.push_back(new Billboard(rand() % (texWidth-1), 10, rand() % (texHeight-1), 10, &skyBoxTex, &program, vec3(0.5, 0.5, 0.5)));
     }
 
 }
