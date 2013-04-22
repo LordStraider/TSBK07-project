@@ -109,7 +109,6 @@ void display(void) {
     /* Display all objects */
 	allObjects.erase(remove_if(allObjects.begin(), allObjects.end(), ObjectUpdater()), allObjects.end());
 
-
     sfDrawString(-20, -10, "meeeeep");
 
     printError("display");
@@ -156,10 +155,6 @@ void displayNoLight(GLfloat t) {
     total = Mult(trans, rot);
 
     glBindTexture(GL_TEXTURE_2D, skyBoxTex);
-
-/*    string s1 = "inPosition";
-    string s2 = "inNormal";
-    string s3 = "inTexCoord";*/
 
     tmp = cam;
     tmp.m[3] = 0;

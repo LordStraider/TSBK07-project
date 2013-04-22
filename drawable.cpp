@@ -20,7 +20,7 @@ public:
 			if (checkCollisionBB(obj1, obj2)) {
 				obj1->collisionHandler(obj2);
 				obj2->collisionHandler(obj1);
-			} 
+			}
 		} else if (mode1 == SPHERE && mode2 == BOX) {
 			if (checkCollisionBS(obj2, obj1)) {
 				obj1->collisionHandler(obj2);
@@ -46,9 +46,9 @@ private:
 vec3 findDimensions(Model* m) {
 /*	int i;
 	float maxx = -1e10, maxy = -1e10, maxz = -1e10, minx = 1e10, miny = 1e10, minz = 1e10;
-	
 
-	
+
+
 	printf("maxz %f minz %f \n", m->radius, m->radiusXZ);
 */
 	return vec3(1,1,1);//maxx-minx, maxy-miny, maxz-minz);
@@ -56,15 +56,15 @@ vec3 findDimensions(Model* m) {
 
 DrawableObject::DrawableObject() {}
 
-DrawableObject::DrawableObject(GLfloat x, GLfloat yOffset, GLfloat z, GLfloat rotation, GLuint* tex, Model* model, GLuint* program, vec3 dimensions, int collisionMode, bool shadow) : 
-	rotation(rotation), scale(1), tex(tex), model(model), program(program), dimensions(dimensions), collisionMode(collisionMode), shadow(shadow), del(false), affectedByGravity(false)  
+DrawableObject::DrawableObject(GLfloat x, GLfloat yOffset, GLfloat z, GLfloat rotation, GLuint* tex, Model* model, GLuint* program, vec3 dimensions, int collisionMode, bool shadow) :
+	rotation(rotation), scale(1), tex(tex), model(model), program(program), dimensions(dimensions), collisionMode(collisionMode), shadow(shadow), del(false), affectedByGravity(false)
 {
 	setCoords(x,yOffset,z);
 //	dimensions = scale * findDimensions(model);
 	setRotation(rotation);
 }
 
-DrawableObject::DrawableObject(GLfloat x, GLfloat yOffset, GLfloat z, GLfloat rotation, GLfloat scale, GLuint* tex, Model* model, GLuint* program, vec3 dimensions, int collisionMode, bool shadow) : 
+DrawableObject::DrawableObject(GLfloat x, GLfloat yOffset, GLfloat z, GLfloat rotation, GLfloat scale, GLuint* tex, Model* model, GLuint* program, vec3 dimensions, int collisionMode, bool shadow) :
 	rotation(rotation), scale(scale), tex(tex), model(model), program(program), dimensions(dimensions), collisionMode(collisionMode), shadow(shadow), del(false), affectedByGravity(false)
 {
 	setCoords(x,yOffset,z);
@@ -73,7 +73,7 @@ DrawableObject::DrawableObject(GLfloat x, GLfloat yOffset, GLfloat z, GLfloat ro
 }
 
 DrawableObject::DrawableObject(vec3 position, GLfloat rotation, GLuint* tex, Model* model, GLuint* program, vec3 dimensions, int collisionMode, bool shadow) :
-	x(position.x), z(position.z), yOffset(position.y), rotation(rotation), tex(tex), model(model), program(program), dimensions(dimensions), collisionMode(collisionMode), shadow(shadow), del(false), affectedByGravity(false) 
+	x(position.x), z(position.z), yOffset(position.y), rotation(rotation), tex(tex), model(model), program(program), dimensions(dimensions), collisionMode(collisionMode), shadow(shadow), del(false), affectedByGravity(false)
 {
 	setCoords(x,yOffset,z);
 //	dimensions = scale * findDimensions(model);
@@ -119,7 +119,7 @@ void DrawableObject::draw() {
     */
 }
 
-//returns random float between min and max. 
+//returns random float between min and max.
 float randomFloat(float Min, float Max)
 {
 	return ((float(rand()) / float(RAND_MAX)) * (Max - Min)) + Min;
@@ -133,7 +133,7 @@ void DrawableObject::rotate(GLfloat angle) {
 	rot = Mult(Ry(angle), rot);
 	updateMatrices();
 }
-	
+
 //use 0,1,0 to move only along the y-axis
 void DrawableObject::move(GLfloat x, GLfloat y, GLfloat z) {
 	setCoords(this->x+x, this->yOffset+y, this->z+z);
@@ -248,7 +248,7 @@ bool Enemy::update() {
 
 		}
 		else{
-			this->DrawableObject::update();		
+			this->DrawableObject::update();
 		}
 	}
 
@@ -271,7 +271,7 @@ bool Player::update() {
    	setCoords(xValue, yValue, zValue);
 
 	for_each(allObjects.begin(), allObjects.end(), CollisionChecker(this));
-	
+
 	return gameOver;
 }
 
@@ -281,7 +281,7 @@ bool Shot::update() {
 		return true;
 	}
 	for_each(allObjects.begin(), allObjects.end(), CollisionChecker(this));
-	
+
 	return getDel();
 }
 
@@ -298,7 +298,7 @@ bool Billboard::update() {
 }
 
 Light::Light(GLfloat x, GLfloat yOffset, GLfloat z, vec3 rotation, GLfloat scale, GLuint* tex, Model* model, GLuint* program, bool shadow) :
-		DrawableObject(x, yOffset, z, 0, scale, tex, model, program, vec3(0,0,0), NONE, shadow) 
+		DrawableObject(x, yOffset, z, 0, scale, tex, model, program, vec3(0,0,0), NONE, shadow)
 	{
 		rot = Mult(Mult(Rx(rotation.x), Ry(rotation.y)), Ry(rotation.z)); //not this simple, is it?
 		source = new LightSource(vec3(x, y = findY(x,z) + yOffset, z), rotation, vec3(1,1,1));
