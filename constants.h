@@ -45,7 +45,7 @@ extern float gravity, angle, angleMod, bunnyRotation, speed, kingRotation;
 extern bool menuPressed;
 
 extern Point3D p, l;
-extern GLuint program, programNoLight, programShadow, programSingleColor, programTerrain;
+extern GLuint program, programNoLight, programShadow, programSingleColor, programInvisible, programTerrain;
 
 extern GLuint dirtTex, bunnyTex, skyBoxTex, grassTex;
 

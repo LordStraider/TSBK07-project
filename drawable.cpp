@@ -79,14 +79,6 @@ DrawableObject::DrawableObject(vec3 position, GLfloat rotation, GLuint* tex, Mod
 	setRotation(rotation);
 }
 
-DrawableObject::DrawableObject(GLfloat x, GLfloat yOffset, GLfloat z, GLfloat rotation, GLfloat scale, GLuint* tex, Model* model, GLuint* program, vec3 dimensions, int collisionMode, int RotationAxis, bool shadow) : 
-	rotation(rotation), scale(scale), tex(tex), model(model), program(program), dimensions(dimensions), collisionMode(collisionMode), shadow(shadow) 
-{
-	setCoords(x,yOffset,z);
-//	dimensions = scale * findDimensions(model);
-	setRotation(rotation);
-}
-
 void DrawableObject::draw() {
     glUseProgram(*program);
     glUniformMatrix4fv(glGetUniformLocation(*program, "camMatrix"), 1, GL_TRUE, cam.m);
@@ -99,7 +91,7 @@ void DrawableObject::draw() {
 	    glUseProgram(programShadow);
 	    glUniformMatrix4fv(glGetUniformLocation(programShadow, "camMatrix"), 1, GL_TRUE, cam.m);
 
-	    mat4 shadowTrans = T(x, findY(x,z) + 0.01, z); //doesn't work for all models
+	    mat4 shadowTrans = T(x, findY(x,z) + 0.1, z); //doesn't work for all models
 	    mat4 sub = Mult(rot, S(scale,0,scale));
 	    mat4 shadowTotal = Mult(shadowTrans, sub);
 
@@ -107,7 +99,7 @@ void DrawableObject::draw() {
 		DrawModel(model, programShadow, "inPosition", "inNormal", "inTexCoord");
 	}
 
-/*	glUseProgram(programInvisible);
+	glUseProgram(programInvisible);
     glEnable(GL_BLEND);
     glUniformMatrix4fv(glGetUniformLocation(programInvisible, "camMatrix"), 1, GL_TRUE, cam.m);
 
@@ -121,7 +113,7 @@ void DrawableObject::draw() {
     glUniformMatrix4fv(glGetUniformLocation(programInvisible, "mdlMatrix"), 1, GL_TRUE, total.m);
     DrawModel(cube, programInvisible, "inPosition", "inNormal", "inTexCoord");
 
-    glDisable(GL_BLEND);*/
+    glDisable(GL_BLEND);
 }
 
 //returns random float between min and max. 
@@ -302,7 +294,7 @@ void Player::collisionHandler() {
     zValue -= xModify * speed;
     xModify = -zModify;
 
-	//direction = -1;
+	direction = -1;
 
 	setCoords(xValue, yValue, zValue);
 }

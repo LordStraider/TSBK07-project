@@ -11,7 +11,7 @@ float gravity, angle, angleMod, bunnyRotation, speed, kingRotation;
 bool menuPressed;
 
 Point3D p,l;
-GLuint program, programNoLight, programShadow, programSingleColor, programTerrain;
+GLuint program, programNoLight, programShadow, programSingleColor, programInvisible, programTerrain;
 
 GLuint dirtTex, bunnyTex, skyBoxTex, grassTex;
 
@@ -76,6 +76,7 @@ void init(void) {
     programNoLight = loadShaders("mainNoLight.vert", "mainNoLight.frag");
     programShadow = loadShaders("mainShadow.vert", "mainShadow.frag");
     programSingleColor = loadShaders("mainSingleColor.vert", "mainSingleColor.frag");
+    programInvisible = loadShaders("mainInvisible.vert", "mainInvisible.frag");
     programTerrain = loadShaders("terrain.vert", "terrain.frag");
 
     printError("init shader");
@@ -83,6 +84,7 @@ void init(void) {
     bunny = LoadModelPlus("bunnyplus.obj");
     kingKong = LoadModelPlus("King_Kong.obj");
     teapot = LoadModelPlus("teapot.obj");
+    cube = LoadModelPlus("cubeplus.obj");
     skyBox = LoadModelPlus("skybox.obj");
     blade = LoadModelPlus("blade.obj");
 	lowResTree = LoadModelPlus("tree_oak.obj");
@@ -108,6 +110,8 @@ void init(void) {
     glUniformMatrix4fv(glGetUniformLocation(programNoLight, "projMatrix"), 1, GL_TRUE, proj.m);
     glUseProgram(programSingleColor);
     glUniformMatrix4fv(glGetUniformLocation(programSingleColor, "projMatrix"), 1, GL_TRUE, proj.m);
+    glUseProgram(programInvisible);
+    glUniformMatrix4fv(glGetUniformLocation(programInvisible, "projMatrix"), 1, GL_TRUE, proj.m);
     glUseProgram(programTerrain);
     glUniformMatrix4fv(glGetUniformLocation(programTerrain, "projMatrix"), 1, GL_TRUE, proj.m);
     glUniform1i(glGetUniformLocation(programTerrain, "tex"), 0); // Texture unit 0
@@ -121,7 +125,7 @@ void init(void) {
 
 
     /* WindMill */
-    allObjects.push_back(new DrawableObject(60, 0, 30, 0, 0.8, &dirtTex, windmillWalls, &programSingleColor, vec3(7, 13, 7), BOX));
+    allObjects.push_back(new DrawableObject(60, 0, 30, 0, 0.8, &dirtTex, windmillWalls, &programSingleColor, vec3(3.5, 13, 3.5), BOX));
     allObjects.push_back(new DrawableObject(60, 0, 30, 0, 0.8, &dirtTex, windmillRoof, &programSingleColor, vec3(0,0,0), NONE));
     allObjects.push_back(new DrawableObject(60, 0, 30, 0, 0.8, &dirtTex, windmillBalcony, &programSingleColor, vec3(0,0,0), NONE, true));
     int i;

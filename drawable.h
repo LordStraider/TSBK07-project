@@ -20,8 +20,6 @@ public:
 
 	DrawableObject(GLfloat x, GLfloat yOffset, GLfloat z, GLfloat rotation, GLfloat scale, GLuint* tex, Model* model, GLuint* program, vec3 dimensions, int collisionMode, bool shadow = false);
 
-	DrawableObject(GLfloat x, GLfloat yOffset, GLfloat z, GLfloat rotation, GLfloat scale, GLuint* tex, Model* model, GLuint* program, vec3 dimensions, int collisionMode, int RotationAxis, bool shadow = false);
-
 	virtual void draw();
 
 	//overload this to add AI behaviour. return true to remove object from public vector.
@@ -72,7 +70,7 @@ class Blade : public DrawableObject{
 public:
 	Blade(GLfloat x, GLfloat yOffset, GLfloat z, GLfloat rotation, GLfloat scale,
          GLuint* tex, Model* model, GLuint* program, vec3 dimensions, int collisionMode, bool shadow = false) :
-		DrawableObject(x, yOffset, z, rotation, scale, tex, model, program, dimensions, collisionMode, 0, shadow) {};
+		DrawableObject(x, yOffset, z, rotation, scale, tex, model, program, dimensions, collisionMode, shadow) {};
 
 	//overload this to add AI behaviour. return true to remove object from public vector.
 	virtual bool update();
