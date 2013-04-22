@@ -15,23 +15,23 @@ public:
 
 		if (mode1 == BOX && mode2 == BOX) {
 			if (checkCollisionBB(obj1, obj2)) {
-				obj1->collisionHandler();
-				obj2->collisionHandler();
+				obj1->collisionHandler(obj2);
+				obj2->collisionHandler(obj1);
 			} 
 		} else if (mode1 == SPHERE && mode2 == BOX) {
 			if (checkCollisionBS(obj2, obj1)) {
-				obj1->collisionHandler();
-				obj2->collisionHandler();
+				obj1->collisionHandler(obj2);
+				obj2->collisionHandler(obj1);
 			}
 		} else if (mode1 == BOX && mode2 == SPHERE) {
 			if (checkCollisionBS(obj1, obj2)) {
-				obj1->collisionHandler();
-				obj2->collisionHandler();
+				obj1->collisionHandler(obj2);
+				obj2->collisionHandler(obj1);
 			}
 		} else if (mode1 == SPHERE && mode2 == SPHERE) {
 			if (checkCollisionSS(obj1, obj2)) {
-				obj1->collisionHandler();
-				obj2->collisionHandler();
+				obj1->collisionHandler(obj2);
+				obj2->collisionHandler(obj1);
 			}
 		}
 	}
@@ -99,6 +99,7 @@ void DrawableObject::draw() {
 		DrawModel(model, programShadow, "inPosition", "inNormal", "inTexCoord");
 	}
 
+	/*
 	glUseProgram(programInvisible);
     glEnable(GL_BLEND);
     glUniformMatrix4fv(glGetUniformLocation(programInvisible, "camMatrix"), 1, GL_TRUE, cam.m);
@@ -114,6 +115,7 @@ void DrawableObject::draw() {
     DrawModel(cube, programInvisible, "inPosition", "inNormal", "inTexCoord");
 
     glDisable(GL_BLEND);
+    */
 }
 
 //returns random float between min and max. 
@@ -231,21 +233,24 @@ bool Blade::update() {
 }
 
 bool Enemy::update() {
-	vec3 direction = Normalize(VectorSub(vec3(xValue, 0, zValue), getCoords()));
-	GLfloat distToCam = sqrt(pow(direction.x, 2) + pow(direction.z,2));
-	float angle = atan2f(direction.z, direction.x);
-	angle -= M_PI / 2; // depends on how the model is rotated.
-	if(distToCam < 50) {
-		setRotation(angle);
-		move(direction.x*0.1, 0, direction.z*0.1);
+	if (!gameOver) {
+		vec3 direction = Normalize(VectorSub(vec3(xValue, 0, zValue), getCoords()));
+		GLfloat distToCam = sqrt(pow(direction.x, 2) + pow(direction.z,2));
+		float angle = atan2f(direction.z, direction.x);
+		angle -= M_PI / 2; // depends on how the model is rotated.
+		if(distToCam < 50) {
+			setRotation(angle);
+			move(direction.x*0.1, 0, direction.z*0.1);
 
-		//DrawableObject *obj1 = this;
-		//for_each(allObjects.begin(), allObjects.end(), CollisionChecker(this));
+			//DrawableObject *obj1 = this;
+			//for_each(allObjects.begin(), allObjects.end(), CollisionChecker(this));
 
+		}
+		else{
+			this->DrawableObject::update();		
+		}
 	}
-	else{
-		this->DrawableObject::update();		
-	}
+
 	return false;
 }
 
@@ -257,7 +262,7 @@ bool Player::update() {
 
 	for_each(allObjects.begin(), allObjects.end(), CollisionChecker(this));
 	
-	return false;
+	return gameOver;
 }
 
 //use width and height rather than scale
@@ -272,34 +277,37 @@ bool Billboard::update() {
 	return false;
 }
 
-void DrawableObject::collisionHandler() {
+void DrawableObject::collisionHandler(DrawableObject* obj) {
 
 }
 
-void Tree::collisionHandler() {
+void Tree::collisionHandler(DrawableObject* obj) {
 
 }
 
-void Blade::collisionHandler() {
+void Blade::collisionHandler(DrawableObject* obj) {
 
 }
 
-void Enemy::collisionHandler() {
-
+void Enemy::collisionHandler(DrawableObject* obj) {
+	Player *p = dynamic_cast<Player*>(obj);
+	if (p != NULL) {
+		gameOver = true;
+	}
 }
 
-void Player::collisionHandler() {
+void Player::collisionHandler(DrawableObject* obj) {
     xValue -= zModify * speed;
     zModify = -xModify;
     zValue -= xModify * speed;
     xModify = -zModify;
 
-	direction = -1;
+    direction = -1;
 
 	setCoords(xValue, yValue, zValue);
 }
 
-void Billboard::collisionHandler() {
+void Billboard::collisionHandler(DrawableObject* obj) {
 
 }
 

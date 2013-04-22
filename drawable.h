@@ -41,7 +41,7 @@ public:
 	virtual GLfloat getYoffset();
 	virtual int getCollisionMode();
 
-	virtual void collisionHandler();
+	virtual void collisionHandler(DrawableObject* obj);
 
 protected:
 	void updateMatrices();
@@ -63,7 +63,7 @@ public:
 
 	//overload this to add AI behaviour. return true to remove object from public vector.
 	virtual bool update();
-	virtual void collisionHandler();
+	virtual void collisionHandler(DrawableObject* obj);
 };
 
 class Blade : public DrawableObject{
@@ -74,7 +74,7 @@ public:
 
 	//overload this to add AI behaviour. return true to remove object from public vector.
 	virtual bool update();
-	virtual void collisionHandler();
+	virtual void collisionHandler(DrawableObject* obj);
 };
 
 class Enemy : public DrawableObject{
@@ -85,7 +85,7 @@ public:
 
 	//overload this to add AI behaviour. return true to remove object from public vector.
 	virtual bool update();
-	virtual void collisionHandler();
+	virtual void collisionHandler(DrawableObject* obj);
 };
 
 class Player : public DrawableObject{
@@ -96,7 +96,7 @@ public:
 
 	//overload this to add AI behaviour. return true to remove object from public vector.
 	virtual bool update();
-	virtual void collisionHandler();
+	virtual void collisionHandler(DrawableObject* obj);
 };
 
 class Billboard : public DrawableObject{
@@ -105,7 +105,7 @@ public:
 
 	//overload this to add AI behaviour. return true to remove object from public vector.
 	virtual bool update();
-	virtual void collisionHandler();
+	virtual void collisionHandler(DrawableObject* obj);
 };
 
 void drawObj(DrawableObject* obj);

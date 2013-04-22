@@ -20,40 +20,21 @@
 /* Globals*/
 
 void MouseController(int x, int y){
-    //CGDisplayMoveCursorToPoint(CGDirectDisplayID display, CGPoint point);
-//  CGDisplayMoveCursorToPoint(200,200);
     if (!menuPressed) {
-        /*GLenum WinX = glutGet(GLUT_WINDOW_WIDTH);
-        GLenum WinY = glutGet(GLUT_WINDOW_HEIGHT);
+        glutWarpPointer(400,320);
+        glutHideCursor();
 
-        CGWarpMouseCursorPosition(CGPointMake(glutGet(GLUT_INIT_WINDOW_X) +
-        WinX / 2, glutGet(GLUT_INIT_WINDOW_Y) + WinY / 2));
-        if (WinX / 2 < x) {
-            xLookAt -= x / WinX;
+        if (x < 350) {
+            camMod = -M_PI / 60;
+        } else if (x > 450) {
+            camMod = M_PI / 60;
         } else {
-            xLookAt += x / WinX;
+            camMod = 0;
         }
-
-        if (WinY / 2 < y) {
-            yLookAt -= x / WinY;
-        } else {
-            yLookAt += x / WinY;
-        } */
-
-/*      CGWarpMouseCursorPosition(CGPointMake(200,600));
-        if (200 < x) {
-            xLookAt -= x*100;
-        } else {
-            xLookAt += x*100;
-        }
-
-        if (200 < y) {
-            yLookAt -= y*100;
-        } else {
-            yLookAt += y*100;
-        } */
+    } else {
+        camMod = 0;
+        glutShowCursor();
     }
-//  SetCursorPos(200,200);
 }
 
 void OnTimer(int value) {
@@ -70,6 +51,8 @@ int main(int argc, char *argv[]) {
     glutInit(&argc, argv);
     glutInitDisplayMode(GLUT_DOUBLE | GLUT_DEPTH);
     glutCreateWindow ("TSBK07 - project");
+    
+    //glutHideCursor();
 
 	//windows only...
 	#if defined(_WIN32)
@@ -85,9 +68,9 @@ int main(int argc, char *argv[]) {
 
     glutDisplayFunc(display);
     initKeymapManager();
-//  glutPassiveMotionFunc(MouseController);
+    glutPassiveMotionFunc(MouseController);
     glutTimerFunc(20, &OnTimer, 0);
-    init ();
+    init();
     glutMainLoop();
     exit(0);
 }

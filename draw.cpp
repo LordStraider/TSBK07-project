@@ -27,6 +27,7 @@ void display(void) {
     t = (GLfloat)glutGet(GLUT_ELAPSED_TIME);
 
     camPos += camMod;
+    yCamPos += camModY;
 
     xValue += xModify * speed;
     yValue += yModify;
@@ -58,7 +59,7 @@ void display(void) {
     kingZ = king.z;
 
 
-    p = SetVector(xValue + 9 * cos(camPos), yFind + 3, zValue + 9 * sin(camPos));
+    p = SetVector(xValue + 9 * cos(camPos), yFind + 3 * sin(yCamPos), zValue + 9 * sin(camPos));
     l = SetVector(xValue, yFind + 3.7 + 2, zValue);
 
     v = SetVector(0.0, 1.0, 0.0);
@@ -74,7 +75,6 @@ void display(void) {
 	allObjects.erase(remove_if(allObjects.begin(), allObjects.end(), ObjectUpdater()), allObjects.end());
 
     printError("display");
-
 
     #if defined(_WIN32)
 		glutSwapBuffers();

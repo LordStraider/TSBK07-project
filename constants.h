@@ -34,7 +34,7 @@ extern TextureData ttex; // terrain
     #define top 1.0
     #define bottom -1.0
 
-extern GLfloat camPos, yCamPos, camMod, xModify, xValue, yFind, yModify, yValue, zModify, zValue, teaY, windY;
+extern GLfloat camPos, yCamPos, camMod, camModY, xModify, xValue, yFind, yModify, yValue, zModify, zValue, teaY, windY;
 extern GLfloat kingX, kingY, kingZ;
 
 extern GLuint texWidth, texHeight;
@@ -42,7 +42,7 @@ extern GLfloat *vertexArray;
 extern GLuint *indexArray;
 
 extern float gravity, angle, angleMod, bunnyRotation, speed, kingRotation;
-extern bool menuPressed;
+extern bool menuPressed, gameOver;
 
 extern Point3D p, l;
 extern GLuint program, programNoLight, programShadow, programSingleColor, programInvisible, programTerrain;

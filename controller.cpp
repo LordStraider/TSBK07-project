@@ -280,7 +280,7 @@ void keyController(){
     xModify = 0.0;
     zModify = 0.0;
     angleMod = 0.0;
-    camMod = 0.0;
+    //camMod = 0.0;
     bunnyRotation = camPos + M_PI / 2;
 
     speed = 1.0;
@@ -324,10 +324,14 @@ void keyController(){
 
     if (keyIsDown('e')) {
         angleMod = M_PI / 60;
-        camMod = M_PI / 60;
+        //camMod = M_PI / 60;
     } else if (keyIsDown('q')) {
         angleMod = -M_PI / 60;
-        camMod = -M_PI / 60;
+        //camMod = -M_PI / 60;
+    }
+
+    if (keyIsDown('m')) {
+        menuPressed = !menuPressed;
     }
 
     if (keyIsDown(' ') && yValue < yFind + 0.705) { 

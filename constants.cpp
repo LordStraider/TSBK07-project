@@ -4,11 +4,11 @@ using namespace std;
 
 mat4 rot, trans, shear, total, cam, proj, tmp;
 
-GLfloat camPos, yCamPos, camMod, xModify, xValue, yFind, yModify, yValue, zModify, zValue, teaY, windY;
+GLfloat camPos, yCamPos, camMod, camModY, xModify, xValue, yFind, yModify, yValue, zModify, zValue, teaY, windY;
 GLfloat kingX, kingY, kingZ;
 
 float gravity, angle, angleMod, bunnyRotation, speed, kingRotation;
-bool menuPressed;
+bool menuPressed, gameOver;
 
 Point3D p,l;
 GLuint program, programNoLight, programShadow, programSingleColor, programInvisible, programTerrain;
@@ -51,6 +51,7 @@ void init(void) {
 
     proj = frustum(left, right, bottom, top, near, far);
 
+    gameOver = false;
     direction = 1;
     xModify = 0.0;
     yModify = 0.0;
