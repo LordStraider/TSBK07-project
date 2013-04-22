@@ -289,12 +289,7 @@ void keyController(){
     if (keyIsDown('<')){
         speed = 2.0;
     }
-    
-    int direction = 1;
-    /*if (checkBoundaries() || checkCollisionBS()) {
-        direction = -1;
-    }*/
-    
+        
     if (keyIsDown('w')){
         xModify += direction * (-0.2 * cos(camPos));
         zModify += direction * (-0.2 * sin(camPos));

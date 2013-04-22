@@ -45,11 +45,13 @@ extern float gravity, angle, angleMod, bunnyRotation, speed, kingRotation;
 extern bool menuPressed;
 
 extern Point3D p, l;
-extern GLuint program, programNoLight, programShadow, programSingleColor, programInvisible, programTerrain;
+extern GLuint program, programNoLight, programShadow, programSingleColor, programTerrain;
 
 extern GLuint dirtTex, bunnyTex, skyBoxTex, grassTex;
 
-extern Model *batmobil, *kingKong, *bunny, *bunnyShadow, *teapot, *teapotShadow, *cube, *skyBox, *blade, *windmillWalls, *windmillRoof, *windmillBalcony, *terrain, *sphere, *lowResTree, *highResTree, *billBoard;
+extern int direction;
+
+extern Model *kingKong, *bunny, *bunnyShadow, *teapot, *teapotShadow, *cube, *skyBox, *blade, *windmillWalls, *windmillRoof, *windmillBalcony, *terrain, *sphere, *lowResTree, *highResTree, *billBoard;
 //extern Model *windmill2;
 
 extern std::vector<DrawableObject*> allObjects;

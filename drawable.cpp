@@ -258,6 +258,7 @@ bool Enemy::update() {
 }
 
 bool Player::update() {
+	direction = 1;
 	setRotation(bunnyRotation + angle);
 
    	setCoords(xValue, yValue, zValue);
@@ -300,6 +301,8 @@ void Player::collisionHandler() {
     zModify = -xModify;
     zValue -= xModify * speed;
     xModify = -zModify;
+
+	//direction = -1;
 
 	setCoords(xValue, yValue, zValue);
 }

@@ -66,22 +66,12 @@ void display(void) {
 
     printError("pre light");
 
+    /* Special displays */
     displayNoLight(t);
-
-//	printError("drawing no light");
 	displayTerrain();
-//	printError("drawing texture");
-//    displaySingleColor(t);
-//	printError("drawing single");
-	//displayModels(t);
 
+    /* Display all objects */
 	allObjects.erase(remove_if(allObjects.begin(), allObjects.end(), ObjectUpdater()), allObjects.end());
-
-	//	printError("drawing models");
-    //displayShadows(t);
-//	printError("drawing shadows");
-//    displayInvisible(t);
-//	printError("drawing invisible");
 
     printError("display");
 
@@ -114,144 +104,6 @@ void displayTerrain() {
 
 
 }
-
-void displaySingleColor(GLfloat t) {
-	int i;
-    glUseProgram(programSingleColor);
-    glUniformMatrix4fv(glGetUniformLocation(programSingleColor, "camMatrix"), 1, GL_TRUE, cam.m);
-
-    trans = T(60, windY, 30);
-    shear = S(0.8, 0.8, 0.8);
-    total = Mult(trans, shear);
-    glUniformMatrix4fv(glGetUniformLocation(programSingleColor, "mdlMatrix"), 1, GL_TRUE, total.m);
-    DrawModel(windmillRoof, programSingleColor, "inPosition", "inNormal", "inTexCoord");
-
-    trans = T(60, windY, 30);
-    shear = S(0.8, 0.8, 0.8);
-    total = Mult(trans, shear);
-    glUniformMatrix4fv(glGetUniformLocation(programSingleColor, "mdlMatrix"), 1, GL_TRUE, total.m);
-    DrawModel(windmillBalcony, programSingleColor, "inPosition", "inNormal", "inTexCoord");
-
-    trans = T(60, windY, 30);
-    shear = S(0.8, 0.8, 0.8);
-    total = Mult(trans, shear);
-    glUniformMatrix4fv(glGetUniformLocation(programSingleColor, "mdlMatrix"), 1, GL_TRUE, total.m);
-    DrawModel(windmillWalls, programSingleColor, "inPosition", "inNormal", "inTexCoord");
-
-
-    for (i = 0; i < 4; i++) {
-        trans = T(64, windY + 7.4, 30);
-        shear = S(0.5, 0.5, 0.5);
-        total = Mult(trans, shear);
-        rot = Rx(i * M_PI / 2 + t/1000);
-        total = Mult(total, rot);
-        glUniformMatrix4fv(glGetUniformLocation(programSingleColor, "mdlMatrix"), 1, GL_TRUE, total.m);
-        DrawModel(blade, programSingleColor, "inPosition", "inNormal", "inTexCoord");
-    }
-}
-
-void displayInvisible(GLfloat t) {
-	glUseProgram(programInvisible);
-    glEnable(GL_BLEND);
-    glUniformMatrix4fv(glGetUniformLocation(programInvisible, "camMatrix"), 1, GL_TRUE, cam.m);
-
-    /* Making a collision cube */
-/*    trans = T(xValue, yValue, zValue);
-//    rot = Ry(rotation + angle);
-//    total = Mult(trans, rot);
-    shear = S(1.6, 0.83, 1.5);
-    total = Mult(trans, shear);
-    glUniformMatrix4fv(glGetUniformLocation(programInvisible, "mdlMatrix"), 1, GL_TRUE, total.m);
-    DrawModel(cube, programInvisible, "inPosition", "inNormal", "inTexCoord");
-*/
-
-    trans = T(60, windY+5, 30);
-    shear = S(7, 13, 7);
-    total = Mult(trans, shear);
-    glUniformMatrix4fv(glGetUniformLocation(programInvisible, "mdlMatrix"), 1, GL_TRUE, total.m);
-    DrawModel(cube, programInvisible, "inPosition", "inNormal", "inTexCoord");
-
-
-    trans = T(xValue, yValue-1, zValue);
-    shear = S(0.8, 0.8, 0.8);
-    total = Mult(trans, shear);
-    glUniformMatrix4fv(glGetUniformLocation(programInvisible, "mdlMatrix"), 1, GL_TRUE, total.m);
-    DrawModel(sphere, programInvisible, "inPosition", "inNormal", "inTexCoord");
-
-
-    glDisable(GL_BLEND);
-}
-
-void displayModels(GLfloat t) {
-    glUseProgram(program);
-    glUniformMatrix4fv(glGetUniformLocation(program, "camMatrix"), 1, GL_TRUE, cam.m);
-
-
-    /* Making the bunny */
-    trans = T(xValue, yValue, zValue);
-    rot = Ry(bunnyRotation + angle);
-    total = Mult(trans, rot);
-    glBindTexture(GL_TEXTURE_2D, bunnyTex);
-    glUniformMatrix4fv(glGetUniformLocation(program, "mdlMatrix"), 1, GL_TRUE, total.m);
-    DrawModel(bunny, program, "inPosition", "inNormal", "inTexCoord");
-
-    /* Making king kong */
-    trans = T(kingX, kingY, kingZ);
-    shear = S(0.6, 0.6, 0.6);
-    total = Mult(trans, shear);
-    rot = Ry(bunnyRotation);
-    total = Mult(total, rot);
-    glBindTexture(GL_TEXTURE_2D, bunnyTex);
-    glUniformMatrix4fv(glGetUniformLocation(program, "mdlMatrix"), 1, GL_TRUE, total.m);
-    DrawModel(kingKong, program, "inPosition", "inNormal", "inTexCoord");
-
-    /* Making batmobil */
-    trans = T(40, findY(40, 12), 12);
-    shear = S(0.1, 0.1, 0.1);
-    total = Mult(trans, shear);
-    glBindTexture(GL_TEXTURE_2D, bunnyTex);
-    glUniformMatrix4fv(glGetUniformLocation(program, "mdlMatrix"), 1, GL_TRUE, total.m);
-    DrawModel(batmobil, program, "inPosition", "inNormal", "inTexCoord");
-
-    /* Making the teapot */
-    trans = T(50, teaY + 18, 40);
-    rot = Ry(-t/1000);
-    total = Mult(trans, rot);
-    rot = Rx(t/1000);
-    total = Mult(total, rot);
-    glBindTexture(GL_TEXTURE_2D, dirtTex);
-    glUniformMatrix4fv(glGetUniformLocation(program, "mdlMatrix"), 1, GL_TRUE, total.m);
-    DrawModel(teapot, program, "inPosition", "inNormal", "inTexCoord");
-}
-
-void displayShadows(GLfloat t) {
-    glUseProgram(programShadow);
-    glUniformMatrix4fv(glGetUniformLocation(programShadow, "camMatrix"), 1, GL_TRUE, cam.m);
-
-    /* Making shadow under the bunny */
-    if (yFind != 1.5) {
-        trans = T(xValue, yFind + 0.2, zValue);
-        shear = S(1, 0, 1);
-        //shear = S(1/(yValue - yFind + 0.1), 0, 1/(yValue - yFind + 0.1)); //Makes the shaddow smaller when jumping, perspective. Buggy.
-        rot = Ry(bunnyRotation);
-        total = Mult(trans, shear);
-        total = Mult(total, rot);
-        glUniformMatrix4fv(glGetUniformLocation(programShadow, "mdlMatrix"), 1, GL_TRUE, total.m);
-        DrawModel(bunny, programShadow, "inPosition", "inNormal", "inTexCoord");
-    }
-
-    /* Making shadow under the teapot */
-    trans = T(50, teaY + 0.01, 40);
-    shear = S(1, 0, 1);
-    total = Mult(trans, shear);
-    rot = Ry(-t/1000);
-    total = Mult(total, rot);
-    rot = Rx(t/1000);
-    total = Mult(total, rot);
-    glUniformMatrix4fv(glGetUniformLocation(programShadow, "mdlMatrix"), 1, GL_TRUE, total.m);
-    DrawModel(teapot, programShadow, "inPosition", "inNormal", "inTexCoord");
-}
-
 
 void displayNoLight(GLfloat t) {
 	mat4 tmp;

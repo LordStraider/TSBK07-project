@@ -11,7 +11,7 @@ float gravity, angle, angleMod, bunnyRotation, speed, kingRotation;
 bool menuPressed;
 
 Point3D p,l;
-GLuint program, programNoLight, programShadow, programSingleColor, programInvisible, programTerrain;
+GLuint program, programNoLight, programShadow, programSingleColor, programTerrain;
 
 GLuint dirtTex, bunnyTex, skyBoxTex, grassTex;
 
@@ -19,7 +19,9 @@ GLuint texWidth, texHeight;
 GLfloat *vertexArray;
 GLuint *indexArray;
 
-Model *batmobil, *kingKong, *bunny, *bunnyShadow, *teapot, *teapotShadow, *cube, *skyBox, *blade, *windmillWalls, *windmillRoof, *windmillBalcony, *terrain, *sphere, *lowResTree, *highResTree, *billBoard;
+int direction;
+
+Model *kingKong, *bunny, *bunnyShadow, *teapot, *teapotShadow, *cube, *skyBox, *blade, *windmillWalls, *windmillRoof, *windmillBalcony, *terrain, *sphere, *lowResTree, *highResTree, *billBoard;
 //Model *windmill2;
 
 
@@ -49,6 +51,7 @@ void init(void) {
 
     proj = frustum(left, right, bottom, top, near, far);
 
+    direction = 1;
     xModify = 0.0;
     yModify = 0.0;
     zModify = 0.0;
@@ -73,16 +76,13 @@ void init(void) {
     programNoLight = loadShaders("mainNoLight.vert", "mainNoLight.frag");
     programShadow = loadShaders("mainShadow.vert", "mainShadow.frag");
     programSingleColor = loadShaders("mainSingleColor.vert", "mainSingleColor.frag");
-    programInvisible = loadShaders("mainInvisible.vert", "mainInvisible.frag");
     programTerrain = loadShaders("terrain.vert", "terrain.frag");
 
     printError("init shader");
 
     bunny = LoadModelPlus("bunnyplus.obj");
     kingKong = LoadModelPlus("King_Kong.obj");
-	batmobil = LoadModelPlus("batmobile.obj");
     teapot = LoadModelPlus("teapot.obj");
-    cube = LoadModelPlus("cubeplus.obj");
     skyBox = LoadModelPlus("skybox.obj");
     blade = LoadModelPlus("blade.obj");
 	lowResTree = LoadModelPlus("tree_oak.obj");
@@ -108,8 +108,6 @@ void init(void) {
     glUniformMatrix4fv(glGetUniformLocation(programNoLight, "projMatrix"), 1, GL_TRUE, proj.m);
     glUseProgram(programSingleColor);
     glUniformMatrix4fv(glGetUniformLocation(programSingleColor, "projMatrix"), 1, GL_TRUE, proj.m);
-    glUseProgram(programInvisible);
-    glUniformMatrix4fv(glGetUniformLocation(programInvisible, "projMatrix"), 1, GL_TRUE, proj.m);
     glUseProgram(programTerrain);
     glUniformMatrix4fv(glGetUniformLocation(programTerrain, "projMatrix"), 1, GL_TRUE, proj.m);
     glUniform1i(glGetUniformLocation(programTerrain, "tex"), 0); // Texture unit 0
