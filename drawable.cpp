@@ -284,16 +284,16 @@ void Player::collisionHandler(DrawableObject* obj) {
 	if (obj->getCollisionMode() == SPHERE) {
 		obj->toggleDel();
 	    addAmmo();
+	} else {
+	    xValue -= zModify * speed;
+	    zModify = -xModify;
+	    zValue -= xModify * speed;
+	    xModify = -zModify;
+
+	    direction = -1;
+
+		setCoords(xValue, yValue, zValue);
 	}
-
-    xValue -= zModify * speed;
-    zModify = -xModify;
-    zValue -= xModify * speed;
-    xModify = -zModify;
-
-    direction = -1;
-
-	setCoords(xValue, yValue, zValue);
 }
 
 void Billboard::collisionHandler(DrawableObject* obj) {

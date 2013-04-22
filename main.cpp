@@ -68,7 +68,7 @@ int main(int argc, char *argv[]) {
 
     glutDisplayFunc(display);
     initKeymapManager();
-    glutPassiveMotionFunc(MouseController);
+//    glutPassiveMotionFunc(MouseController);
     glutTimerFunc(20, &OnTimer, 0);
     init();
     glutMainLoop();
