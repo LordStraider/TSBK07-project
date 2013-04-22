@@ -42,8 +42,8 @@ void MouseController(int x, int y){
 }
 
 void MouseClick(int button, int state, int x, int y) {
-    if (button == 0 && state == 0 && bunnyObj->getAmmo() > 0) {
-		bunnyObj->fireBullet();  
+    if (button == 0 && state == 0) {
+		bunnyObj->fireBulletIfAmmo();
 	}
 }
 

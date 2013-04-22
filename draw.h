@@ -25,6 +25,7 @@
 
 void displayTexture();
 void displayTerrain();
+void displayPlayerStatus();
 // void displaySingleColor(GLfloat t);
 void displayInvisible(GLfloat t);
 void displayModels(GLfloat t);

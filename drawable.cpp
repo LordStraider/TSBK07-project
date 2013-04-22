@@ -255,9 +255,10 @@ bool Enemy::update() {
 	return getDel();
 }
 
-void Player::fireBullet(){
-	subAmmo();
-    printf("ammo: %i\n", getAmmo());
+void Player::fireBulletIfAmmo(){
+    if(this->getAmmo() <= 0) return;
+
+    subAmmo();
 	float rot1 = rotation + M_PI / 2;
 	Shot* shot = new Shot(x, 1, z, rot1, 0.4, &dirtTex, sphere, &programSingleColor, vec3(0.4, 0.4, 0.4), SPHERE, vec3(cos(rot1),0,sin(rot1)));
 	allObjects.push_back(shot);

@@ -154,7 +154,6 @@ void init_constants(void) {
     allObjects.push_back(bunnyObj);
 
 	for (int i = 0; i < 100; i++) {
-        /* Spheres */
     	/* Trees */
     	allObjects.push_back(new Tree(rand() % texWidth, 0, rand() % texHeight, 0, 1, &grassTex, highResTree, &program, vec3(0.5, 10, 0.5), BOX));
 	    /* Billboards */

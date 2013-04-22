@@ -115,12 +115,12 @@ class Player : public DrawableObject{
 public:
 	Player(GLfloat x, GLfloat yOffset, GLfloat z, GLfloat rotation, GLfloat scale,
           GLuint* tex, Model* model, GLuint* program, vec3 dimensions, int collisionMode, bool shadow = false) :
-		DrawableObject(x, yOffset, z, rotation, scale, tex, model, program, dimensions, collisionMode, shadow), ammo(0) {};
+		DrawableObject(x, yOffset, z, rotation, scale, tex, model, program, dimensions, collisionMode, shadow), ammo(10) {};
 
 	//overload this to add AI behaviour. return true to remove object from public vector.
 	virtual bool update();
 	virtual void collisionHandler(DrawableObject* obj);
-	void fireBullet();
+	void fireBulletIfAmmo();
 	void addAmmo() { ammo++; }
 	int getAmmo() { return ammo; }
 	void subAmmo() { --ammo; }

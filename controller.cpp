@@ -10,7 +10,7 @@ Model* GenerateTerrain(TextureData *tex)
     Point3D cross;
     Point3D sum;
     Point3D tmp;
-    Model* model; 
+    Model* model;
     GLfloat y;
     GLfloat *normalArray, *texCoordArray;
 
@@ -19,7 +19,7 @@ Model* GenerateTerrain(TextureData *tex)
     texCoordArray = (GLfloat*)malloc(sizeof(GLfloat) * 2 * vertexCount);
     indexArray = (GLuint*)malloc(sizeof(GLuint) * triangleCount*3);
     //ballY = malloc(sizeof(GLfloat) * 100);
-    
+
     texWidth = tex->width;
 
     texHeight = tex->height;
@@ -58,7 +58,7 @@ Model* GenerateTerrain(TextureData *tex)
             indexArray[(x + z * (tex->width-1))*6 + 4] = x + (z+1) * tex->width;
             indexArray[(x + z * (tex->width-1))*6 + 5] = x+1 + (z+1) * tex->width;
         }
-    
+
 /*
     Point3D *TmpCrossArray[3 * 9];
     for (x = 0; x < tex->width; x++)
@@ -68,7 +68,7 @@ Model* GenerateTerrain(TextureData *tex)
             //Hämta alla vertices som är grannar med oss och ta kryssprodukten av dem!
             for (k = -1; k < 1; k++){
                 for (j = -1; j < 1; j++){
-                    // Funkar (?) men problem vid hörn och kanter!! 
+                    // Funkar (?) men problem vid hörn och kanter!!
                     TmpCrossArray[k + 1 + (j + 1) * 3] = CrossProduct(
 Point3D(vertexArray[((x+k) + (z+j) * tex->width)*3 + 0], vertexArray[((x+k) + (z+j) * tex->width)*3 + 1], vertexArray[((x+k) + (z+j) * tex->width)*3 + 2]), p);
 
@@ -113,7 +113,7 @@ Point3D(vertexArray[((x+k) + (z+j) * tex->width)*3 + 0], vertexArray[((x+k) + (z
         }
 
     // End of terrain generation
-    
+
     // Create Model and upload to GPU:
 
     model = LoadDataToModel(
@@ -136,7 +136,7 @@ bool SameSide(Point3D p1, Point3D p2, Point3D a, Point3D b) {
     sub3 = VectorSub(p2, a);
     result = CrossProduct(sub1, sub2);
     result2 = CrossProduct(sub1, sub3);
-    
+
     if (DotProduct(result, result2) >= 0) {
         return true;
     }
@@ -153,10 +153,10 @@ bool PointInTriangle(Point3D p, Point3D a, Point3D b, Point3D c) {
 }
 
 GLfloat findY(int x, int z) {
-    GLuint triangle1[3]; 
-    GLuint triangle2[3]; 
+    GLuint triangle1[3];
+    GLuint triangle2[3];
     GLfloat y = 0.0;
-    GLfloat d; 
+    GLfloat d;
     Point3D p, v1, v2, v3, norm;
 
     triangle1[0] = indexArray[(x + z * (texWidth-1))*6 + 0] * 3; //x
@@ -165,7 +165,7 @@ GLfloat findY(int x, int z) {
     triangle2[0] = indexArray[(x + z * (texWidth-1))*6 + 3] * 3; //x
     triangle2[1] = indexArray[(x + z * (texWidth-1))*6 + 4] * 3; //y
     triangle2[2] = indexArray[(x + z * (texWidth-1))*6 + 5] * 3; //z
-    
+
     p = SetVector(x, 0, z);
     v1 = SetVector(vertexArray[triangle1[0]], 0, vertexArray[triangle1[0] + 2]);
     v2 = SetVector(vertexArray[triangle1[1]], 0, vertexArray[triangle1[1] + 2]);
@@ -186,7 +186,7 @@ GLfloat findY(int x, int z) {
     // A * x + B * y + C * z - D = 0 => y = (D - A*x - C*z) / B
     d = norm.x * v1.x + norm.y * v1.y + norm.z * v1.z;
     y = (d - norm.x * v1.x - norm.z * v1.z) / norm.y;
-    
+
     return y;
 }
 
@@ -280,7 +280,7 @@ void keyController(){
 
     float rotateFront = 0.0;
     float rotateSide = 0.0;
-    
+
     xModify = 0.0;
     zModify = 0.0;
     angleMod = 0.0;
@@ -293,7 +293,7 @@ void keyController(){
     if (keyIsDown('<')){
         speed = 2.0;
     }
-        
+
     if (keyIsDown('w')){
         xModify += direction * (-0.2 * cos(camPos));
         zModify += direction * (-0.2 * sin(camPos));
@@ -312,7 +312,7 @@ void keyController(){
         xModify += direction * (0.2 * sin(camPos));
         zModify += direction * (-0.2 * cos(camPos));
         rotateSide = direction * (M_PI / 2);
-    } 
+    }
 
     if (keyIsDown('w') && keyIsDown('a')){
         bunnyRotation += direction * (- M_PI / 4);
@@ -327,7 +327,7 @@ void keyController(){
     }
 
 	if(keyIsDown('f')){
-		bunnyObj->fireBullet();
+		bunnyObj->fireBulletIfAmmo();
 	}
 
     if (keyIsDown('e')) {
@@ -342,7 +342,7 @@ void keyController(){
         menuPressed = !menuPressed;
     }
 
-    if (keyIsDown(' ') && yValue < yFind + 0.705) { 
+    if (keyIsDown(' ') && yValue < yFind + 0.705) {
         gravity = -0.18;
         yValue += 0.35;
     }

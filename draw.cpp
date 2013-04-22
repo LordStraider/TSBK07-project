@@ -102,14 +102,13 @@ void display(void) {
     /* Special displays */
     displayNoLight(t);
 	displayTerrain();
+    displayPlayerStatus();
  //   displaySingleColor(t);
 
 	for_each(programs.begin(), programs.end(), updateProgram());
 
     /* Display all objects */
 	allObjects.erase(remove_if(allObjects.begin(), allObjects.end(), ObjectUpdater()), allObjects.end());
-
-    sfDrawString(-20, -10, "meeeeep");
 
     printError("display");
 
@@ -118,6 +117,15 @@ void display(void) {
     #endif
 
     glFlush();
+}
+
+void displayPlayerStatus() {
+    #define MAX_STRING_LENGTH 20
+
+    // String handling in C/C++ <3
+    char ammo[MAX_STRING_LENGTH] = "";
+    snprintf(ammo, MAX_STRING_LENGTH, "Ammo: %d", bunnyObj->getAmmo());
+    sfDrawString(-20, -10, ammo);
 }
 
 void displayTerrain() {
