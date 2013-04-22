@@ -1,5 +1,8 @@
 #pragma once
 
+// C++ Standard-library imports
+#include <algorithm>
+
 // Third-party module imports
 #include "lib/GL_utilities.h"
 #include "lib/VectorUtils3.h"
@@ -7,7 +10,8 @@
 // Project modules
 #include "controller.h"
 #include "constants.h"
-#include <algorithm>
+
+
 class LightSource {
 public:
 	vec3 position, direction, color;
@@ -23,7 +27,7 @@ public:
 	mat4 total;
 
 //	~DrawableObject();
-	
+
 	DrawableObject();
 
 	DrawableObject(GLfloat x, GLfloat yOffset, GLfloat z, GLfloat rotation, GLuint* tex, Model* model, GLuint* program, vec3 dimensions, int collisionMode, bool shadow = false);
