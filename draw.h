@@ -21,7 +21,7 @@
 
 void displayTexture();
 void displayTerrain();
-void displaySingleColor(GLfloat t);
+// void displaySingleColor(GLfloat t);
 void displayInvisible(GLfloat t);
 void displayModels(GLfloat t);
 void displayShadows(GLfloat t);

@@ -4,11 +4,11 @@ using namespace std;
 
 mat4 rot, trans, shear, total, cam, proj, tmp;
 
-GLfloat camPos, yCamPos, camMod, xModify, xValue, yFind, yModify, yValue, zModify, zValue, teaY, windY;
+GLfloat camPos, yCamPos, camMod, camModY, xModify, xValue, yFind, yModify, yValue, zModify, zValue, teaY, windY;
 GLfloat kingX, kingY, kingZ;
 
-float gravity, angle, angleMod, rotation, speed, kingRotation;
-bool menuPressed;
+float gravity, angle, angleMod, bunnyRotation, speed, kingRotation;
+bool menuPressed, gameOver;
 
 Point3D p,l;
 GLuint program, programNoLight, programShadow, programSingleColor, programInvisible, programTerrain;
@@ -19,7 +19,9 @@ GLuint texWidth, texHeight;
 GLfloat *vertexArray;
 GLuint *indexArray;
 
-Model *batmobil, *kingKong, *bunny, *bunnyShadow, *teapot, *teapotShadow, *cube, *skyBox, *blade, *windmillWalls, *windmillRoof, *windmillBalcony, *terrain, *sphere, *lowResTree, *highResTree, *billBoard;
+int direction;
+
+Model *kingKong, *bunny, *bunnyShadow, *teapot, *teapotShadow, *cube, *skyBox, *blade, *windmillWalls, *windmillRoof, *windmillBalcony, *terrain, *sphere, *lowResTree, *highResTree, *billBoard;
 //Model *windmill2;
 
 vector<GLuint*> programs;
@@ -50,6 +52,8 @@ void init(void) {
 
     proj = frustum(left, right, bottom, top, near, far);
 
+    gameOver = false;
+    direction = 1;
     xModify = 0.0;
     yModify = 0.0;
     zModify = 0.0;
@@ -58,7 +62,7 @@ void init(void) {
     yFind = 0.0;
     zValue = 40.0;
     gravity = 0.0;
-    rotation = M_PI / 2;
+    bunnyRotation = M_PI / 2;
     angle = 0.0;
     camPos = M_PI / 2;
     menuPressed = false;
@@ -81,7 +85,6 @@ void init(void) {
 
     bunny = LoadModelPlus("bunnyplus.obj");
     kingKong = LoadModelPlus("King_Kong.obj");
-	batmobil = LoadModelPlus("batmobile.obj");
     teapot = LoadModelPlus("teapot.obj");
     cube = LoadModelPlus("cubeplus.obj");
     skyBox = LoadModelPlus("skybox.obj");
@@ -126,24 +129,37 @@ void init(void) {
 
     LoadTGATexture("fft-terrain.tga", &ttex);
     terrain = GenerateTerrain(&ttex);
-    teaY = findY(50, 40);
-    windY = findY(60, 30);
-    kingY = findY(kingX, kingZ);
     printError("init arrays");
 
-    bunnyObj = new DrawableObject(rand() % texWidth, 0, rand() % texHeight, 0, &dirtTex, teapot, &program, true);
-    allObjects.push_back(bunnyObj);
-    bunnyObj = new Enemy(rand() % texWidth, 0, rand() % texHeight, 0, 1, &bunnyTex, kingKong, &program, true);
-    allObjects.push_back(bunnyObj);
-    bunnyObj = new DrawableObject(xValue, yValue, zValue, 0, &bunnyTex, bunny, &program, true);
-    allObjects.push_back(bunnyObj);
-	for (int i = 0; i < 20; i++) {
-        bunnyObj = new DrawableObject(rand() % (texWidth-1), 0, rand() % (texHeight-1), 0, 1, &dirtTex, sphere, &program);
-    	allObjects.push_back(bunnyObj);
-		bunnyObj = new Tree(rand() % (texWidth-1), 0, rand() % (texHeight-1), 0, 1, &grassTex, highResTree, &program);
-    	allObjects.push_back(bunnyObj);
-		allObjects.push_back(new Billboard(rand() % (texWidth-1), 10, rand() % (texHeight-1), 10, &skyBoxTex, &program));
+
+    /* WindMill */
+    allObjects.push_back(new DrawableObject(60, 0, 30, 0, 0.8, &dirtTex, windmillWalls, &programSingleColor, vec3(3.5, 13, 3.5), BOX));
+    allObjects.push_back(new DrawableObject(60, 0, 30, 0, 0.8, &dirtTex, windmillRoof, &programSingleColor, vec3(0,0,0), NONE));
+    allObjects.push_back(new DrawableObject(60, 0, 30, 0, 0.8, &dirtTex, windmillBalcony, &programSingleColor, vec3(0,0,0), NONE, true));
+    int i;
+    for (i = 0; i < 4; i++) {
+        float r = i * M_PI / 2;
+        allObjects.push_back(new Blade(64, 7.4, 30, r, 0.5, &dirtTex, blade, &programSingleColor, vec3(0,0,0), NONE));
     }
+
+    /* Teapot */
+    allObjects.push_back(new DrawableObject(rand() % texWidth, 0, rand() % texHeight, 0, &dirtTex, teapot, &program, vec3(10, 20, 10), BOX, true));
+
+    /* KingKong */
+    allObjects.push_back(new Enemy(rand() % texWidth, 0, rand() % texHeight, 0, 1, &bunnyTex, kingKong, &program, vec3(5.1, 40, 5.1), BOX, true));
+
+    /* Bunny */
+    allObjects.push_back(new Player(xValue, 0.7, zValue, 0, 1, &bunnyTex, bunny, &program, vec3(0.8, 0.8, 0.8), SPHERE, true));
+
+	for (int i = 0; i < 100; i++) {
+        /* Spheres */
+    	/* Trees */
+    	allObjects.push_back(new Tree(rand() % texWidth, 0, rand() % texHeight, 0, 1, &grassTex, highResTree, &program, vec3(0.5, 10, 0.5), BOX));
+	    /* Billboards */
+        allObjects.push_back(new Billboard(rand() % (texWidth-1), 10, rand() % (texHeight-1), 10, &skyBoxTex, &program, vec3(0,0,0), NONE));
+
+    }
+
 	for (int i = 0; i < 8; i++){
 		bunnyObj = new Light(20, 5, 20, vec3(rand() % 6, rand() % 6, rand() % 6), 3, &skyBoxTex, sphere, &program);
 		lightSources.push_back(bunnyObj);

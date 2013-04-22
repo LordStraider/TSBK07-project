@@ -4,7 +4,7 @@
 #include "GL_utilities.h"
 #include "controller.h"
 #include "constants.h"
-
+#include <algorithm>
 class LightSource {
 public:
 	vec3 position, direction, color;
@@ -23,11 +23,11 @@ public:
 	
 	DrawableObject();
 
-	DrawableObject(GLfloat x, GLfloat yOffset, GLfloat z, GLfloat rotation, GLuint* tex, Model* model, GLuint* program, bool shadow = false);
+	DrawableObject(GLfloat x, GLfloat yOffset, GLfloat z, GLfloat rotation, GLuint* tex, Model* model, GLuint* program, vec3 dimensions, int collisionMode, bool shadow = false);
 
-	DrawableObject(vec3 position, GLfloat rotation, GLuint* tex, Model* model, GLuint* program, bool shadow = false);
+	DrawableObject(vec3 position, GLfloat rotation, GLuint* tex, Model* model, GLuint* program, vec3 dimensions, int collisionMode, bool shadow = false);
 
-	DrawableObject(GLfloat x, GLfloat yOffset, GLfloat z, GLfloat rotation, GLfloat scale, GLuint* tex, Model* model, GLuint* program, bool shadow = false);
+	DrawableObject(GLfloat x, GLfloat yOffset, GLfloat z, GLfloat rotation, GLfloat scale, GLuint* tex, Model* model, GLuint* program, vec3 dimensions, int collisionMode, bool shadow = false);
 
 	virtual void draw();
 
@@ -45,43 +45,87 @@ public:
 
 	//use NULL,0,NULL to set y = 0 while not affecting x or z. See also move()
 	virtual void setCoords(GLfloat x, GLfloat y, GLfloat z);
-	virtual vec3 getCoords();
+	virtual vec3 getCoords() const { return vec3(this->x, this->y, this->z); }
+	virtual vec3 getDimensons() const { return dimensions; }
+	virtual GLfloat getYoffset() { return yOffset; }
+	virtual int getCollisionMode() const { return collisionMode; }
+	virtual bool getDel() const { return del; }
+	void toggleDel() { del = !del; }
+
+	virtual void collisionHandler(DrawableObject* obj);
+
+	//being lazy
+	bool affectedByGravity;
 
 protected:
 	void updateMatrices();
 	void stayInBounds();
 	GLfloat x, z, y, yOffset, rotation, scale; //yOffset is distance from ground
+	vec3 dimensions;
 	Model* model;
 	GLuint* program;
 	GLuint* tex;
+	int collisionMode;
 	bool shadow;
+	bool del;
 };
 
 class Tree : public DrawableObject{
 public:
 	Tree(GLfloat x, GLfloat yOffset, GLfloat z, GLfloat rotation, GLfloat scale,
-         GLuint* tex, Model* model, GLuint* program, bool shadow = false) :
-		DrawableObject(x, yOffset, z, rotation, scale, tex, model, program, shadow) {};
+         GLuint* tex, Model* model, GLuint* program, vec3 dimensions, int collisionMode, bool shadow = false) :
+		DrawableObject(x, yOffset, z, rotation, scale, tex, model, program, dimensions, collisionMode, shadow) {};
 
 	//overload this to add AI behaviour. return true to remove object from public vector.
 	virtual bool update();
+	virtual void collisionHandler(DrawableObject* obj);
+	std::vector<DrawableObject*> apples;
+};
+
+class Blade : public DrawableObject{
+public:
+	Blade(GLfloat x, GLfloat yOffset, GLfloat z, GLfloat rotation, GLfloat scale,
+         GLuint* tex, Model* model, GLuint* program, vec3 dimensions, int collisionMode, bool shadow = false) :
+		DrawableObject(x, yOffset, z, rotation, scale, tex, model, program, dimensions, collisionMode, shadow) {};
+
+	//overload this to add AI behaviour. return true to remove object from public vector.
+	virtual bool update();
+	virtual void collisionHandler(DrawableObject* obj);
 };
 
 class Enemy : public DrawableObject{
 public:
 	Enemy(GLfloat x, GLfloat yOffset, GLfloat z, GLfloat rotation, GLfloat scale,
-          GLuint* tex, Model* model, GLuint* program, bool shadow = false) :
-		DrawableObject(x, yOffset, z, rotation, scale, tex, model, program, shadow) {};
+          GLuint* tex, Model* model, GLuint* program, vec3 dimensions, int collisionMode, bool shadow = false) :
+		DrawableObject(x, yOffset, z, rotation, scale, tex, model, program, dimensions, collisionMode, shadow) {};
 
 	//overload this to add AI behaviour. return true to remove object from public vector.
 	virtual bool update();
+	virtual void collisionHandler(DrawableObject* obj);
+};
+
+class Player : public DrawableObject{
+public:
+	Player(GLfloat x, GLfloat yOffset, GLfloat z, GLfloat rotation, GLfloat scale,
+          GLuint* tex, Model* model, GLuint* program, vec3 dimensions, int collisionMode, bool shadow = false) :
+		DrawableObject(x, yOffset, z, rotation, scale, tex, model, program, dimensions, collisionMode, shadow), ammo(0) {};
+
+	//overload this to add AI behaviour. return true to remove object from public vector.
+	virtual bool update();
+	virtual void collisionHandler(DrawableObject* obj);
+	void addAmmo() { ammo++; }
+
+private:
+	int ammo;
 };
 
 class Billboard : public DrawableObject{
 public:
-	Billboard(GLfloat x, GLfloat yOffset, GLfloat z, GLfloat scale, GLuint* tex, GLuint* program);
+	Billboard(GLfloat x, GLfloat yOffset, GLfloat z, GLfloat scale, GLuint* tex, GLuint* program, vec3 dimensions, int collisionMode);
+
 	//overload this to add AI behaviour. return true to remove object from public vector.
 	virtual bool update();
+	virtual void collisionHandler(DrawableObject* obj);
 };
 
 class Light : public DrawableObject{

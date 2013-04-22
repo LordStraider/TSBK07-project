@@ -24,6 +24,9 @@ extern mat4 rot, trans, shear, total, cam, proj, tmp;
 
 extern TextureData ttex; // terrain
 
+    #define BOX 0
+    #define SPHERE 1
+    #define NONE 100
     #define near 1.0
     #define far 300.0
     #define right 1.0
@@ -31,22 +34,24 @@ extern TextureData ttex; // terrain
     #define top 1.0
     #define bottom -1.0
 
-extern GLfloat camPos, yCamPos, camMod, xModify, xValue, yFind, yModify, yValue, zModify, zValue, teaY, windY;
+extern GLfloat camPos, yCamPos, camMod, camModY, xModify, xValue, yFind, yModify, yValue, zModify, zValue, teaY, windY;
 extern GLfloat kingX, kingY, kingZ;
 
 extern GLuint texWidth, texHeight;
 extern GLfloat *vertexArray;
 extern GLuint *indexArray;
 
-extern float gravity, angle, angleMod, rotation, speed, kingRotation;
-extern bool menuPressed;
+extern float gravity, angle, angleMod, bunnyRotation, speed, kingRotation;
+extern bool menuPressed, gameOver;
 
 extern Point3D p, l;
 extern GLuint program, programNoLight, programShadow, programSingleColor, programInvisible, programTerrain;
 
 extern GLuint dirtTex, bunnyTex, skyBoxTex, grassTex;
 
-extern Model *batmobil, *kingKong, *bunny, *bunnyShadow, *teapot, *teapotShadow, *cube, *skyBox, *blade, *windmillWalls, *windmillRoof, *windmillBalcony, *terrain, *sphere, *lowResTree, *highResTree, *billBoard;
+extern int direction;
+
+extern Model *kingKong, *bunny, *bunnyShadow, *teapot, *teapotShadow, *cube, *skyBox, *blade, *windmillWalls, *windmillRoof, *windmillBalcony, *terrain, *sphere, *lowResTree, *highResTree, *billBoard;
 //extern Model *windmill2;
 
 extern std::vector<GLuint*> programs;
