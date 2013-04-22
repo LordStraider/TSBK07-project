@@ -116,6 +116,7 @@ public:
 	//overload this to add AI behaviour. return true to remove object from public vector.
 	virtual bool update();
 	virtual void collisionHandler(DrawableObject* obj);
+	void fireBullet();
 	void addAmmo() { ammo++; }
 	int getAmmo() { return ammo; }
 	void subAmmo() { --ammo; }

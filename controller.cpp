@@ -269,8 +269,9 @@ bool checkBoundaries() {
     return checkBoundaries(xValue, zValue);
 }
 
+//returns true if OUT of bounds
 bool checkBoundaries(int x, int z) {
-    return x < 0 || x > texWidth || z < 0 || z > texHeight;
+    return x < 0 || x >= texWidth || z < 0 || z >= texHeight;
 }
 
 void keyController(){
@@ -324,6 +325,10 @@ void keyController(){
     } else {
         bunnyRotation += direction * (rotateFront + rotateSide);
     }
+
+	if(keyIsDown('f')){
+		bunnyObj->fireBullet();
+	}
 
     if (keyIsDown('e')) {
         angleMod = M_PI / 60;
