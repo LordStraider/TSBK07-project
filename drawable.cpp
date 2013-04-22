@@ -256,6 +256,7 @@ bool Enemy::update() {
 }
 
 void Player::fireBullet(){
+	if(getAmmo() <= 0) return;
 	subAmmo();
     printf("ammo: %i\n", getAmmo());
 	float rot1 = rotation + M_PI / 2;
