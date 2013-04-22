@@ -41,11 +41,12 @@ void MouseController(int x, int y){
 
 void MouseClick(int button, int state, int x, int y) {
     if (button == 0 && state == 0 && bunnyObj->getAmmo() > 0) {
-        bunnyObj->subAmmo();
+		bunnyObj->subAmmo();
         printf("ammo: %i\n", bunnyObj->getAmmo());
-
         vec3 direction = vec3(xValue+1, 0, zValue+1);
-        allObjects.push_back(new Shot(xValue, 1, zValue, 0, 0.4, &dirtTex, sphere, &programSingleColor, vec3(0.4, 0.4, 0.4), SPHERE, direction));
+		float rot1 = bunnyObj->rotation + M_PI / 2;
+		Shot* shot = new Shot(xValue, 1, zValue, rot1, 0.4, &dirtTex, sphere, &programSingleColor, vec3(0.4, 0.4, 0.4), SPHERE, direction);
+		allObjects.push_back(shot);
     }
 }
 

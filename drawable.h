@@ -56,11 +56,11 @@ public:
 
 	//being lazy
 	bool affectedByGravity;
-
+	GLfloat rotation;
 protected:
 	void updateMatrices();
 	void stayInBounds();
-	GLfloat x, z, y, yOffset, rotation, scale; //yOffset is distance from ground
+	GLfloat x, z, y, yOffset, scale; //yOffset is distance from ground
 	vec3 dimensions;
 	Model* model;
 	GLuint* program;

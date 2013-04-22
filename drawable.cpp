@@ -127,6 +127,9 @@ float randomFloat(float Min, float Max)
 
 //Rotates an object (rotation += angle). See also: setRotation(GLfloat)
 void DrawableObject::rotate(GLfloat angle) {
+	rotation += angle;
+	if(rotation < 0) rotation = M_PI * 2 - rotation;
+	if(rotation > M_PI * 2) rotation -= M_PI * 2;
 	rot = Mult(Ry(angle), rot);
 	updateMatrices();
 }
@@ -138,6 +141,9 @@ void DrawableObject::move(GLfloat x, GLfloat y, GLfloat z) {
 
 //SETS rotation (rotation = angle). See also: rotate(GLfloat)
 void DrawableObject::setRotation(GLfloat angle) {
+	rotation = angle;
+	if(rotation < 0) rotation = M_PI * 2 - rotation;
+	if(rotation > M_PI * 2) rotation -= M_PI * 2;
 	rot = Ry(angle);
 	updateMatrices();
 }
@@ -164,9 +170,9 @@ void DrawableObject::updateMatrices() {
 
 void DrawableObject::stayInBounds() {
 	if(x < 0) x = 0;
-	if(x > texWidth) x = texWidth;
+	if(x >= texWidth) x = texWidth-1;
 	if(z < 0) z = 0;
-	if(z > texHeight) z = texHeight;
+	if(z >= texHeight) z = texHeight-1;
 }
 
 //overload this to add AI behaviour. return true to remove object from public vector.
@@ -261,9 +267,7 @@ bool Player::update() {
 }
 
 bool Shot::update() {
-	vec3 newCoord = vec3(0.1,0,0.1) + getCoords();
-   	setCoords(newCoord.x, 1, newCoord.z);
-
+	move(cos(rotation), 0, sin(rotation));
 	for_each(allObjects.begin(), allObjects.end(), CollisionChecker(this));
 	
 	return getDel();
