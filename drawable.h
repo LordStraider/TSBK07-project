@@ -50,7 +50,7 @@ public:
 	virtual GLfloat getYoffset() { return yOffset; }
 	virtual int getCollisionMode() const { return collisionMode; }
 	virtual bool getDel() const { return del; }
-	void toggleDel() { del = !del; }
+	void setDel(const bool b) { del = b; }
 
 	virtual void collisionHandler(DrawableObject* obj);
 
@@ -114,9 +114,26 @@ public:
 	virtual bool update();
 	virtual void collisionHandler(DrawableObject* obj);
 	void addAmmo() { ammo++; }
+	int getAmmo() { return ammo; }
+	void subAmmo() { --ammo; }
 
 private:
 	int ammo;
+};
+
+class Shot : public DrawableObject{
+public:
+	Shot(GLfloat x, GLfloat yOffset, GLfloat z, GLfloat rotation, GLfloat scale,
+          GLuint* tex, Model* model, GLuint* program, vec3 dimensions, int collisionMode, vec3 direction, bool shadow = false) :
+		DrawableObject(x, yOffset, z, rotation, scale, tex, model, program, dimensions, collisionMode, shadow), direction(direction) {};
+
+	//overload this to add AI behaviour. return true to remove object from public vector.
+	virtual bool update();
+	virtual void collisionHandler(DrawableObject* obj);
+	vec3 getDirection() const { return direction; }
+
+private:
+	const vec3 direction;
 };
 
 class Billboard : public DrawableObject{

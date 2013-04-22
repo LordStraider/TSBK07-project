@@ -27,7 +27,8 @@ Model *kingKong, *bunny, *bunnyShadow, *teapot, *teapotShadow, *cube, *skyBox, *
 vector<GLuint*> programs;
 vector<DrawableObject*> allObjects;
 vector<DrawableObject*> lightSources;
-DrawableObject* bunnyObj;
+
+Player* bunnyObj;
 
 /*DrawableObjectVector::DrawableObjectVector() : std::vector<DrawableObject*>() {};
 void DrawableObjectVector::drawAll(GLfloat t){
@@ -149,7 +150,8 @@ void init(void) {
     allObjects.push_back(new Enemy(rand() % texWidth, 0, rand() % texHeight, 0, 1, &bunnyTex, kingKong, &program, vec3(5.1, 40, 5.1), BOX, true));
 
     /* Bunny */
-    allObjects.push_back(new Player(xValue, 0.7, zValue, 0, 1, &bunnyTex, bunny, &program, vec3(0.8, 0.8, 0.8), SPHERE, true));
+    bunnyObj = new Player(xValue, 0.7, zValue, 0, 1, &bunnyTex, bunny, &program, vec3(0.8, 0.8, 0.8), SPHERE, true);
+    allObjects.push_back(bunnyObj);
 
 	for (int i = 0; i < 100; i++) {
         /* Spheres */
@@ -161,10 +163,10 @@ void init(void) {
     }
 
 	for (int i = 0; i < 8; i++){
-		bunnyObj = new Light(20, 5, 20, vec3(rand() % 6, rand() % 6, rand() % 6), 3, &skyBoxTex, sphere, &program);
-		lightSources.push_back(bunnyObj);
+		Light* light = new Light(20, 5, 20, vec3(rand() % 6, rand() % 6, rand() % 6), 3, &skyBoxTex, sphere, &program);
+		lightSources.push_back(light);
 		//when lightSources works: only push to allObjects, let constructor take care of its LightSource.
-		allObjects.push_back(bunnyObj);
+		allObjects.push_back(light);
 	}
 
 }

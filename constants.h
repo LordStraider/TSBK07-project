@@ -19,6 +19,7 @@
 #endif
 
 class DrawableObject;
+class Player;
 
 extern mat4 rot, trans, shear, total, cam, proj, tmp;
 
@@ -56,10 +57,9 @@ extern Model *kingKong, *bunny, *bunnyShadow, *teapot, *teapotShadow, *cube, *sk
 
 extern std::vector<GLuint*> programs;
 extern std::vector<DrawableObject*> allObjects;
-
 //should be: std::vector<LightSource*> lightSources, but I can't get that to work
 extern std::vector<DrawableObject*> lightSources;
-extern DrawableObject* bunnyObj;
+extern Player* bunnyObj;
 
 void init();
 

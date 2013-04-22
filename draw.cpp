@@ -15,6 +15,38 @@ struct ObjectUpdater
 	} 
 };
 
+
+//This is an attempt to minimize the amount of unnecessary work that is done in DrawableObject::draw()
+struct updateProgram{
+	updateProgram(){}
+	void operator()(GLuint* program){
+		glUseProgram(*program);
+		//glEnable(GL_LIGHTING);
+		glUniformMatrix4fv(glGetUniformLocation(*program, "camMatrix"), 1, GL_TRUE, cam.m);
+		int i = 0;
+		//for_each(lightSources.begin(), lightSources.end(), [program, &i](DrawableObject* obj){
+			/*this would (maybe) work if we:
+				* Fixed this vector to be vector<Light*> or vector<LightSource*>
+				* used actual gl* methods to pass parameters to shaders (glVertex, glPerspectiveMatrix)
+			*/
+			/*Light* light = (Light*)obj;
+			LightSource* source = light->source;
+			vec3 color = source->color;
+			vec3 position = source->position;
+			vec3 direction = source->direction;
+			printf("###test: %d, %d, %d\n", position.x, position.y, position.z);*/
+		/*	GLfloat pos[] = {20, 10, 10, 1.0};
+			int k = 1;
+			if(i % 2 == 0) k = -1; 
+			GLfloat dir[] = {0, k, 0, 1.0};
+			glEnable(GL_LIGHT0 + i);
+			glLightfv(GL_LIGHT0 + i, GL_POSITION, pos);
+			glLightfv(GL_LIGHT0 + i++, GL_SPOT_DIRECTION, dir);
+		});*/
+
+	}
+};
+
 void display(void) {
 	GLfloat t;
     vec3 v;
@@ -72,31 +104,7 @@ void display(void) {
 	displayTerrain();
  //   displaySingleColor(t);
 
-	for_each(programs.begin(), programs.end(), [](GLuint* program){
-		glUseProgram(*program);
-		//glEnable(GL_LIGHTING);
-		glUniformMatrix4fv(glGetUniformLocation(*program, "camMatrix"), 1, GL_TRUE, cam.m);
-		int i = 0;
-		for_each(lightSources.begin(), lightSources.end(), [program, &i](DrawableObject* obj){
-			/*this would (maybe) work if we:
-				* Fixed this vector to be vector<Light*> or vector<LightSource*>
-				* used actual gl* methods to pass parameters to shaders (glVertex, glPerspectiveMatrix)
-			*/
-			/*Light* light = (Light*)obj;
-			LightSource* source = light->source;
-			vec3 color = source->color;
-			vec3 position = source->position;
-			vec3 direction = source->direction;
-			printf("###test: %d, %d, %d\n", position.x, position.y, position.z);*/
-			GLfloat pos[] = {20, 10, 10, 1.0};
-			int k = 1;
-			if(i % 2 == 0) k = -1; 
-			GLfloat dir[] = {0, k, 0, 1.0};
-			glEnable(GL_LIGHT0 + i);
-			glLightfv(GL_LIGHT0 + i, GL_POSITION, pos);
-			glLightfv(GL_LIGHT0 + i++, GL_SPOT_DIRECTION, dir);
-		});
-	});
+	for_each(programs.begin(), programs.end(), updateProgram());
 	
     /* Display all objects */
 	allObjects.erase(remove_if(allObjects.begin(), allObjects.end(), ObjectUpdater()), allObjects.end());
