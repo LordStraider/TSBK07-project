@@ -1,23 +1,25 @@
 #ifdef __APPLE__
-    #include <OpenGL/gl3.h>
-    #include "MicroGlut.h"
     // Linking hint for Lightweight IDE
     // uses framework Cocoa
+
+    #include <OpenGL/gl3.h>
+    #include "lib/MicroGlut.h"
 #else
-//  #include <GL/glee.h> Might be needed for Windows - not tested
     #include <GL/glew.h>
     #include <GL/glut.h>
 #endif
 
-#include "GL_utilities.h"
-#include "VectorUtils3.h"
-#include "loadobj.h"
-#include "LoadTGA2.h"
+// Third-party module imports
+#include "lib/GL_utilities.h"
+#include "lib/loadobj.h"
+#include "lib/LoadTGA2.h"
+#include "lib/VectorUtils3.h"
 
+// Project modules
 #include "controller.h"
 #include "constants.h"
 #include "draw.h"
-/* Globals*/
+
 
 void MouseController(int x, int y){
     if (!menuPressed) {
