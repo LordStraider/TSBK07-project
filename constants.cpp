@@ -39,7 +39,7 @@ void DrawableObjectVector::drawAll(GLfloat t){
 
 TextureData ttex; // terrain
 
-void init(void) {
+void init_constants(void) {
     /* GL inits*/
     glClearColor(0.2,0.2,0.5,0);
     glEnable(GL_DEPTH_TEST);

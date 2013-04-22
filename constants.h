@@ -1,5 +1,4 @@
-#ifndef CONSTANTS_H
-#define CONSTANTS_H
+#pragma once
 
 #ifdef __APPLE__
     #include <OpenGL/gl3.h>
@@ -68,6 +67,4 @@ extern std::vector<DrawableObject*> allObjects;
 extern std::vector<DrawableObject*> lightSources;
 extern Player* bunnyObj;
 
-void init();
-
-#endif
+void init_constants();

@@ -25,9 +25,9 @@ void MouseController(int x, int y){
     if (!menuPressed) {
         //glutWarpPointer(400,320);
         //glutHideCursor(); NO WINDOWS SUPPORT FOR THIS :( : May I suggest implementing the STANDARD setCursor method in MicroGlut?
-		
+
 		int width = 800; //glutGet(GLUT_WINDOW_WIDTH);
-		
+
 		if (x < width / 4) {
             camMod = -M_PI / 60;
         } else if (x > 3 * (width / 4)) {
@@ -54,6 +54,12 @@ void OnTimer(int value) {
     glutTimerFunc(20, &OnTimer, value);
 }
 
+void reshape(GLsizei w, GLsizei h)
+{
+    glViewport(0, 0, w, h);
+    sfSetRasterSize(w, h);
+}
+
 int main(int argc, char *argv[]) {
 	glutInitWindowPosition (100, 100);
     glutInitWindowSize (800, 640);
@@ -61,7 +67,7 @@ int main(int argc, char *argv[]) {
     glutInit(&argc, argv);
     glutInitDisplayMode(GLUT_DOUBLE | GLUT_DEPTH);
     glutCreateWindow ("TSBK07 - project");
-    
+
     //glutHideCursor();
 
 	//windows only...
@@ -77,11 +83,17 @@ int main(int argc, char *argv[]) {
 	#endif
 
     glutDisplayFunc(display);
+    glutReshapeFunc(reshape);
+
     initKeymapManager();
     glutMouseFunc(MouseClick);
     //glutPassiveMotionFunc(MouseController);
     glutTimerFunc(20, &OnTimer, 0);
-    init();
+
+    sfMakeRasterFont();
+
+    init_constants();
+
     glutMainLoop();
     exit(0);
 }

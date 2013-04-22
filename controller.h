@@ -1,5 +1,4 @@
-#ifndef CONTROLLER_H
-#define CONTROLLER_H
+#pragma once
 
 #ifdef __APPLE__
     #include <OpenGL/gl3.h>
@@ -33,5 +32,3 @@ bool checkBoundaries();
 bool checkCollisionBB(DrawableObject* obj1, DrawableObject* obj2);
 bool checkCollisionBS(DrawableObject* obj1, DrawableObject* obj2);
 bool checkCollisionSS(DrawableObject* obj1, DrawableObject* obj2);
-
-#endif
