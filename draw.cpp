@@ -47,6 +47,38 @@ struct updateProgram{
 	}
 };
 
+
+
+int frameCount = 0;
+int previousTime = 0;
+int fps = 0;
+//please move this to some suitable place
+int calculateFPS()
+{
+    //  Increase frame count
+    frameCount++;
+ 
+    //  Get the number of milliseconds since glutInit called
+    //  (or first call to glutGet(GLUT ELAPSED TIME)).
+    int currentTime = glutGet(GLUT_ELAPSED_TIME);
+ 
+    //  Calculate time passed
+    int timeInterval = currentTime - previousTime;
+ 
+    if(timeInterval > 1000)
+    {
+        //  calculate the number of frames per second
+        fps = frameCount / (timeInterval / 1000.0f);
+ 
+        //  Set time
+        previousTime = currentTime;
+ 
+        //  Reset frame count
+        frameCount = 0;
+    }
+	return fps;
+}
+
 void display(void) {
 	GLfloat t;
     vec3 v;
@@ -108,9 +140,10 @@ void display(void) {
 
     /* Display all objects */
 	allObjects.erase(remove_if(allObjects.begin(), allObjects.end(), ObjectUpdater()), allObjects.end());
-
-
-    sfDrawString(-20, -10, "meeeeep");
+	stringstream ss;//create a stringstream
+	ss << calculateFPS();//add number to the stream
+	string m = "meeeeep " + ss.str(); 
+	sfDrawString(-20, -10, (char*)m.c_str());
 
     printError("display");
 
@@ -120,6 +153,8 @@ void display(void) {
 
     glFlush();
 }
+
+
 
 void displayTerrain() {
 	GLfloat b = 1;

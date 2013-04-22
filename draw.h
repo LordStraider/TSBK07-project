@@ -11,7 +11,7 @@
 #include <vector>
 #include <algorithm>
 #include <iterator>
-
+#include <sstream>
 // Third-party module imports
 #include "lib/GL_utilities.h"
 #include "lib/loadobj.h"
