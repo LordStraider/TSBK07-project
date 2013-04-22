@@ -197,11 +197,11 @@ bool checkCollisionBB(DrawableObject* obj1, DrawableObject* obj2) {
     vec3 obj1dim = obj1->getDimensons();
     vec3 obj2dim = obj2->getDimensons();
 
-    GLfloat y1 = findY(obj1pos.x, obj1pos.z) + obj1pos.y;
-    GLfloat y2 = findY(obj2pos.x, obj2pos.z) + obj2pos.y;
+    obj1pos.y = findY(obj1pos.x, obj1pos.z) + obj1->getYoffset();
+    obj2pos.y = findY(obj2pos.x, obj2pos.z) + obj2->getYoffset();
 
     if (obj1pos.x + obj1dim.x > obj2pos.x - obj2dim.x && obj1pos.x < obj2pos.x + obj2dim.x) {
-        if (y1 + obj1dim.y > obj2pos.y && obj1pos.y < obj2pos.y + obj2pos.y) {
+        if (obj1pos.y + obj1dim.y > obj2pos.y && obj1pos.y < obj2pos.y + obj2dim.y) {
             if (obj1pos.z + obj1dim.z > obj2pos.z - obj2dim.z && obj1pos.z < obj2pos.z + obj2dim.z){
                 return true;
             }
@@ -211,48 +211,56 @@ bool checkCollisionBB(DrawableObject* obj1, DrawableObject* obj2) {
 }
 
 bool checkCollisionBS(DrawableObject* obj1, DrawableObject* obj2) {
-    Point3D center, closest, result;
-    center = SetVector(xValue, yValue - 1, zValue);
+    vec3 center, closest, result, obj1pos, obj1dim, obj2dim;
+    center = obj2->getCoords();
+    obj1pos = obj1->getCoords();
+    obj1dim = obj1->getDimensons();
+    obj2dim = obj2->getDimensons();
 
-    if(center.x < 60 - 3.5)
-        closest.x = 60 - 3.5;
-    else if(center.x > 60 + 3.5)
-        closest.x = 60 + 3.5;
+    center.y = findY(center.x, center.z) + obj1->getYoffset() - 1;
+    obj1pos.y = findY(obj1pos.x, obj1pos.z) + obj2->getYoffset() - 1;
+
+    if(center.x < obj1pos.x - obj1dim.x)
+        closest.x = obj1pos.x - obj1dim.x;
+    else if(center.x > obj1pos.x + obj1dim.x)
+        closest.x = obj1pos.x + obj1dim.x;
     else
         closest.x = center.x;
 
 
-    if(center.y < windY - 6.5)
-        closest.y = windY - 6.5;
-    else if(center.y > windY + 6.5)
-        closest.y = windY + 6.5;
+    if(center.y < obj1pos.y + obj2->getYoffset() - obj1dim.y)
+        closest.y = obj1pos.y + obj2->getYoffset() - obj1dim.y;
+    else if(center.y > obj1pos.y + obj2->getYoffset() + obj1dim.y)
+        closest.y = obj1pos.y + obj2->getYoffset() + obj1dim.y;
     else
         closest.y = center.y;
 
 
-    if(center.z < 30 - 3.5)
-        closest.z = 30 - 3.5;
-    else if(center.z > 30 + 3.5)
-        closest.z = 30 + 3.5;
+    if(center.z < obj1pos.z - obj1dim.z)
+        closest.z = obj1pos.z - obj1dim.z;
+    else if(center.z > obj1pos.z + obj1dim.z)
+        closest.z = obj1pos.z + obj1dim.z;
     else
         closest.z = center.z;
 
 
     result = VectorSub(closest, center);
 
-    if (sqrt(result.x * result.x + result.y * result.y + result.z * result.z) < 0.8)
+    if (sqrt(result.x * result.x + result.y * result.y + result.z * result.z) < obj2dim.x)
         return true;
     return false;
 }
 
 bool checkCollisionSS(DrawableObject* obj1, DrawableObject* obj2) {
-    Point3D center1, center2, result;
-    center1 = SetVector(xValue, yValue+0.5, zValue);
-    center2 = SetVector(10, 0.5, 10);
+    Point3D center1, center2, result, obj1dim, obj2dim;
+    center1 = obj1->getCoords();
+    center2 = obj2->getCoords();
+    obj1dim = obj1->getDimensons();
+    obj2dim = obj2->getDimensons();
 
     result = VectorSub(center2, center1);
 
-    if (sqrt(result.x * result.x + result.y * result.y + result.z * result.z) < 1.97)
+    if (sqrt(result.x * result.x + result.y * result.y + result.z * result.z) < obj1dim.x + obj2dim.x)
         return true;
     return false;
 }

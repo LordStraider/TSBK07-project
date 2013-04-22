@@ -71,7 +71,7 @@ void display(void) {
 //	printError("drawing no light");
 	displayTerrain();
 //	printError("drawing texture");
-    displaySingleColor(t);
+//    displaySingleColor(t);
 //	printError("drawing single");
 	//displayModels(t);
 

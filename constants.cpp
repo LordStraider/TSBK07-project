@@ -119,23 +119,35 @@ void init(void) {
 
     LoadTGATexture("fft-terrain.tga", &ttex);
     terrain = GenerateTerrain(&ttex);
-    teaY = findY(50, 40);
-    windY = findY(60, 30);
-    kingY = findY(kingX, kingZ);
     printError("init arrays");
 
-    bunnyObj = new DrawableObject(rand() % texWidth, 0, rand() % texHeight, 0, &dirtTex, teapot, &program, vec3(10, 20, 10), true);
-    allObjects.push_back(bunnyObj);
-    bunnyObj = new Enemy(rand() % texWidth, 0, rand() % texHeight, 0, 1, &bunnyTex, kingKong, &program, vec3(5.1, 40, 5.1), true);
-    allObjects.push_back(bunnyObj);
-    bunnyObj = new Player(xValue, 0.7, zValue, 0, 1, &bunnyTex, bunny, &program, vec3(1.6, 0.83, 1.5), true);
-    allObjects.push_back(bunnyObj);
+
+    /* WindMill */
+    allObjects.push_back(new DrawableObject(60, 0, 30, 0, 0.8, &dirtTex, windmillWalls, &programSingleColor, vec3(7, 13, 7), BOX));
+    allObjects.push_back(new DrawableObject(60, 0, 30, 0, 0.8, &dirtTex, windmillRoof, &programSingleColor, vec3(0,0,0), NONE));
+    allObjects.push_back(new DrawableObject(60, 0, 30, 0, 0.8, &dirtTex, windmillBalcony, &programSingleColor, vec3(0,0,0), NONE, true));
+    int i;
+    for (i = 0; i < 4; i++) {
+        float r = i * M_PI / 2;
+        allObjects.push_back(new Blade(64, 7.4, 30, r, 0.5, &dirtTex, blade, &programSingleColor, vec3(0,0,0), NONE));
+    }
+
+    /* Teapot */
+    allObjects.push_back(new DrawableObject(rand() % texWidth, 0, rand() % texHeight, 0, &dirtTex, teapot, &program, vec3(10, 20, 10), BOX, true));
+
+    /* KingKong */
+    allObjects.push_back(new Enemy(rand() % texWidth, 0, rand() % texHeight, 0, 1, &bunnyTex, kingKong, &program, vec3(5.1, 40, 5.1), BOX, true));
+
+    /* Bunny */
+    allObjects.push_back(new Player(xValue, 0.7, zValue, 0, 1, &bunnyTex, bunny, &program, vec3(0.8, 0.8, 0.8), SPHERE, true));
+
 	for (int i = 0; i < 100; i++) {
-        bunnyObj = new DrawableObject(rand() % texWidth, 0, rand() % texHeight, 0, 1, &dirtTex, sphere, &program, vec3(1.9, 3.9, 1.9));
-    	allObjects.push_back(bunnyObj);
-		bunnyObj = new Tree(rand() % texWidth, 0, rand() % texHeight, 0, 1, &grassTex, highResTree, &program, vec3(0.5, 10, 0.5));
-    	allObjects.push_back(bunnyObj);
-		allObjects.push_back(new Billboard(rand() % (texWidth-1), 10, rand() % (texHeight-1), 10, &skyBoxTex, &program, vec3(0.5, 0.5, 0.5)));
+        /* Spheres */
+    	allObjects.push_back(new DrawableObject(rand() % texWidth, 0, rand() % texHeight, 0, 1, &dirtTex, sphere, &programSingleColor, vec3(1, 1, 1), SPHERE));
+		/* Trees */
+    	allObjects.push_back(new Tree(rand() % texWidth, 0, rand() % texHeight, 0, 1, &grassTex, highResTree, &program, vec3(0.5, 10, 0.5), BOX));
+	    /* Billboards */
+        allObjects.push_back(new Billboard(rand() % (texWidth-1), 10, rand() % (texHeight-1), 10, &skyBoxTex, &program, vec3(0,0,0), NONE));
     }
 
 }

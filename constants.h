@@ -24,6 +24,9 @@ extern mat4 rot, trans, shear, total, cam, proj, tmp;
 
 extern TextureData ttex; // terrain
 
+    #define BOX 0
+    #define SPHERE 1
+    #define NONE 100
     #define near 1.0
     #define far 300.0
     #define right 1.0
