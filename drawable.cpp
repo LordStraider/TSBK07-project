@@ -56,7 +56,7 @@ DrawableObject::DrawableObject() {
 }
 
 DrawableObject::DrawableObject(GLfloat x, GLfloat yOffset, GLfloat z, GLfloat rotation, GLuint* tex, Model* model, GLuint* program, vec3 dimensions, int collisionMode, bool shadow) : 
-	rotation(rotation), scale(1), tex(tex), model(model), program(program), dimensions(dimensions), collisionMode(collisionMode), shadow(shadow) 
+	rotation(rotation), scale(1), tex(tex), model(model), program(program), dimensions(dimensions), collisionMode(collisionMode), shadow(shadow), del(false) 
 {
 	setCoords(x,yOffset,z);
 //	dimensions = scale * findDimensions(model);
@@ -64,7 +64,7 @@ DrawableObject::DrawableObject(GLfloat x, GLfloat yOffset, GLfloat z, GLfloat ro
 }
 
 DrawableObject::DrawableObject(GLfloat x, GLfloat yOffset, GLfloat z, GLfloat rotation, GLfloat scale, GLuint* tex, Model* model, GLuint* program, vec3 dimensions, int collisionMode, bool shadow) : 
-	rotation(rotation), scale(scale), tex(tex), model(model), program(program), dimensions(dimensions), collisionMode(collisionMode), shadow(shadow) 
+	rotation(rotation), scale(scale), tex(tex), model(model), program(program), dimensions(dimensions), collisionMode(collisionMode), shadow(shadow), del(false)
 {
 	setCoords(x,yOffset,z);
 //	dimensions = scale * findDimensions(model);
@@ -72,7 +72,7 @@ DrawableObject::DrawableObject(GLfloat x, GLfloat yOffset, GLfloat z, GLfloat ro
 }
 
 DrawableObject::DrawableObject(vec3 position, GLfloat rotation, GLuint* tex, Model* model, GLuint* program, vec3 dimensions, int collisionMode, bool shadow) :
-	x(position.x), z(position.z), yOffset(position.y), rotation(rotation), tex(tex), model(model), program(program), dimensions(dimensions), collisionMode(collisionMode), shadow(shadow) 
+	x(position.x), z(position.z), yOffset(position.y), rotation(rotation), tex(tex), model(model), program(program), dimensions(dimensions), collisionMode(collisionMode), shadow(shadow), del(false) 
 {
 	setCoords(x,yOffset,z);
 //	dimensions = scale * findDimensions(model);
@@ -156,22 +156,6 @@ void DrawableObject::setCoords(GLfloat x, GLfloat y, GLfloat z) {
 	updateMatrices();
 }
 
-vec3 DrawableObject::getCoords() {
-	return vec3(this->x, this->y, this->z);
-}
-
-vec3 DrawableObject::getDimensons() {
-	return dimensions;
-}
-
-GLfloat DrawableObject::getYoffset() {
-	return yOffset;
-}
-
-int DrawableObject::getCollisionMode() {
-	return collisionMode;
-}
-
 void DrawableObject::updateMatrices() {
 	mat4 s= S(scale,scale,scale);
 	total = Mult(trans, Mult(rot, s));
@@ -198,7 +182,7 @@ bool DrawableObject::update() {
 	//if(rand() > RAND_MAX-1000) move(randomFloat(-2,2), 0, randomFloat(-2,2));
 	//rotate(0.05);
 	//if(rand() > RAND_MAX-10) return true; // randomly remove objects to test deletion of objects (pick ups, dead enemies, etc)
-	return false;
+	return getDel();
 }
 
 bool Tree::update() {
@@ -222,14 +206,14 @@ bool Tree::update() {
 		}
 		model = highResTree;
 	}
-	return false;
+	return getDel();
 }
 
 bool Blade::update() {
 	rot = Rx(rotation + (GLfloat)glutGet(GLUT_ELAPSED_TIME) / 1000);
 	updateMatrices();
 
-	return false;
+	return getDel();
 }
 
 bool Enemy::update() {
@@ -251,7 +235,7 @@ bool Enemy::update() {
 		}
 	}
 
-	return false;
+	return getDel();
 }
 
 bool Player::update() {
@@ -297,6 +281,11 @@ void Enemy::collisionHandler(DrawableObject* obj) {
 }
 
 void Player::collisionHandler(DrawableObject* obj) {
+	if (obj->getCollisionMode() == SPHERE) {
+		obj->toggleDel();
+	    addAmmo();
+	}
+
     xValue -= zModify * speed;
     zModify = -xModify;
     zValue -= xModify * speed;

@@ -274,6 +274,9 @@ bool checkBoundaries(int x, int z) {
 }
 
 void keyController(){
+    if (gameOver)
+        return;
+    
     float rotateFront = 0.0;
     float rotateSide = 0.0;
     

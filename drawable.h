@@ -36,10 +36,12 @@ public:
 
 	//use NULL,0,NULL to set y = 0 while not affecting x or z. See also move()
 	virtual void setCoords(GLfloat x, GLfloat y, GLfloat z);
-	virtual vec3 getCoords();
-	virtual vec3 getDimensons();
-	virtual GLfloat getYoffset();
-	virtual int getCollisionMode();
+	virtual vec3 getCoords() const { return vec3(this->x, this->y, this->z); }
+	virtual vec3 getDimensons() const { return dimensions; }
+	virtual GLfloat getYoffset() { return yOffset; }
+	virtual int getCollisionMode() const { return collisionMode; }
+	virtual bool getDel() const { return del; }
+	void toggleDel() { del = !del; }
 
 	virtual void collisionHandler(DrawableObject* obj);
 
@@ -53,6 +55,7 @@ protected:
 	GLuint* tex;
 	int collisionMode;
 	bool shadow;
+	bool del;
 };
 
 class Tree : public DrawableObject{
@@ -92,11 +95,15 @@ class Player : public DrawableObject{
 public:
 	Player(GLfloat x, GLfloat yOffset, GLfloat z, GLfloat rotation, GLfloat scale,
           GLuint* tex, Model* model, GLuint* program, vec3 dimensions, int collisionMode, bool shadow = false) :
-		DrawableObject(x, yOffset, z, rotation, scale, tex, model, program, dimensions, collisionMode, shadow) {};
+		DrawableObject(x, yOffset, z, rotation, scale, tex, model, program, dimensions, collisionMode, shadow), ammo(0) {};
 
 	//overload this to add AI behaviour. return true to remove object from public vector.
 	virtual bool update();
 	virtual void collisionHandler(DrawableObject* obj);
+	void addAmmo() { ammo++; }
+
+private:
+	int ammo;
 };
 
 class Billboard : public DrawableObject{
