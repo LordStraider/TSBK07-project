@@ -1,7 +1,10 @@
 #pragma once
 
-#include "VectorUtils3.h"
-#include "GL_utilities.h"
+// Third-party module imports
+#include "lib/GL_utilities.h"
+#include "lib/VectorUtils3.h"
+
+// Project modules
 #include "controller.h"
 #include "constants.h"
 #include <algorithm>

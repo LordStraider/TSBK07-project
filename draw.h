@@ -3,21 +3,25 @@
 
 #ifdef __APPLE__
     #include <OpenGL/gl3.h>
-    #include "MicroGlut.h"
+    #include "lib/MicroGlut.h"
 #endif
 
-#include "GL_utilities.h"
-#include "LoadTGA2.h"
+// C++ Standard-library imports
 #include <math.h>
-#include <vector>
-#include <math.h>
-#include "loadobj.h"
-#include "VectorUtils3.h"
 #include <stdio.h>
+#include <vector>
 #include <algorithm>
 #include <iterator>
-#include "drawable.h"
+
+// Third-party module imports
+#include "lib/GL_utilities.h"
+#include "lib/loadobj.h"
+#include "lib/LoadTGA2.h"
+#include "lib/VectorUtils3.h"
+
+// Project modules
 #include "constants.h"
+#include "drawable.h"
 
 void displayTexture();
 void displayTerrain();
