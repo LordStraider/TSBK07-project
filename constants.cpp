@@ -128,7 +128,7 @@ void init(void) {
     allObjects.push_back(bunnyObj);
     bunnyObj = new Enemy(rand() % texWidth, 0, rand() % texHeight, 0, 1, &bunnyTex, kingKong, &program, true);
     allObjects.push_back(bunnyObj);
-    bunnyObj = new DrawableObject(xValue, yValue, zValue, 0, &bunnyTex, bunny, &program, true);
+    bunnyObj = new DrawableObject(xValue, 0.7, zValue, 0, &bunnyTex, bunny, &program, true);
     allObjects.push_back(bunnyObj);
 	for (int i = 0; i < 100; i++) {
         bunnyObj = new DrawableObject(rand() % texWidth, 0, rand() % texHeight, 0, 1, &dirtTex, sphere, &program);
