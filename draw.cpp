@@ -47,6 +47,38 @@ struct updateProgram{
 	}
 };
 
+
+
+int frameCount = 0;
+int previousTime = 0;
+int fps = 0;
+//please move this to some suitable place
+int calculateFPS()
+{
+    //  Increase frame count
+    frameCount++;
+
+    //  Get the number of milliseconds since glutInit called
+    //  (or first call to glutGet(GLUT ELAPSED TIME)).
+    int currentTime = glutGet(GLUT_ELAPSED_TIME);
+
+    //  Calculate time passed
+    int timeInterval = currentTime - previousTime;
+
+    if(timeInterval > 1000)
+    {
+        //  calculate the number of frames per second
+        fps = frameCount / (timeInterval / 1000.0f);
+
+        //  Set time
+        previousTime = currentTime;
+
+        //  Reset frame count
+        frameCount = 0;
+    }
+	return fps;
+}
+
 void display(void) {
 	GLfloat t;
     vec3 v;
@@ -102,13 +134,14 @@ void display(void) {
     /* Special displays */
     displayNoLight(t);
 	displayTerrain();
-    displayPlayerStatus();
  //   displaySingleColor(t);
 
 	for_each(programs.begin(), programs.end(), updateProgram());
 
     /* Display all objects */
 	allObjects.erase(remove_if(allObjects.begin(), allObjects.end(), ObjectUpdater()), allObjects.end());
+
+    displayPlayerStatus();
 
     printError("display");
 
@@ -120,12 +153,15 @@ void display(void) {
 }
 
 void displayPlayerStatus() {
-    #define MAX_STRING_LENGTH 20
+    stringstream s1;
+    s1 << calculateFPS();//add number to the stream
+    string fps = s1.str() + " FPS";
+    sfDrawString(20, 20, (char*)fps.c_str());
 
-    // String handling in C/C++ <3
-    char ammo[MAX_STRING_LENGTH] = "";
-    snprintf(ammo, MAX_STRING_LENGTH, "Ammo: %d", bunnyObj->getAmmo());
-    sfDrawString(-20, -10, ammo);
+    stringstream s2;
+    s2 << bunnyObj->getAmmo();
+    string ammo = "Ammo: " + s2.str();
+    sfDrawString(-20, -10, (char*)ammo.c_str());
 }
 
 void displayTerrain() {

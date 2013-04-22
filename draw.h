@@ -11,7 +11,7 @@
 #include <vector>
 #include <algorithm>
 #include <iterator>
-
+#include <sstream>
 // Third-party module imports
 #include "lib/GL_utilities.h"
 #include "lib/loadobj.h"
@@ -25,10 +25,11 @@
 
 void displayTexture();
 void displayTerrain();
-void displayPlayerStatus();
 // void displaySingleColor(GLfloat t);
 void displayInvisible(GLfloat t);
 void displayModels(GLfloat t);
 void displayShadows(GLfloat t);
 void displayNoLight(GLfloat t);
+
+void displayPlayerStatus();
 void display();
