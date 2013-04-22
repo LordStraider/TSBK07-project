@@ -17,6 +17,7 @@
 #include "lib/loadobj.h"
 #include "lib/LoadTGA2.h"
 #include "lib/VectorUtils3.h"
+#include "lib/simplefont.h"
 
 // Project modules
 #include "constants.h"

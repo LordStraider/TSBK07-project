@@ -12,7 +12,7 @@ struct ObjectUpdater
 		bool erase = obj->update();
 		if(!erase) obj->draw();
 		return erase;
-	} 
+	}
 };
 
 
@@ -37,7 +37,7 @@ struct updateProgram{
 			printf("###test: %d, %d, %d\n", position.x, position.y, position.z);*/
 		/*	GLfloat pos[] = {20, 10, 10, 1.0};
 			int k = 1;
-			if(i % 2 == 0) k = -1; 
+			if(i % 2 == 0) k = -1;
 			GLfloat dir[] = {0, k, 0, 1.0};
 			glEnable(GL_LIGHT0 + i);
 			glLightfv(GL_LIGHT0 + i, GL_POSITION, pos);
@@ -105,9 +105,12 @@ void display(void) {
  //   displaySingleColor(t);
 
 	for_each(programs.begin(), programs.end(), updateProgram());
-	
+
     /* Display all objects */
 	allObjects.erase(remove_if(allObjects.begin(), allObjects.end(), ObjectUpdater()), allObjects.end());
+
+
+    sfDrawString(-20, -10, "meeeeep");
 
     printError("display");
 
