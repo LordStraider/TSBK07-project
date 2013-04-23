@@ -114,6 +114,7 @@ public:
 	//overload this to add AI behaviour. return true to remove object from public vector.
 	virtual bool update();
 	virtual void collisionHandler(DrawableObject* obj);
+	GLuint* getProgram() { return program; }
 };
 
 class Player : public DrawableObject{

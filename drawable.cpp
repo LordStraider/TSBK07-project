@@ -373,8 +373,8 @@ void Shot::collisionHandler(DrawableObject* obj) {
 		bunnyObj->addScore();
 		obj->setDel(true);
 		/* Adding 2 new monsters */
-	    allObjects.push_back(new Enemy(rand() % texWidth, 0, rand() % texHeight, 0, 1, &bunnyTex, kingKong, program, vec3(5.1, 40, 5.1), BOX, true));
-	    allObjects.push_back(new Enemy(rand() % texWidth, 0, rand() % texHeight, 0, 1, &bunnyTex, kingKong, program, vec3(5.1, 40, 5.1), BOX, true));
+	    allObjects.push_back(new Enemy(rand() % texWidth, 0, rand() % texHeight, 0, 1, &bunnyTex, kingKong, e->getProgram(), vec3(5.1, 40, 5.1), BOX, true));
+	    allObjects.push_back(new Enemy(rand() % texWidth, 0, rand() % texHeight, 0, 1, &bunnyTex, kingKong, e->getProgram(), vec3(5.1, 40, 5.1), BOX, true));
 	}
 }
 
