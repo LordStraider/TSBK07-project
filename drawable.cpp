@@ -343,6 +343,7 @@ void Player::collisionHandler(DrawableObject* obj) {
 
 	if (obj->getCollisionMode() == SPHERE) {
 		obj->setDel(true);
+        allObjects.push_back(new DrawableObject(rand() % texWidth, 0, rand() % texHeight, 0, 1, &dirtTex, sphere, &programSingleColor, vec3(1, 1, 1), SPHERE));
 	    addAmmo();
 	} else {
 	    xValue -= zModify * speed;
@@ -369,7 +370,11 @@ void Shot::collisionHandler(DrawableObject* obj) {
 
 	Enemy *e = dynamic_cast<Enemy*>(obj);
 	if (e != NULL) {
+		bunnyObj->addScore();
 		obj->setDel(true);
+		/* Adding 2 new monsters */
+	    allObjects.push_back(new Enemy(rand() % texWidth, 0, rand() % texHeight, 0, 1, &bunnyTex, kingKong, program, vec3(5.1, 40, 5.1), BOX, true));
+	    allObjects.push_back(new Enemy(rand() % texWidth, 0, rand() % texHeight, 0, 1, &bunnyTex, kingKong, program, vec3(5.1, 40, 5.1), BOX, true));
 	}
 }
 

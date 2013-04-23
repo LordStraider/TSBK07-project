@@ -1,7 +1,13 @@
 #pragma once
 
+#ifdef __APPLE__
+    #include <OpenGL/gl3.h>
+    #include "lib/MicroGlut.h"
+#endif
+
 // C++ Standard-library imports
 #include <algorithm>
+#include <math.h>
 
 // Third-party module imports
 #include "lib/GL_utilities.h"
@@ -10,7 +16,6 @@
 // Project modules
 #include "controller.h"
 #include "constants.h"
-
 
 class LightSource {
 public:
@@ -115,7 +120,7 @@ class Player : public DrawableObject{
 public:
 	Player(GLfloat x, GLfloat yOffset, GLfloat z, GLfloat rotation, GLfloat scale,
           GLuint* tex, Model* model, GLuint* program, vec3 dimensions, int collisionMode, bool shadow = false) :
-		DrawableObject(x, yOffset, z, rotation, scale, tex, model, program, dimensions, collisionMode, shadow), ammo(10) {};
+		DrawableObject(x, yOffset, z, rotation, scale, tex, model, program, dimensions, collisionMode, shadow), ammo(10), score(0) {};
 
 	//overload this to add AI behaviour. return true to remove object from public vector.
 	virtual bool update();
@@ -124,8 +129,11 @@ public:
 	void addAmmo() { ammo++; }
 	int getAmmo() { return ammo; }
 	void subAmmo() { --ammo; }
+	void addScore() { score++; }
+	int getScore() { return score; }
 
 private:
+	int score;
 	int ammo;
 };
 

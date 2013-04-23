@@ -148,13 +148,16 @@ void init_constants(void) {
 
     /* KingKong */
     allObjects.push_back(new Enemy(rand() % texWidth, 0, rand() % texHeight, 0, 1, &bunnyTex, kingKong, &program, vec3(5.1, 40, 5.1), BOX, true));
+    allObjects.push_back(new Enemy(rand() % texWidth, 0, rand() % texHeight, 0, 1, &bunnyTex, kingKong, &program, vec3(5.1, 40, 5.1), BOX, true));
 
     /* Bunny */
     bunnyObj = new Player(xValue, 0.7, zValue, 0, 1, &bunnyTex, bunny, &program, vec3(0.8, 0.8, 0.8), SPHERE, true);
     allObjects.push_back(bunnyObj);
 
 	for (int i = 0; i < 100; i++) {
-    	/* Trees */
+        /* Spheres */
+        allObjects.push_back(new DrawableObject(rand() % texWidth, 0, rand() % texHeight, 0, 1, &dirtTex, sphere, &programSingleColor, vec3(1, 1, 1), SPHERE));
+        /* Trees */
     	allObjects.push_back(new Tree(rand() % texWidth, 0, rand() % texHeight, 0, 1, &grassTex, highResTree, &program, vec3(0.5, 10, 0.5), BOX));
 	    /* Billboards */
         allObjects.push_back(new Billboard(rand() % (texWidth-1), 10, rand() % (texHeight-1), 10, &skyBoxTex, &program, vec3(0,0,0), NONE));
@@ -162,6 +165,7 @@ void init_constants(void) {
     }
 
 	for (int i = 0; i < 8; i++){
+        /* sphere dont have any texture coordinates so the skyboxtex is not doing what it is supposed to... */
 		Light* light = new Light(20, 5, 20, vec3(rand() % 6, rand() % 6, rand() % 6), 3, &skyBoxTex, sphere, &program);
 		lightSources.push_back(light);
 		//when lightSources works: only push to allObjects, let constructor take care of its LightSource.

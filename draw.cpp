@@ -161,7 +161,12 @@ void displayPlayerStatus() {
     stringstream s2;
     s2 << bunnyObj->getAmmo();
     string ammo = "Ammo: " + s2.str();
-    sfDrawString(-20, -10, (char*)ammo.c_str());
+    sfDrawString(-20, -30, (char*)ammo.c_str());
+
+    stringstream s3;
+    s3 << bunnyObj->getScore();
+    string score = "Enemies killed: " + s3.str();
+    sfDrawString(-20, -10, (char*)score.c_str());
 }
 
 void displayTerrain() {
