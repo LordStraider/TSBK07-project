@@ -17,9 +17,9 @@
 
 // Project modules
 #include "constants.h"
-#include "drawable.h"
-#include "plane.h"
-
+//#include "drawable.h"
+//#include "plane.h"
+/*
 class DrawableObject;
 class Plane;
 
@@ -54,7 +54,7 @@ private:
 		FARP
 	};
 };
-
+*/
 /*
     #define BOX 0
     #define SPHERE 1
@@ -67,6 +67,6 @@ private:
     #define bottom -1.0
 */
 
-bool objectVisible3(const vec3 pos, const GLfloat radius);
-bool objectVisible2(const vec3 pos, const GLfloat &radius);
-bool objectVisible(const vec3 pos, const GLfloat &radius);
+bool objectVisible(const vec3 pos, const GLfloat radius);
+//bool objectVisible2(const vec3 pos, const GLfloat &radius);
+//bool objectVisible(const vec3 pos, const GLfloat &radius);

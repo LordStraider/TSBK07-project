@@ -57,7 +57,7 @@ public:
 	virtual void setRotation(GLfloat angle);
 
 	//use NULL,0,NULL to set y = 0 while not affecting x or z. See also move()
-	virtual void setCoords(GLfloat x, GLfloat y, GLfloat z);
+	virtual void setCoords(GLfloat *x, GLfloat *y, GLfloat *z);
 	virtual vec3 getCoords() const { return vec3(this->x, this->y, this->z); }
 	virtual vec3 getDimensions() const { return dimensions; }
 	virtual GLfloat getYoffset() { return yOffset; }
@@ -72,7 +72,7 @@ public:
 	GLfloat rotation;
 protected:
 	void updateMatrices();
-	void stayInBounds();
+	void stayInBounds(GLfloat *x, GLfloat *z);
 	GLfloat x, z, y, yOffset, scale; //yOffset is distance from ground
 	vec3 dimensions;
 	Model* model;
@@ -128,7 +128,7 @@ public:
 	virtual bool update();
 	virtual void collisionHandler(DrawableObject* obj);
 	void fireBulletIfAmmo();
-	void addAmmo() { ammo++; }
+	void addAmmo(const int a) { ammo += a; }
 	int getAmmo() { return ammo; }
 	void subAmmo() { --ammo; }
 	void addScore() { score++; }

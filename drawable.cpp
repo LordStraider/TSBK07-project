@@ -59,7 +59,7 @@ DrawableObject::DrawableObject() {}
 DrawableObject::DrawableObject(GLfloat x, GLfloat yOffset, GLfloat z, GLfloat rotation, GLuint* tex, Model* model, GLuint* program, vec3 dimensions, int collisionMode, bool shadow) :
 	rotation(rotation), scale(1), tex(tex), model(model), program(program), dimensions(dimensions), collisionMode(collisionMode), shadow(shadow), del(false), affectedByGravity(false)
 {
-	setCoords(x,yOffset,z);
+	setCoords(&x, &yOffset, &z);
 //	dimensions = scale * findDimensions(model);
 	setRotation(rotation);
 }
@@ -67,7 +67,7 @@ DrawableObject::DrawableObject(GLfloat x, GLfloat yOffset, GLfloat z, GLfloat ro
 DrawableObject::DrawableObject(GLfloat x, GLfloat yOffset, GLfloat z, GLfloat rotation, GLfloat scale, GLuint* tex, Model* model, GLuint* program, vec3 dimensions, int collisionMode, bool shadow) :
 	rotation(rotation), scale(scale), tex(tex), model(model), program(program), dimensions(dimensions), collisionMode(collisionMode), shadow(shadow), del(false), affectedByGravity(false)
 {
-	setCoords(x,yOffset,z);
+	setCoords(&x, &yOffset, &z);
 //	dimensions = scale * findDimensions(model);
 	setRotation(rotation);
 }
@@ -75,13 +75,13 @@ DrawableObject::DrawableObject(GLfloat x, GLfloat yOffset, GLfloat z, GLfloat ro
 DrawableObject::DrawableObject(vec3 position, GLfloat rotation, GLuint* tex, Model* model, GLuint* program, vec3 dimensions, int collisionMode, bool shadow) :
 	x(position.x), z(position.z), yOffset(position.y), rotation(rotation), tex(tex), model(model), program(program), dimensions(dimensions), collisionMode(collisionMode), shadow(shadow), del(false), affectedByGravity(false)
 {
-	setCoords(x,yOffset,z);
+	setCoords(&x, &yOffset, &z);
 //	dimensions = scale * findDimensions(model);
 	setRotation(rotation);
 }
 
 void DrawableObject::draw() {
-	if (!objectVisible3(getCoords(), 20)) {
+	if (!objectVisible(getCoords(), 20)) {
 		return;
 	}
 
@@ -140,7 +140,10 @@ void DrawableObject::rotate(GLfloat angle) {
 
 //use 0,1,0 to move only along the y-axis
 void DrawableObject::move(GLfloat x, GLfloat y, GLfloat z) {
-	setCoords(this->x+x, this->yOffset+y, this->z+z);
+	this->x += x;
+	this->yOffset += y;
+	this->z += z;
+	setCoords(&this->x, &this->yOffset, &this->z);
 }
 
 //SETS rotation (rotation = angle). See also: rotate(GLfloat)
@@ -153,17 +156,17 @@ void DrawableObject::setRotation(GLfloat angle) {
 }
 
 //use -1 if you don't want to change a value. Example: -1,0,-1 to set y = 0 while not affecting x or z
-void DrawableObject::setCoords(GLfloat x, GLfloat y, GLfloat z) {
-	if(x!=-1)
-		this->x = x;
-	if(y!=-1)
-		this->yOffset = y;
-	if(z!=-1)
-		this->z = z;
+void DrawableObject::setCoords(GLfloat *x, GLfloat *y, GLfloat *z) {
+	stayInBounds(x, z);
 
-	stayInBounds();
+	if(*x != -1)
+		this->x = *x;
+	if(*y != -1)
+		this->yOffset = *y;
+	if(*z != -1)
+		this->z = *z;
 
-	trans = T(x, this->y = yOffset + findY(x,z), z);
+	trans = T(*x, this->y = yOffset + findY(*x, *z), *z);
 	updateMatrices();
 }
 
@@ -172,11 +175,11 @@ void DrawableObject::updateMatrices() {
 	total = Mult(trans, Mult(rot, s));
 }
 
-void DrawableObject::stayInBounds() {
-	if(x < 0) x = 0;
-	if(x >= texWidth-1) x = texWidth-1;
-	if(z < 0) z = 0;
-	if(z >= texHeight-1) z = texHeight-1;
+void DrawableObject::stayInBounds(GLfloat *x, GLfloat *z) {
+	if(*x < 5) *x = 5;
+	if(*x > texWidth-5) *x = texWidth-5;
+	if(*z < 5) *z = 5;
+	if(*z > texHeight-5) *z = texHeight-5;
 }
 
 //overload this to add AI behaviour. return true to remove object from public vector.
@@ -199,16 +202,28 @@ bool DrawableObject::update() {
 	return getDel();
 }
 
+bool checkInterval(float x) {
+	bool r = true;
+	if (x - 15 < 0)
+		r = false;
+	else if (x + 15 > texWidth)
+		r = false;
+	else if (x + 15 > texHeight)
+		r = false;
+	return r;
+}
+
 bool Tree::update() {
 	if (findY(x, z) == 1.5) {
 		return true;
 	}
 
-	if(rand() > RAND_MAX - 1000000 && apples.size() < 10){
+	if(checkInterval(this->x) && checkInterval(this->z) && rand() > RAND_MAX - 1200000 && apples.size() < 6){
 		//spawn an apple!
 		DrawableObject* apple = new DrawableObject(this->x + randomFloat(-10,10), 20, this->z + randomFloat(-10,10), 0, 0.4, &dirtTex, sphere, &programSingleColor, vec3(0.4, 0.4, 0.4), SPHERE);
 		apples.push_back(apple);
 		allObjects.push_back(apple);
+		printf("allobjsize: %i\n", allObjects.size());
 	}
 
 	GLfloat distToCam = sqrt(pow(xValue - x, 2) + pow(zValue - z, 2));
@@ -273,8 +288,8 @@ bool Player::update() {
 	direction = 1;
 	setRotation(bunnyRotation + angle);
 
-   	setCoords(xValue, yValue, zValue);
-
+   	setCoords(&xValue, &yValue, &zValue);
+printf("xValue: %f, zValue: %f\n", xValue, zValue);
 	for_each(allObjects.begin(), allObjects.end(), CollisionChecker(this));
 
 	return gameOver;
@@ -347,8 +362,8 @@ void Player::collisionHandler(DrawableObject* obj) {
 
 	if (obj->getCollisionMode() == SPHERE) {
 		obj->setDel(true);
-        allObjects.push_back(new DrawableObject(rand() % texWidth, 0, rand() % texHeight, 0, 1, &dirtTex, sphere, &programSingleColor, vec3(1, 1, 1), SPHERE));
-	    addAmmo();
+//        allObjects.push_back(new DrawableObject(rand() % texWidth, 0, rand() % texHeight, 0, 1, &dirtTex, sphere, &programSingleColor, vec3(1, 1, 1), SPHERE));
+	    addAmmo(3);
 	} else {
 	    xValue -= zModify * speed;
 	    zModify = -xModify;
@@ -357,7 +372,7 @@ void Player::collisionHandler(DrawableObject* obj) {
 
 	    direction = -1;
 
-		setCoords(xValue, yValue, zValue);
+		setCoords(&xValue, &yValue, &zValue);
 	}
 }
 

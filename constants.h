@@ -18,7 +18,7 @@
 
 // Project modules
 #include "drawable.h"
-#include "frustum.h"
+//#include "frustum.h"
 
 
 #ifndef M_PI
@@ -42,6 +42,7 @@ extern TextureData ttex; // terrain
     #define left -1.0
     #define top 1.0
     #define bottom -1.0
+    #define frustumRadius 95 // far / 2 + a bit offset
 
 extern GLfloat camPos, yCamPos, camMod, camModY, xModify, xValue, yFind, yModify, yValue, zModify, zValue, teaY, windY;
 extern GLfloat kingX, kingY, kingZ;
@@ -50,10 +51,8 @@ extern GLuint texWidth, texHeight;
 extern GLfloat *vertexArray;
 extern GLuint *indexArray;
 
-extern float gravity, angle, angleMod, bunnyRotation, speed, kingRotation, frustumLength, frustumRadius;
+extern float gravity, angle, angleMod, bunnyRotation, speed, kingRotation;
 extern bool menuPressed, gameOver;
-
-extern vec3 frustumCoords;
 
 extern Point3D p, l;
 extern GLuint program, programNoLight, programShadow, programSingleColor, programInvisible, programTerrain;

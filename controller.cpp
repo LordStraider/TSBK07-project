@@ -152,10 +152,7 @@ bool PointInTriangle(Point3D p, Point3D a, Point3D b, Point3D c) {
     return false;
 }
 
-GLfloat findY(int x, int z) {
-    if ((x + z * (texWidth-1))*6 + 5 > sizeof(GLuint) * (texWidth-1) * (texHeight-1) * 2 *3)
-        return 0;
-
+GLfloat findY(int x, int z) {    
     GLuint triangle1[3];
     GLuint triangle2[3];
     GLfloat y = 0.0;

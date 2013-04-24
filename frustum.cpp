@@ -1,20 +1,21 @@
 #include "frustum.h"
 
-#define ANG2RAD 180.0/3.14159265358979323846
+//#define ANG2RAD 180.0/3.14159265358979323846
 
-bool objectVisible3(const vec3 pos, const GLfloat radius) {
+bool objectVisible(const vec3 pos, const GLfloat radius) {
 
-	// calculate the center of the sphere
-	frustumCoords = VectorAdd(p, ScalarMult(l, frustumLength * 0.5 - 40));
-	frustumCoords.y = 0;
+
+    vec3 frustumCoords = vec3(xValue - frustumRadius * cos(camPos), 0, zValue - frustumRadius * sin(camPos));
+
 
     Point3D result = VectorSub(frustumCoords, pos);
 
-    if (Norm(result) < frustumRadius + radius)
+    if (Norm(result) < frustumRadius + radius) {
         return true;
+    }
     return false;
 }
- 
+ /*
 
 bool objectVisible2(const vec3 pos, const GLfloat &radius) {
 	vec3 direction = VectorSub(pos, p);
@@ -31,7 +32,7 @@ bool objectVisible2(const vec3 pos, const GLfloat &radius) {
 	if(Degrees > 50)
 	    return false;
 	return true;
-
+*/
 /*	1) Get a vector from the object's position to the camera's position
 	2) Normalize it
 	3) Get just the view component of your View vector (View - Position)
@@ -56,8 +57,8 @@ bool objectVisible2(const vec3 pos, const GLfloat &radius) {
 	if(Degrees > 50) {
 	    return false;
 	}*/
-}
-
+//}
+/*
 
 bool objectVisible(const vec3 pos, const GLfloat &radius) {
 	// The equation for a plane is: Ax + By + Cz + D = 0, where A, B and C define the plane's normal vector, D is the distance from the origin to the plane,
@@ -294,3 +295,4 @@ int FrustumG::boxInFrustum(DrawableObject *b) {
 
 	return result;
 }
+*/
