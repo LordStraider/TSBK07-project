@@ -24,6 +24,8 @@ int direction;
 Model *kingKong, *bunny, *bunnyShadow, *teapot, *teapotShadow, *cube, *skyBox, *blade, *windmillWalls, *windmillRoof, *windmillBalcony, *terrain, *sphere, *lowResTree, *highResTree, *billBoard;
 //Model *windmill2;
 
+FrustumG* frustumG;
+
 vector<GLuint*> programs;
 vector<DrawableObject*> allObjects;
 vector<DrawableObject*> lightSources;
@@ -156,7 +158,7 @@ void init_constants(void) {
 
 	for (int i = 0; i < 100; i++) {
         /* Spheres */
-        allObjects.push_back(new DrawableObject(rand() % texWidth, 0, rand() % texHeight, 0, 1, &dirtTex, sphere, &programSingleColor, vec3(1, 1, 1), SPHERE));
+        //allObjects.push_back(new DrawableObject(rand() % texWidth, 0, rand() % texHeight, 0, 1, &dirtTex, sphere, &programSingleColor, vec3(1, 1, 1), SPHERE));
         /* Trees */
     	allObjects.push_back(new Tree(rand() % texWidth, 0, rand() % texHeight, 0, 1, &grassTex, highResTree, &program, vec3(0.5, 10, 0.5), BOX));
 	    /* Billboards */
@@ -172,4 +174,7 @@ void init_constants(void) {
 		allObjects.push_back(light);
 	}
 
+
+    frustumG = new FrustumG();
+    frustumG->setCamInternals(1,texWidth/texHeight,near,far);
 }

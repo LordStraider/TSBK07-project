@@ -16,6 +16,7 @@
 // Project modules
 #include "controller.h"
 #include "constants.h"
+#include "frustum.h"
 
 class LightSource {
 public:
@@ -58,7 +59,7 @@ public:
 	//use NULL,0,NULL to set y = 0 while not affecting x or z. See also move()
 	virtual void setCoords(GLfloat x, GLfloat y, GLfloat z);
 	virtual vec3 getCoords() const { return vec3(this->x, this->y, this->z); }
-	virtual vec3 getDimensons() const { return dimensions; }
+	virtual vec3 getDimensions() const { return dimensions; }
 	virtual GLfloat getYoffset() { return yOffset; }
 	virtual int getCollisionMode() const { return collisionMode; }
 	virtual bool getDel() const { return del; }

@@ -19,7 +19,6 @@
 #include "constants.h"
 #include "drawable.h"
 
-
 class DrawableObject;
 
 Model* GenerateTerrain(TextureData *tex);

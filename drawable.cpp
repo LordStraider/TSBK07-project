@@ -81,6 +81,11 @@ DrawableObject::DrawableObject(vec3 position, GLfloat rotation, GLuint* tex, Mod
 }
 
 void DrawableObject::draw() {
+	if (!objectVisible2(getCoords(), 20)) {
+		return;
+	}
+
+
     glUseProgram(*program);
 
 	GLfloat t = (GLfloat)glutGet(GLUT_ELAPSED_TIME);
@@ -107,7 +112,7 @@ void DrawableObject::draw() {
 
     vec3 pos, dim;
     pos = getCoords();
-    dim = getDimensons();
+    dim = getDimensions();
 
     mat4 trans = T(pos.x, pos.y, pos.z);
     mat4 shear = S(dim.x, dim.y, dim.z);
@@ -120,8 +125,7 @@ void DrawableObject::draw() {
 }
 
 //returns random float between min and max.
-float randomFloat(float Min, float Max)
-{
+float randomFloat(float Min, float Max) {
 	return ((float(rand()) / float(RAND_MAX)) * (Max - Min)) + Min;
 }
 
@@ -200,7 +204,7 @@ bool Tree::update() {
 		return true;
 	}
 
-	if(rand() > RAND_MAX - 100 && apples.size() < 10){
+	if(rand() > RAND_MAX - 1000000 && apples.size() < 10){
 		//spawn an apple!
 		DrawableObject* apple = new DrawableObject(this->x + randomFloat(-10,10), 20, this->z + randomFloat(-10,10), 0, 0.4, &dirtTex, sphere, &programSingleColor, vec3(0.4, 0.4, 0.4), SPHERE);
 		apples.push_back(apple);

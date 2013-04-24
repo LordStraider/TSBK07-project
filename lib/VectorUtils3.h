@@ -52,6 +52,11 @@
 	typedef struct mat4
 	{
 		GLfloat m[16];
+	
+		GLfloat operator[](const int b) {
+			return this->m[b]; // result = a * b
+		}
+
 	} mat4;
 	typedef struct mat3
 	{
@@ -127,6 +132,7 @@ extern "C" {
 	mat4 mat3tomat4(mat3 m);
 	vec3 vec4tovec3(vec4 v);
 	vec4 vec3tovec4(vec3 v);
+
 #ifdef __cplusplus
 }
 #endif

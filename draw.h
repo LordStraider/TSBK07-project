@@ -22,6 +22,8 @@
 // Project modules
 #include "constants.h"
 #include "drawable.h"
+#include "frustum.h"
+
 
 void displayTexture();
 void displayTerrain();
