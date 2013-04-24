@@ -50,8 +50,10 @@ extern GLuint texWidth, texHeight;
 extern GLfloat *vertexArray;
 extern GLuint *indexArray;
 
-extern float gravity, angle, angleMod, bunnyRotation, speed, kingRotation;
+extern float gravity, angle, angleMod, bunnyRotation, speed, kingRotation, frustumLength, frustumRadius;
 extern bool menuPressed, gameOver;
+
+extern vec3 frustumCoords;
 
 extern Point3D p, l;
 extern GLuint program, programNoLight, programShadow, programSingleColor, programInvisible, programTerrain;

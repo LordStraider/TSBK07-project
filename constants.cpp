@@ -7,8 +7,10 @@ mat4 rot, trans, shear, total, cam, proj, tmp;
 GLfloat camPos, yCamPos, camMod, camModY, xModify, xValue, yFind, yModify, yValue, zModify, zValue, teaY, windY;
 GLfloat kingX, kingY, kingZ;
 
-float gravity, angle, angleMod, bunnyRotation, speed, kingRotation;
+float gravity, angle, angleMod, bunnyRotation, speed, kingRotation, frustumLength, frustumRadius;
 bool menuPressed, gameOver;
+
+vec3 frustumCoords;
 
 Point3D p,l;
 GLuint program, programNoLight, programShadow, programSingleColor, programInvisible, programTerrain;
@@ -177,4 +179,29 @@ void init_constants(void) {
 
     frustumG = new FrustumG();
     frustumG->setCamInternals(1,texWidth/texHeight,near,far);
+
+
+
+    // calculate the radius of the frustum sphere
+    frustumLength = far - near;
+
+    // use some trig to find the height of the frustum at the far plane
+    float fHeight = frustumLength * tan(45 * 0.5f);
+
+    // with an aspect ratio of 1, the width will be the same
+    float fWidth = fHeight;
+
+    // halfway point between near/far planes starting at the origin and extending along the z axis
+    vec3 P = vec3(0.0f, 0.0f, near + frustumLength * 0.5f);
+
+    // the calculate far corner of the frustum
+    vec3 Q = vec3(fWidth, fHeight, frustumLength);
+
+    // the vector between P and Q
+    vec3 vDiff = VectorSub(P, Q);
+    // the radius becomes the length of this vector
+    frustumRadius = Norm(vDiff);
+    vec3 a;
+    a = l * frustumLength * 0.5;
+    frustumCoords = VectorAdd(p, a);
 }

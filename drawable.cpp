@@ -81,7 +81,7 @@ DrawableObject::DrawableObject(vec3 position, GLfloat rotation, GLuint* tex, Mod
 }
 
 void DrawableObject::draw() {
-	if (!objectVisible2(getCoords(), 20)) {
+	if (!objectVisible3(getCoords(), 20)) {
 		return;
 	}
 
