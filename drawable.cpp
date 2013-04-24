@@ -177,21 +177,13 @@ void DrawableObject::stayInBounds() {
 
 //overload this to add AI behaviour. return true to remove object from public vector.
 bool DrawableObject::update() {
-	//just testing various things we might need
-
 	if(affectedByGravity){
-		if(yOffset<=0) yOffset = 0;
+		if(yOffset<=0) {
+			yOffset = 0;
+			//handle this as a onCollide with ground?
+		}
 		else move(0,-0.25,0);
 	}
-
-	/*if(rand() > RAND_MAX-10) {
-		//just testing. Will need to be able to do this if we want to fire bullets, for instance.
-		allObjects.push_back(new DrawableObject(rand() % texWidth, 0, rand() % texHeight, 0, &bunnyTex, sphere, program, dimensions, collisionMode));
-		printf("amount of objects now: %d\n", allObjects.size());
-	}*/
-	//if(rand() > RAND_MAX-1000) move(randomFloat(-2,2), 0, randomFloat(-2,2));
-	//rotate(0.05);
-	//if(rand() > RAND_MAX-10) return true; // randomly remove objects to test deletion of objects (pick ups, dead enemies, etc)
 	return getDel();
 }
 
@@ -303,12 +295,13 @@ Light::Light(GLfloat x, GLfloat yOffset, GLfloat z, vec3 rotation, GLfloat scale
 	{
 		rot = Mult(Mult(Rx(rotation.x), Ry(rotation.y)), Ry(rotation.z)); //not this simple, is it?
 		source = new LightSource(vec3(x, y = findY(x,z) + yOffset, z), rotation, vec3(1,1,1));
+		lightDirections.push_back(rotation);
+		lightColors.push_back(vec3(1,0,0));
 	};
 
 void DrawableObject::collisionHandler(DrawableObject* obj) {
 
 }
-
 
 struct AppleDropper
 {

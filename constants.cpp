@@ -26,7 +26,9 @@ Model *kingKong, *bunny, *bunnyShadow, *teapot, *teapotShadow, *cube, *skyBox, *
 
 vector<GLuint*> programs;
 vector<DrawableObject*> allObjects;
-vector<DrawableObject*> lightSources;
+
+vector<vec3> lightDirections;
+vector<vec3> lightColors; 
 
 Player* bunnyObj;
 
@@ -156,7 +158,7 @@ void init_constants(void) {
 
 	for (int i = 0; i < 100; i++) {
         /* Spheres */
-        allObjects.push_back(new DrawableObject(rand() % texWidth, 0, rand() % texHeight, 0, 1, &dirtTex, sphere, &programSingleColor, vec3(1, 1, 1), SPHERE));
+		//allObjects.push_back(new DrawableObject(rand() % texWidth, 0, rand() % texHeight, 0, 1, &dirtTex, sphere, &programSingleColor, vec3(1, 1, 1), SPHERE));
         /* Trees */
     	allObjects.push_back(new Tree(rand() % texWidth, 0, rand() % texHeight, 0, 1, &grassTex, highResTree, &program, vec3(0.5, 10, 0.5), BOX));
 	    /* Billboards */
@@ -165,10 +167,10 @@ void init_constants(void) {
     }
 
 	for (int i = 0; i < 8; i++){
-        /* sphere dont have any texture coordinates so the skyboxtex is not doing what it is supposed to... */
-		Light* light = new Light(20, 5, 20, vec3(rand() % 6, rand() % 6, rand() % 6), 3, &skyBoxTex, sphere, &program);
-		lightSources.push_back(light);
-		//when lightSources works: only push to allObjects, let constructor take care of its LightSource.
+		//these are only displayed for debug purposes
+		//the objects are also there to make eventual subclasses simpler. Moving lights, fires, etc. 
+		vec3 pos = vec3(rand() % (texWidth -1), 0, rand() % (texHeight - 1));
+		Light* light = new Light(pos.x,pos.y,pos.z, pos, 1, &grassTex, bunny, &program);
 		allObjects.push_back(light);
 	}
 

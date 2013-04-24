@@ -9,14 +9,17 @@ uniform vec3 camPos;
 uniform bool mode;
 uniform mat4 mdlMatrix;
 uniform mat4 camMatrix;
+uniform vec3 lightSourcesDirPosArr[8];
+uniform vec3 lightSourcesColorArr[8];
 
-float specular(void){
-	vec3 normal = normalize(mat3(mdlMatrix) * exNormal);
-	vec3 surf = vec3(mdlMatrix * vec4(exPos,1.0)); 
+vec3 specular(int i){
+	vec3 normal = normalize(mat3(camMatrix * mdlMatrix) * exNormal);
+	vec3 surf = vec3(camMatrix * mdlMatrix * vec4(exPos,1.0));
+	//vec3 normal = normalize(mat3(mdlMatrix) * exNormal);
+	//vec3 surf = vec3(mdlMatrix * vec4(exPos,1.0)); 
 	
-	vec3 lightDirection;
-	//fix
-	lightDirection = normalize(mat3(mdlMatrix) * camPos);
+	vec3 lightDirection = normalize(mat3(camMatrix) * lightSourcesDirPosArr[i]);
+	//lightDirection = normalize(mat3(mdlMatrix) * camPos);
 		
 	vec3 reflectedLightDirection = reflect(lightDirection, normal);
 	vec3 eyeDirection = normalize(surf);
@@ -24,7 +27,7 @@ float specular(void){
 	float specularStrength = dot(reflectedLightDirection, eyeDirection);
 	specularStrength = max(specularStrength, 0.01);	//prevent negative light
 	specularStrength = pow(specularStrength, 10);
-	return specularStrength;
+	return specularStrength * lightSourcesColorArr[i];
 }
 
 void main(void)
@@ -35,12 +38,18 @@ void main(void)
 //	diffuse = dot(norm, normalize(lightSourcesDirPosArr[i]));
 //	shade = max(dot(normalize(exNormal), normalize(camPos)), 0.0);
 	diffuse = max(dot(normalize(exNormal), normalize(light)), 0.0);
-	diffuse = clamp(diffuse, 0, 1);
-	diffuse = diffuse + specular() / exPos.y;
 	
+	vec3 specularLight = vec3(0,0,0);
+	int i;
+	for(i = 0; i < 8; i++){
+		specularLight += specular(i);
+	}
+	
+	vec3 lights = (specularLight / exPos.y);
+
 	if (exPos.y <= 1.5){ //water
-		outColor = exPos.y / 2.5 * (diffuse * 1.2 * texture(tex, texCoord) + diffuse * vec4(0,0,1,1));
+		outColor = vec4(lights,1.0) + exPos.y / 2.5 * (diffuse * 1.2 * texture(tex, texCoord) + diffuse * vec4(0,0,1,1));
 	} else {
-		outColor = diffuse * texture(tex, texCoord);
+		outColor = vec4(lights,1.0) + diffuse * texture(tex, texCoord);
 	}
 }

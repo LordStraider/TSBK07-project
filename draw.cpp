@@ -21,33 +21,13 @@ struct updateProgram{
 	updateProgram(){}
 	void operator()(GLuint* program){
 		glUseProgram(*program);
-		//glEnable(GL_LIGHTING);
 		glUniformMatrix4fv(glGetUniformLocation(*program, "camMatrix"), 1, GL_TRUE, cam.m);
-		int i = 0;
-		//for_each(lightSources.begin(), lightSources.end(), [program, &i](DrawableObject* obj){
-			/*this would (maybe) work if we:
-				* Fixed this vector to be vector<Light*> or vector<LightSource*>
-				* used actual gl* methods to pass parameters to shaders (glVertex, glPerspectiveMatrix)
-			*/
-			/*Light* light = (Light*)obj;
-			LightSource* source = light->source;
-			vec3 color = source->color;
-			vec3 position = source->position;
-			vec3 direction = source->direction;
-			printf("###test: %d, %d, %d\n", position.x, position.y, position.z);*/
-		/*	GLfloat pos[] = {20, 10, 10, 1.0};
-			int k = 1;
-			if(i % 2 == 0) k = -1;
-			GLfloat dir[] = {0, k, 0, 1.0};
-			glEnable(GL_LIGHT0 + i);
-			glLightfv(GL_LIGHT0 + i, GL_POSITION, pos);
-			glLightfv(GL_LIGHT0 + i++, GL_SPOT_DIRECTION, dir);
-		});*/
-
+		//we have to specify amount of files at compile time
+		//a way around this would be upgrading to some newer opengl version or passing these arrays as textures.
+		glUniform3fv(glGetUniformLocation(*program, "lightSourcesDirPosArr"), 8, &lightDirections[0].x);
+		glUniform3fv(glGetUniformLocation(*program, "lightSourcesColorArr"), 8, &lightColors[0].x);	
 	}
 };
-
-
 
 int frameCount = 0;
 int previousTime = 0;
@@ -108,7 +88,6 @@ void display(void) {
     if (yFind != 1.5) {
         yValue += yModify;
     }
-
 
     Point3D mod, player, king;
     player = SetVector(xValue, yValue, zValue);
