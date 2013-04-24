@@ -223,7 +223,6 @@ bool Tree::update() {
 		DrawableObject* apple = new DrawableObject(this->x + randomFloat(-10,10), 20, this->z + randomFloat(-10,10), 0, 0.4, &dirtTex, sphere, &programSingleColor, vec3(0.4, 0.4, 0.4), SPHERE);
 		apples.push_back(apple);
 		allObjects.push_back(apple);
-		printf("allobjsize: %i\n", allObjects.size());
 	}
 
 	GLfloat distToCam = sqrt(pow(xValue - x, 2) + pow(zValue - z, 2));
@@ -289,7 +288,7 @@ bool Player::update() {
 	setRotation(bunnyRotation + angle);
 
    	setCoords(&xValue, &yValue, &zValue);
-printf("xValue: %f, zValue: %f\n", xValue, zValue);
+
 	for_each(allObjects.begin(), allObjects.end(), CollisionChecker(this));
 
 	return gameOver;
