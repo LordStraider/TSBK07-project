@@ -152,7 +152,7 @@ bool PointInTriangle(Point3D p, Point3D a, Point3D b, Point3D c) {
     return false;
 }
 
-GLfloat findY(int x, int z) {
+GLfloat findY(int x, int z) {    
     GLuint triangle1[3];
     GLuint triangle2[3];
     GLfloat y = 0.0;
@@ -194,8 +194,8 @@ GLfloat findY(int x, int z) {
 bool checkCollisionBB(DrawableObject* obj1, DrawableObject* obj2) {
     vec3 obj1pos = obj1->getCoords();
     vec3 obj2pos = obj2->getCoords();
-    vec3 obj1dim = obj1->getDimensons();
-    vec3 obj2dim = obj2->getDimensons();
+    vec3 obj1dim = obj1->getDimensions();
+    vec3 obj2dim = obj2->getDimensions();
 
     obj1pos.y = findY(obj1pos.x, obj1pos.z) + obj1->getYoffset();
     obj2pos.y = findY(obj2pos.x, obj2pos.z) + obj2->getYoffset();
@@ -214,8 +214,8 @@ bool checkCollisionBS(DrawableObject* obj1, DrawableObject* obj2) {
     vec3 center, closest, result, obj1pos, obj1dim, obj2dim;
     center = obj2->getCoords();
     obj1pos = obj1->getCoords();
-    obj1dim = obj1->getDimensons();
-    obj2dim = obj2->getDimensons();
+    obj1dim = obj1->getDimensions();
+    obj2dim = obj2->getDimensions();
 
     center.y = findY(center.x, center.z) + obj1->getYoffset() - 1;
     obj1pos.y = findY(obj1pos.x, obj1pos.z) + obj2->getYoffset() - 1;
@@ -255,8 +255,8 @@ bool checkCollisionSS(DrawableObject* obj1, DrawableObject* obj2) {
     Point3D center1, center2, result, obj1dim, obj2dim;
     center1 = obj1->getCoords();
     center2 = obj2->getCoords();
-    obj1dim = obj1->getDimensons();
-    obj2dim = obj2->getDimensons();
+    obj1dim = obj1->getDimensions();
+    obj2dim = obj2->getDimensions();
 
     result = VectorSub(center2, center1);
 
@@ -288,7 +288,6 @@ void keyController(){
     bunnyRotation = camPos + M_PI / 2;
 
     speed = 1.0;
-
 
     if (keyIsDown('<')){
         speed = 2.0;

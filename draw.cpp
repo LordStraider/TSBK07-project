@@ -11,6 +11,7 @@ struct ObjectUpdater
 	{
 		bool erase = obj->update();
 		if(!erase) obj->draw();
+		//else delete obj;
 		return erase;
 	}
 };
@@ -22,7 +23,7 @@ struct updateProgram{
 	void operator()(GLuint* program){
 		glUseProgram(*program);
 		glUniformMatrix4fv(glGetUniformLocation(*program, "camMatrix"), 1, GL_TRUE, cam.m);
-		//we have to specify amount of files at compile time
+		//we have to specify amount of lights at compile time
 		//a way around this would be upgrading to some newer opengl version or passing these arrays as textures.
 		glUniform3fv(glGetUniformLocation(*program, "lightSourcesDirPosArr"), 8, &lightDirections[0].x);
 		glUniform3fv(glGetUniformLocation(*program, "lightSourcesColorArr"), 8, &lightColors[0].x);	
@@ -107,6 +108,7 @@ void display(void) {
 
     v = SetVector(0.0, 1.0, 0.0);
     cam = lookAtv(p, l, v);
+//    frustumG->setCamDef(&p, &l, &v); 
 
     printError("pre light");
 
@@ -146,6 +148,13 @@ void displayPlayerStatus() {
     s3 << bunnyObj->getScore();
     string score = "Enemies killed: " + s3.str();
     sfDrawString(-20, -10, (char*)score.c_str());
+
+    if (gameOver) {
+        stringstream s4;
+        s4 << bunnyObj->getScore();
+        score = "Game Over! Enemies killed: " + s4.str();
+        sfDrawString(155, 155, (char*)score.c_str());
+    }
 }
 
 void displayTerrain() {

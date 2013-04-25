@@ -16,6 +16,7 @@
 // Project modules
 #include "controller.h"
 #include "constants.h"
+#include "frustum.h"
 
 class LightSource {
 public:
@@ -56,9 +57,9 @@ public:
 	virtual void setRotation(GLfloat angle);
 
 	//use NULL,0,NULL to set y = 0 while not affecting x or z. See also move()
-	virtual void setCoords(GLfloat x, GLfloat y, GLfloat z);
+	virtual void setCoords(GLfloat *x, GLfloat *y, GLfloat *z);
 	virtual vec3 getCoords() const { return vec3(this->x, this->y, this->z); }
-	virtual vec3 getDimensons() const { return dimensions; }
+	virtual vec3 getDimensions() const { return dimensions; }
 	virtual GLfloat getYoffset() { return yOffset; }
 	virtual int getCollisionMode() const { return collisionMode; }
 	virtual bool getDel() const { return del; }
@@ -71,7 +72,7 @@ public:
 	GLfloat rotation;
 protected:
 	void updateMatrices();
-	void stayInBounds();
+	void stayInBounds(GLfloat *x, GLfloat *z);
 	GLfloat x, z, y, yOffset, scale; //yOffset is distance from ground
 	vec3 dimensions;
 	Model* model;
@@ -82,6 +83,17 @@ protected:
 	bool del;
 };
 
+class SingleColor : public DrawableObject{
+public:
+	SingleColor(GLfloat x, GLfloat yOffset, GLfloat z, GLfloat rotation, GLfloat scale,
+         vec3 color, Model* model, vec3 dimensions, int collisionMode, bool shadow = false);
+	//overload this to add AI behaviour. return true to remove object from public vector.
+	virtual bool update(){return DrawableObject::update();}
+	virtual void draw();
+	virtual void collisionHandler(DrawableObject* obj){DrawableObject::collisionHandler(obj);};
+	vec3 color;
+};
+
 class Tree : public DrawableObject{
 public:
 	Tree(GLfloat x, GLfloat yOffset, GLfloat z, GLfloat rotation, GLfloat scale,
@@ -90,15 +102,16 @@ public:
 
 	//overload this to add AI behaviour. return true to remove object from public vector.
 	virtual bool update();
+	virtual void draw();
 	virtual void collisionHandler(DrawableObject* obj);
-	std::vector<DrawableObject*> apples;
+	std::vector<SingleColor*> apples;
 };
 
-class Blade : public DrawableObject{
+class Blade : public SingleColor{
 public:
 	Blade(GLfloat x, GLfloat yOffset, GLfloat z, GLfloat rotation, GLfloat scale,
-         GLuint* tex, Model* model, GLuint* program, vec3 dimensions, int collisionMode, bool shadow = false) :
-		DrawableObject(x, yOffset, z, rotation, scale, tex, model, program, dimensions, collisionMode, shadow) {};
+         vec3 color, Model* model, vec3 dimensions, int collisionMode, bool shadow = false) :
+		SingleColor(x, yOffset, z, rotation, scale, color, model, dimensions, collisionMode, shadow) {};
 
 	//overload this to add AI behaviour. return true to remove object from public vector.
 	virtual bool update();
@@ -127,7 +140,7 @@ public:
 	virtual bool update();
 	virtual void collisionHandler(DrawableObject* obj);
 	void fireBulletIfAmmo();
-	void addAmmo() { ammo++; }
+	void addAmmo(const int a) { ammo += a; }
 	int getAmmo() { return ammo; }
 	void subAmmo() { --ammo; }
 	void addScore() { score++; }
@@ -138,11 +151,11 @@ private:
 	int ammo;
 };
 
-class Shot : public DrawableObject{
+class Shot : public SingleColor{
 public:
 	Shot(GLfloat x, GLfloat yOffset, GLfloat z, GLfloat rotation, GLfloat scale,
-          GLuint* tex, Model* model, GLuint* program, vec3 dimensions, int collisionMode, vec3 direction, bool shadow = false) :
-		DrawableObject(x, yOffset, z, rotation, scale, tex, model, program, dimensions, collisionMode, shadow), direction(direction) {};
+          vec3 color, Model* model, vec3 dimensions, int collisionMode, vec3 direction, bool shadow = false) :
+		SingleColor(x, yOffset, z, rotation, scale, color, model, dimensions, collisionMode, shadow), direction(direction) {};
 
 	//overload this to add AI behaviour. return true to remove object from public vector.
 	virtual bool update();
@@ -169,7 +182,7 @@ public:
 	//overload this to add AI behaviour. return true to remove object from public vector.
 
 	//use NULL,0,NULL to set y = 0 while not affecting x or z. See also move()
-	virtual void setCoords(GLfloat x, GLfloat y, GLfloat z);
+	virtual void setCoords(GLfloat* x, GLfloat* y, GLfloat* z);
 
 };
 

@@ -24,6 +24,8 @@ int direction;
 Model *kingKong, *bunny, *bunnyShadow, *teapot, *teapotShadow, *cube, *skyBox, *blade, *windmillWalls, *windmillRoof, *windmillBalcony, *terrain, *sphere, *lowResTree, *highResTree, *billBoard;
 //Model *windmill2;
 
+FrustumG* frustumG;
+
 vector<GLuint*> programs;
 vector<DrawableObject*> allObjects;
 
@@ -136,13 +138,13 @@ void init_constants(void) {
 
 
     /* WindMill */
-    allObjects.push_back(new DrawableObject(60, 0, 30, 0, 0.8, &dirtTex, windmillWalls, &programSingleColor, vec3(3.5, 13, 3.5), BOX));
-    allObjects.push_back(new DrawableObject(60, 0, 30, 0, 0.8, &dirtTex, windmillRoof, &programSingleColor, vec3(0,0,0), NONE));
-    allObjects.push_back(new DrawableObject(60, 0, 30, 0, 0.8, &dirtTex, windmillBalcony, &programSingleColor, vec3(0,0,0), NONE, true));
+	allObjects.push_back(new SingleColor(60, 0, 30, 0, 0.8, vec3(0,1,0), windmillWalls, vec3(3.5, 13, 3.5), BOX));
+    allObjects.push_back(new SingleColor(60, 0, 30, 0, 0.8, vec3(1,1,0), windmillRoof, vec3(0,0,0), NONE));
+    allObjects.push_back(new SingleColor(60, 0, 30, 0, 0.8, vec3(0,1,1), windmillBalcony, vec3(0,0,0), NONE, true));
     int i;
     for (i = 0; i < 4; i++) {
         float r = i * M_PI / 2;
-        allObjects.push_back(new Blade(64, 7.4, 30, r, 0.5, &dirtTex, blade, &programSingleColor, vec3(0,0,0), NONE));
+        allObjects.push_back(new Blade(64, 7.4, 30, r, 0.5, vec3(1,0,1), blade, vec3(0,0,0), NONE));
     }
 
     /* Teapot */
@@ -163,7 +165,6 @@ void init_constants(void) {
     	allObjects.push_back(new Tree(rand() % texWidth, 0, rand() % texHeight, 0, 1, &grassTex, highResTree, &program, vec3(0.5, 10, 0.5), BOX));
 	    /* Billboards */
         allObjects.push_back(new Billboard(rand() % (texWidth-1), 10, rand() % (texHeight-1), 10, &skyBoxTex, &program, vec3(0,0,0), NONE));
-
     }
 
 	for (int i = 0; i < 8; i++){
@@ -174,4 +175,7 @@ void init_constants(void) {
 		allObjects.push_back(light);
 	}
 
+
+//    frustumG = new FrustumG();
+//    frustumG->setCamInternals(1,texWidth/texHeight,near,far);
 }

@@ -18,6 +18,7 @@
 
 // Project modules
 #include "drawable.h"
+//#include "frustum.h"
 
 
 #ifndef M_PI
@@ -27,6 +28,7 @@
 class DrawableObject;
 class Player;
 class LightSource;
+class FrustumG;
 
 extern mat4 rot, trans, shear, total, cam, proj, tmp;
 
@@ -36,11 +38,12 @@ extern TextureData ttex; // terrain
     #define SPHERE 1
     #define NONE 100
     #define near 1.0
-    #define far 300.0
+    #define far 200.0
     #define right 1.0
     #define left -1.0
     #define top 1.0
     #define bottom -1.0
+    #define frustumRadius 95 // far / 2 + a bit offset
 
 extern GLfloat camPos, yCamPos, camMod, camModY, xModify, xValue, yFind, yModify, yValue, zModify, zValue, teaY, windY;
 extern GLfloat kingX, kingY, kingZ;
@@ -61,6 +64,8 @@ extern int direction;
 
 extern Model *kingKong, *bunny, *bunnyShadow, *teapot, *teapotShadow, *cube, *skyBox, *blade, *windmillWalls, *windmillRoof, *windmillBalcony, *terrain, *sphere, *lowResTree, *highResTree, *billBoard;
 //extern Model *windmill2;
+
+extern FrustumG* frustumG;
 
 extern std::vector<GLuint*> programs;
 extern std::vector<DrawableObject*> allObjects;
