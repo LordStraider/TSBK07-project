@@ -146,7 +146,7 @@ void init_constants(void) {
     }
 
     /* Teapot */
-    allObjects.push_back(new DrawableObject(rand() % texWidth, 0, rand() % texHeight, 0, &dirtTex, teapot, &program, vec3(10, 20, 10), BOX, true));
+    allObjects.push_back(new DrawableObject(-1, 0, 258, 0, &dirtTex, teapot, &program, vec3(10, 20, 10), BOX, true));
 
     /* KingKong */
     allObjects.push_back(new Enemy(rand() % texWidth, 0, rand() % texHeight, 0, 1, &bunnyTex, kingKong, &program, vec3(5.1, 40, 5.1), BOX, true));

@@ -148,6 +148,10 @@ void DrawableObject::setRotation(GLfloat angle) {
 	updateMatrices();
 }
 
+GLfloat clamp(GLfloat a, GLfloat min, GLfloat max){
+	return a = (a < min) ? min : (a > max) ? max : a;
+}
+
 //use -1 if you don't want to change a value. Example: -1,0,-1 to set y = 0 while not affecting x or z
 void DrawableObject::setCoords(GLfloat x, GLfloat y, GLfloat z) {
 	if(x!=-1)
@@ -157,9 +161,9 @@ void DrawableObject::setCoords(GLfloat x, GLfloat y, GLfloat z) {
 	if(z!=-1)
 		this->z = z;
 
-	stayInBounds();
-
-	trans = T(x, this->y = yOffset + findY(x,z), z);
+	this->x = clamp(x,0,texWidth-2);
+	this->z = clamp(z,0,texHeight-2);
+	trans = T(this->x, this->y = yOffset + findY(this->x,this->z), this->z);
 	updateMatrices();
 }
 
@@ -260,16 +264,17 @@ void Player::fireBulletIfAmmo(){
 bool Player::update() {
 	direction = 1;
 	setRotation(bunnyRotation + angle);
-
+	
    	setCoords(xValue, yValue, zValue);
-
+	
+	lightDirections[0] = getCoords();
 	for_each(allObjects.begin(), allObjects.end(), CollisionChecker(this));
-
 	return gameOver;
 }
 
 bool Shot::update() {
 	move(cos(rotation), 0, sin(rotation));
+	
 	if(x <= 1 || x >= texWidth-1 || z <= 1 || z >= texHeight-1){
 		return true;
 	}
@@ -295,9 +300,18 @@ Light::Light(GLfloat x, GLfloat yOffset, GLfloat z, vec3 rotation, GLfloat scale
 	{
 		rot = Mult(Mult(Rx(rotation.x), Ry(rotation.y)), Ry(rotation.z)); //not this simple, is it?
 		source = new LightSource(vec3(x, y = findY(x,z) + yOffset, z), rotation, vec3(1,1,1));
+		this->lightId = lightDirections.size();
 		lightDirections.push_back(rotation);
 		lightColors.push_back(vec3(1,0,0));
 	};
+
+	//use NULL,0,NULL to set y = 0 while not affecting x or z. See also move()
+void Light::setCoords(GLfloat x, GLfloat y, GLfloat z){
+	this->y += y - yOffset;
+	this->source->direction = vec3(x,this->y,z);
+	lightDirections[this->lightId] = this->source->direction;
+	return DrawableObject::setCoords(x,y,z);
+}
 
 void DrawableObject::collisionHandler(DrawableObject* obj) {
 
@@ -336,7 +350,7 @@ void Player::collisionHandler(DrawableObject* obj) {
 
 	if (obj->getCollisionMode() == SPHERE) {
 		obj->setDel(true);
-        allObjects.push_back(new DrawableObject(rand() % texWidth, 0, rand() % texHeight, 0, 1, &dirtTex, sphere, &programSingleColor, vec3(1, 1, 1), SPHERE));
+        //allObjects.push_back(new DrawableObject(rand() % texWidth, 0, rand() % texHeight, 0, 1, &dirtTex, sphere, &programSingleColor, vec3(1, 1, 1), SPHERE));
 	    addAmmo();
 	} else {
 	    xValue -= zModify * speed;
@@ -349,6 +363,8 @@ void Player::collisionHandler(DrawableObject* obj) {
 		setCoords(xValue, yValue, zValue);
 	}
 }
+
+
 
 void Shot::collisionHandler(DrawableObject* obj) {
 	Player *p = dynamic_cast<Player*>(obj);

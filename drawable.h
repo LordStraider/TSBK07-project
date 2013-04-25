@@ -164,9 +164,13 @@ public:
 
 class Light : public DrawableObject{
 public:
-	LightSource* source;
+	LightSource* source; int lightId;
 	Light(GLfloat x, GLfloat yOffset, GLfloat z, vec3 rotation, GLfloat scale, GLuint* tex, Model* model, GLuint* program, bool shadow = false);
 	//overload this to add AI behaviour. return true to remove object from public vector.
+
+	//use NULL,0,NULL to set y = 0 while not affecting x or z. See also move()
+	virtual void setCoords(GLfloat x, GLfloat y, GLfloat z);
+
 };
 
 void drawObj(DrawableObject* obj);
