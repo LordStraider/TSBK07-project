@@ -12,8 +12,10 @@ struct ObjectUpdater
 		bool erase = obj->update();
 		if(!erase)
             obj->draw();
-        else 
+        else {
             delete obj;
+            printf("deleted\n");
+        }
 
 		return erase;
 	}
