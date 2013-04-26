@@ -166,13 +166,13 @@ void init_constants(void) {
 
     }
 
-	for (int i = 0; i < 8; i++){
+/*	for (int i = 0; i < 8; i++){
         /* sphere dont have any texture coordinates so the skyboxtex is not doing what it is supposed to... */
-		Light* light = new Light(20, 5, 20, vec3(rand() % 6, rand() % 6, rand() % 6), 3, &skyBoxTex, sphere, &program);
+/*		Light* light = new Light(20, 5, 20, vec3(rand() % 6, rand() % 6, rand() % 6), 3, &skyBoxTex, sphere, &program);
 		lightSources.push_back(light);
 		//when lightSources works: only push to allObjects, let constructor take care of its LightSource.
 		allObjects.push_back(light);
-	}
+	}*/
 
 
 //    frustumG = new FrustumG();

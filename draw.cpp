@@ -10,7 +10,11 @@ struct ObjectUpdater
 	bool operator()(DrawableObject* obj) const
 	{
 		bool erase = obj->update();
-		if(!erase) obj->draw();
+		if(!erase)
+            obj->draw();
+        else 
+            delete obj;
+
 		return erase;
 	}
 };
@@ -141,6 +145,7 @@ void display(void) {
 
     /* Display all objects */
 	allObjects.erase(remove_if(allObjects.begin(), allObjects.end(), ObjectUpdater()), allObjects.end());
+    //for_each(allObjects.begin(), allObjects.end(), ObjectUpdater());
 
     displayPlayerStatus();
 

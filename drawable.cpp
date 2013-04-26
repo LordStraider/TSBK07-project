@@ -197,7 +197,8 @@ void DrawableObject::stayInBounds(GLfloat *x, GLfloat *z) {
         outOfBound = true;
     }
 
-    if (outOfBound && getCollisionMode() == SPHERE) {
+    Shot *s = dynamic_cast<Shot*>(this);
+    if (outOfBound && s != NULL) {
         del = true;
     }
 }
@@ -227,7 +228,7 @@ bool Tree::update() {
         return true;
     }
 
-    if(rand() > RAND_MAX - 1200000 && apples.size() < 6){
+    if(rand() > RAND_MAX - 1200000 && apples.size() < 10){
         //spawn an apple!
         GLfloat x, z;
         x = this->x + randomFloat(-10,10);
@@ -236,7 +237,7 @@ bool Tree::update() {
         DrawableObject* apple = new DrawableObject(x, 20, z, 0, 0.4, &dirtTex, sphere, &programSingleColor, vec3(0.4, 0.4, 0.4), SPHERE);
         apples.push_back(apple);
         allObjects.push_back(apple);
-//      printf("allobjsize: %i\n", allObjects.size());
+        //printf("allobjsize: %i\n", allObjects.size());
     }
 
     GLfloat distToCam = sqrt(pow(xValue - x, 2) + pow(zValue - z, 2));
@@ -405,8 +406,8 @@ void Shot::collisionHandler(DrawableObject* obj) {
         bunnyObj->addScore();
         obj->setDel(true);
         /* Adding 2 new monsters */
-        allObjects.push_back(new Enemy(rand() % texWidth, 0, rand() % texHeight, 0, 1, &bunnyTex, kingKong, e->getProgram(), vec3(5.1, 40, 5.1), BOX, true));
-        allObjects.push_back(new Enemy(rand() % texWidth, 0, rand() % texHeight, 0, 1, &bunnyTex, kingKong, e->getProgram(), vec3(5.1, 40, 5.1), BOX, true));
+        allObjects.push_back(new Enemy(rand() % texWidth - 5, 0, rand() % texHeight - 5, 0, 1, &bunnyTex, kingKong, e->getProgram(), vec3(5.1, 40, 5.1), BOX, true));
+        allObjects.push_back(new Enemy(rand() % texWidth - 5, 0, rand() % texHeight - 5, 0, 1, &bunnyTex, kingKong, e->getProgram(), vec3(5.1, 40, 5.1), BOX, true));
     }
 }
 
