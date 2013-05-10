@@ -83,6 +83,17 @@ protected:
 	bool del;
 };
 
+class SingleColor : public DrawableObject{
+public:
+	SingleColor(GLfloat x, GLfloat yOffset, GLfloat z, GLfloat rotation, GLfloat scale,
+         vec3 color, Model* model, vec3 dimensions, int collisionMode, bool shadow = false);
+	//overload this to add AI behaviour. return true to remove object from public vector.
+	virtual bool update(){return DrawableObject::update();}
+	virtual void draw();
+	virtual void collisionHandler(DrawableObject* obj){DrawableObject::collisionHandler(obj);};
+	vec3 color;
+};
+
 class Tree : public DrawableObject{
 public:
 	Tree(GLfloat x, GLfloat yOffset, GLfloat z, GLfloat rotation, GLfloat scale,
@@ -91,15 +102,16 @@ public:
 
 	//overload this to add AI behaviour. return true to remove object from public vector.
 	virtual bool update();
+	virtual void draw();
 	virtual void collisionHandler(DrawableObject* obj);
-	std::vector<DrawableObject*> apples;
+	std::vector<SingleColor*> apples;
 };
 
-class Blade : public DrawableObject{
+class Blade : public SingleColor{
 public:
 	Blade(GLfloat x, GLfloat yOffset, GLfloat z, GLfloat rotation, GLfloat scale,
-         GLuint* tex, Model* model, GLuint* program, vec3 dimensions, int collisionMode, bool shadow = false) :
-		DrawableObject(x, yOffset, z, rotation, scale, tex, model, program, dimensions, collisionMode, shadow) {};
+         vec3 color, Model* model, vec3 dimensions, int collisionMode, bool shadow = false) :
+		SingleColor(x, yOffset, z, rotation, scale, color, model, dimensions, collisionMode, shadow) {};
 
 	//overload this to add AI behaviour. return true to remove object from public vector.
 	virtual bool update();
@@ -139,11 +151,11 @@ private:
 	int ammo;
 };
 
-class Shot : public DrawableObject{
+class Shot : public SingleColor{
 public:
 	Shot(GLfloat x, GLfloat yOffset, GLfloat z, GLfloat rotation, GLfloat scale,
-          GLuint* tex, Model* model, GLuint* program, vec3 dimensions, int collisionMode, vec3 direction, bool shadow = false) :
-		DrawableObject(x, yOffset, z, rotation, scale, tex, model, program, dimensions, collisionMode, shadow), direction(direction) {};
+          vec3 color, Model* model, vec3 dimensions, int collisionMode, vec3 direction, bool shadow = false) :
+		SingleColor(x, yOffset, z, rotation, scale, color, model, dimensions, collisionMode, shadow), direction(direction) {};
 
 	//overload this to add AI behaviour. return true to remove object from public vector.
 	virtual bool update();
@@ -165,9 +177,13 @@ public:
 
 class Light : public DrawableObject{
 public:
-	LightSource* source;
+	LightSource* source; int lightId;
 	Light(GLfloat x, GLfloat yOffset, GLfloat z, vec3 rotation, GLfloat scale, GLuint* tex, Model* model, GLuint* program, bool shadow = false);
 	//overload this to add AI behaviour. return true to remove object from public vector.
+
+	//use NULL,0,NULL to set y = 0 while not affecting x or z. See also move()
+	virtual void setCoords(GLfloat* x, GLfloat* y, GLfloat* z);
+
 };
 
 void drawObj(DrawableObject* obj);

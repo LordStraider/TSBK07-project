@@ -43,14 +43,8 @@ private:
     DrawableObject* obj1;
 };
 
+//deprecated
 vec3 findDimensions(Model* m) {
-/*  int i;
-    float maxx = -1e10, maxy = -1e10, maxz = -1e10, minx = 1e10, miny = 1e10, minz = 1e10;
-
-
-
-    printf("maxz %f minz %f \n", m->radius, m->radiusXZ);
-*/
     return vec3(1,1,1);//maxx-minx, maxy-miny, maxz-minz);
 }
 
@@ -60,7 +54,6 @@ DrawableObject::DrawableObject(GLfloat x, GLfloat yOffset, GLfloat z, GLfloat ro
     rotation(rotation), scale(1), tex(tex), model(model), program(program), dimensions(dimensions), collisionMode(collisionMode), shadow(shadow), del(false), affectedByGravity(false)
 {
     setCoords(&x, &yOffset, &z);
-//  dimensions = scale * findDimensions(model);
     setRotation(rotation);
 }
 
@@ -68,7 +61,6 @@ DrawableObject::DrawableObject(GLfloat x, GLfloat yOffset, GLfloat z, GLfloat ro
     rotation(rotation), scale(scale), tex(tex), model(model), program(program), dimensions(dimensions), collisionMode(collisionMode), shadow(shadow), del(false), affectedByGravity(false)
 {
     setCoords(&x, &yOffset, &z);
-//  dimensions = scale * findDimensions(model);
     setRotation(rotation);
 }
 
@@ -76,7 +68,6 @@ DrawableObject::DrawableObject(vec3 position, GLfloat rotation, GLuint* tex, Mod
     x(position.x), z(position.z), yOffset(position.y), rotation(rotation), tex(tex), model(model), program(program), dimensions(dimensions), collisionMode(collisionMode), shadow(shadow), del(false), affectedByGravity(false)
 {
     setCoords(&x, &yOffset, &z);
-//  dimensions = scale * findDimensions(model);
     setRotation(rotation);
 }
 
@@ -85,12 +76,10 @@ void DrawableObject::draw() {
         return;
     }
 
-
     glUseProgram(*program);
-
     GLfloat t = (GLfloat)glutGet(GLUT_ELAPSED_TIME);
-
-    glBindTexture(GL_TEXTURE_2D, *tex);
+	if(tex != NULL)
+		glBindTexture(GL_TEXTURE_2D, *tex);
     glUniformMatrix4fv(glGetUniformLocation(*program, "mdlMatrix"), 1, GL_TRUE, total.m);
     DrawModel(model, *program, "inPosition", "inNormal", "inTexCoord");
 
@@ -155,15 +144,19 @@ void DrawableObject::setRotation(GLfloat angle) {
     updateMatrices();
 }
 
-//use -1 if you don't want to change a value. Example: -1,0,-1 to set y = 0 while not affecting x or z
+GLfloat clamp(GLfloat a, GLfloat min, GLfloat max){
+	return a = (a < min) ? min : (a > max) ? max : a;
+}
+
+//use NULL or -1 if you don't want to change a value. Example: -1,0,-1 to set y = 0 while not affecting x or z
 void DrawableObject::setCoords(GLfloat *x, GLfloat *y, GLfloat *z) {
     stayInBounds(x, z);
 
-    if(*x != -1)
+    if(x != NULL && *x != -1) 
         this->x = *x;
-    if(*y != -1)
+    if(y != NULL && *y != -1)
         this->yOffset = *y;
-    if(*z != -1)
+    if(z != NULL && *z != -1)
         this->z = *z;
 
     trans = T(*x, this->y = yOffset + findY(*x, *z), *z);
@@ -205,22 +198,49 @@ void DrawableObject::stayInBounds(GLfloat *x, GLfloat *z) {
 
 //overload this to add AI behaviour. return true to remove object from public vector.
 bool DrawableObject::update() {
-    //just testing various things we might need
-
     if(affectedByGravity){
         if(yOffset<=0) yOffset = 0;
         else move(0,-0.25,0);
     }
-
-    /*if(rand() > RAND_MAX-10) {
-        //just testing. Will need to be able to do this if we want to fire bullets, for instance.
-        allObjects.push_back(new DrawableObject(rand() % texWidth, 0, rand() % texHeight, 0, &bunnyTex, sphere, program, dimensions, collisionMode));
-        printf("amount of objects now: %d\n", allObjects.size());
-    }*/
-    //if(rand() > RAND_MAX-1000) move(randomFloat(-2,2), 0, randomFloat(-2,2));
-    //rotate(0.05);
-    //if(rand() > RAND_MAX-10) return true; // randomly remove objects to test deletion of objects (pick ups, dead enemies, etc)
     return getDel();
+}
+
+void Tree::draw(){
+    GLfloat distToCam = sqrt(pow(xValue - x, 2) + pow(zValue - z, 2));
+    if(distToCam > 100){
+        if(scale < 1.5){
+            scale = 1.5;
+            updateMatrices();
+		    model = lowResTree;
+		}
+        //would be awesome to use a billboard version of the high res tree here!
+     }
+    else{
+        if(scale > 0.3){
+            scale = 0.3;
+            updateMatrices();
+			model = highResTree;
+        }
+		for_each(apples.begin(),apples.end(), drawObj);
+    }
+	DrawableObject::draw();
+}
+
+struct AppleDropper
+{
+    AppleDropper() {}
+    bool operator()(SingleColor* apple) {
+        if(rand() % 4 != 0) return false;
+		SingleColor* o = new SingleColor(*apple);
+		o->affectedByGravity = true;
+        allObjects.push_back(o);
+		//delete apple;
+		return true;
+    }
+};
+
+void Tree::collisionHandler(DrawableObject* obj) {
+    apples.erase(remove_if(apples.begin(), apples.end(), AppleDropper()), apples.end());
 }
 
 bool Tree::update() {
@@ -228,34 +248,21 @@ bool Tree::update() {
         return true;
     }
 
-    if(rand() > RAND_MAX - 1200000 && apples.size() < 10){
+	//with a chance of 0.1%, each tree will generate an average of 50 * 0.001 = 0.05 apples every second
+    if(randomFloat(0,100) > 99.9 && apples.size() < 6){
         //spawn an apple!
         GLfloat x, z;
         x = this->x + randomFloat(-10,10);
         z = this->z + randomFloat(-10,10);
         stayInBounds(&x, &z);
-        DrawableObject* apple = new DrawableObject(x, 20, z, 0, 0.4, &dirtTex, sphere, &programSingleColor, vec3(0.4, 0.4, 0.4), SPHERE);
+        SingleColor* apple = new SingleColor(x, randomFloat(15,25), z, 0, 0.4, vec3(1,0,0), sphere, vec3(0.4, 0.4, 0.4), SPHERE);
         apples.push_back(apple);
-        allObjects.push_back(apple);
         //printf("allobjsize: %i\n", allObjects.size());
+		if(allObjects.size() < 250 && x > 9.9 && z > 9.9){
+			apples.erase(remove_if(apples.begin(), apples.end(), AppleDropper()), apples.end());		
+		}
     }
 
-    GLfloat distToCam = sqrt(pow(xValue - x, 2) + pow(zValue - z, 2));
-    if(distToCam > 100){
-        if(scale < 1.5){
-            scale = 1.5;
-            updateMatrices();
-        }
-        //would be awesome to use a billboard version of the high res tree here!
-        model = lowResTree;
-    }
-    else{
-        if(scale > 0.3){
-            scale = 0.3;
-            updateMatrices();
-        }
-        model = highResTree;
-    }
     return getDel();
 }
 
@@ -293,19 +300,20 @@ void Player::fireBulletIfAmmo(){
 
     subAmmo();
     float rot1 = rotation + M_PI / 2;
-    Shot* shot = new Shot(x, 1, z, rot1, 0.4, &dirtTex, sphere, &programSingleColor, vec3(0.4, 0.4, 0.4), SPHERE, vec3(cos(rot1),0,sin(rot1)));
+    Shot* shot = new Shot(x, 1, z, rot1, 0.4, vec3(1,0,0), sphere, vec3(0.4, 0.4, 0.4), SPHERE, vec3(cos(rot1),0,sin(rot1)));
     allObjects.push_back(shot);
     //cooldown?
 }
 
-bool Player::update() {
-    direction = 1;
+bool Player::update() {   	
+	direction = 1;
     setRotation(bunnyRotation + angle);
-
     setCoords(&xValue, &yValue, &zValue);
-
-    for_each(allObjects.begin(), allObjects.end(), CollisionChecker(this));
-
+    
+	//just testing lights. This won't be here.
+	lightDirections[0] = getCoords();
+	
+	for_each(allObjects.begin(), allObjects.end(), CollisionChecker(this));
     return gameOver;
 }
 
@@ -331,30 +339,37 @@ bool Billboard::update() {
     return false;
 }
 
+SingleColor::SingleColor(GLfloat x, GLfloat yOffset, GLfloat z, GLfloat rotation, GLfloat scale,
+         vec3 color, Model* model, vec3 dimensions, int collisionMode, bool shadow) : 
+	DrawableObject(x, yOffset, z, rotation, scale, (GLuint*)NULL, model, &programSingleColor, dimensions, collisionMode, shadow), color(color) {};
+
+
+void SingleColor::draw(){
+	glUseProgram(*program);
+	glUniform3fv(glGetUniformLocation(*program, "color"), 1, &color.x);
+    DrawableObject::draw();
+}
+
 Light::Light(GLfloat x, GLfloat yOffset, GLfloat z, vec3 rotation, GLfloat scale, GLuint* tex, Model* model, GLuint* program, bool shadow) :
         DrawableObject(x, yOffset, z, 0, scale, tex, model, program, vec3(0,0,0), NONE, shadow)
     {
         rot = Mult(Mult(Rx(rotation.x), Ry(rotation.y)), Ry(rotation.z)); //not this simple, is it?
         source = new LightSource(vec3(x, y = findY(x,z) + yOffset, z), rotation, vec3(1,1,1));
+		this->lightId = lightDirections.size();
+		lightDirections.push_back(rotation);
+		lightColors.push_back(vec3(0,0,1));
+
     };
+
+void Light::setCoords(GLfloat* x, GLfloat* y, GLfloat* z){
+	this->y += *y - yOffset;
+	this->source->direction = vec3(*x,this->y,*z);
+	lightDirections[this->lightId] = this->source->direction;
+	return DrawableObject::setCoords(x,y,z);
+}
 
 void DrawableObject::collisionHandler(DrawableObject* obj) {
 
-}
-
-
-struct AppleDropper
-{
-    AppleDropper() {}
-    bool operator()(DrawableObject* apple) {
-        if(rand() % 4 == 0) return false;
-        apple->affectedByGravity = true;
-        return true;
-    }
-};
-
-void Tree::collisionHandler(DrawableObject* obj) {
-    apples.erase(remove_if(apples.begin(), apples.end(), AppleDropper()), apples.end());
 }
 
 void Blade::collisionHandler(DrawableObject* obj) {
@@ -389,6 +404,8 @@ void Player::collisionHandler(DrawableObject* obj) {
         setCoords(&xValue, &yValue, &zValue);
     }
 }
+
+
 
 void Shot::collisionHandler(DrawableObject* obj) {
     Player *p = dynamic_cast<Player*>(obj);

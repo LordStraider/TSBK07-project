@@ -28,7 +28,9 @@ FrustumG* frustumG;
 
 vector<GLuint*> programs;
 vector<DrawableObject*> allObjects;
-vector<DrawableObject*> lightSources;
+
+vector<vec3> lightDirections;
+vector<vec3> lightColors; 
 
 Player* bunnyObj;
 
@@ -136,17 +138,17 @@ void init_constants(void) {
 
 
     /* WindMill */
-    allObjects.push_back(new DrawableObject(60, 0, 30, 0, 0.8, &dirtTex, windmillWalls, &programSingleColor, vec3(3.5, 13, 3.5), BOX));
-    allObjects.push_back(new DrawableObject(60, 0, 30, 0, 0.8, &dirtTex, windmillRoof, &programSingleColor, vec3(0,0,0), NONE));
-    allObjects.push_back(new DrawableObject(60, 0, 30, 0, 0.8, &dirtTex, windmillBalcony, &programSingleColor, vec3(0,0,0), NONE, true));
+	allObjects.push_back(new SingleColor(60, 0, 30, 0, 0.8, vec3(0,1,0), windmillWalls, vec3(3.5, 13, 3.5), BOX));
+    allObjects.push_back(new SingleColor(60, 0, 30, 0, 0.8, vec3(1,1,0), windmillRoof, vec3(0,0,0), NONE));
+    allObjects.push_back(new SingleColor(60, 0, 30, 0, 0.8, vec3(0,1,1), windmillBalcony, vec3(0,0,0), NONE, true));
     int i;
     for (i = 0; i < 4; i++) {
         float r = i * M_PI / 2;
-        allObjects.push_back(new Blade(64, 7.4, 30, r, 0.5, &dirtTex, blade, &programSingleColor, vec3(0,0,0), NONE));
+        allObjects.push_back(new Blade(64, 7.4, 30, r, 0.5, vec3(1,0,1), blade, vec3(0,0,0), NONE));
     }
 
     /* Teapot */
-    allObjects.push_back(new DrawableObject(rand() % texWidth, 0, rand() % texHeight, 0, &dirtTex, teapot, &program, vec3(10, 20, 10), BOX, true));
+    allObjects.push_back(new DrawableObject(-1, 0, 258, 0, &dirtTex, teapot, &program, vec3(10, 20, 10), BOX, true));
 
     /* KingKong */
     allObjects.push_back(new Enemy(rand() % texWidth, 0, rand() % texHeight, 0, 1, &bunnyTex, kingKong, &program, vec3(5.1, 40, 5.1), BOX, true));
@@ -158,21 +160,21 @@ void init_constants(void) {
 
 	for (int i = 0; i < 100; i++) {
         /* Spheres */
-        //allObjects.push_back(new DrawableObject(rand() % texWidth, 0, rand() % texHeight, 0, 1, &dirtTex, sphere, &programSingleColor, vec3(1, 1, 1), SPHERE));
+		//allObjects.push_back(new DrawableObject(rand() % texWidth, 0, rand() % texHeight, 0, 1, &dirtTex, sphere, &programSingleColor, vec3(1, 1, 1), SPHERE));
         /* Trees */
     	allObjects.push_back(new Tree(rand() % texWidth, 0, rand() % texHeight, 0, 1, &grassTex, highResTree, &program, vec3(0.5, 10, 0.5), BOX));
 	    /* Billboards */
         allObjects.push_back(new Billboard(rand() % (texWidth-1), 10, rand() % (texHeight-1), 10, &skyBoxTex, &program, vec3(0,0,0), NONE));
-
     }
 
-/*	for (int i = 0; i < 8; i++){
-        /* sphere dont have any texture coordinates so the skyboxtex is not doing what it is supposed to... */
-/*		Light* light = new Light(20, 5, 20, vec3(rand() % 6, rand() % 6, rand() % 6), 3, &skyBoxTex, sphere, &program);
-		lightSources.push_back(light);
+	for (int i = 0; i < 8; i++){
 		//when lightSources works: only push to allObjects, let constructor take care of its LightSource.
+		//these are only displayed for debug purposes
+		//the objects are also there to make eventual subclasses simpler. Moving lights, fires, etc. 
+		vec3 pos = vec3(rand() % (texWidth -1), 0, rand() % (texHeight - 1));
+		Light* light = new Light(pos.x,pos.y,pos.z, pos, 1, &grassTex, bunny, &program);
 		allObjects.push_back(light);
-	}*/
+	}
 
 
 //    frustumG = new FrustumG();

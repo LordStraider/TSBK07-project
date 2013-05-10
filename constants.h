@@ -24,9 +24,10 @@
 #ifndef M_PI
     #define M_PI           3.14159265358979323846
 #endif
-
+//Forward declarations
 class DrawableObject;
 class Player;
+class LightSource;
 class FrustumG;
 
 extern mat4 rot, trans, shear, total, cam, proj, tmp;
@@ -68,8 +69,10 @@ extern FrustumG* frustumG;
 
 extern std::vector<GLuint*> programs;
 extern std::vector<DrawableObject*> allObjects;
-//should be: std::vector<LightSource*> lightSources, but I can't get that to work
-extern std::vector<DrawableObject*> lightSources;
+
+extern std::vector<vec3> lightDirections;
+extern std::vector<vec3> lightColors; 
+
 extern Player* bunnyObj;
 
 void init_constants();
