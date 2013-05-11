@@ -15,6 +15,7 @@ Model* GenerateTerrain(TextureData *tex)
     GLfloat *normalArray, *texCoordArray;
 
     vertexArray = (GLfloat*)malloc(sizeof(GLfloat) * 3 * vertexCount);
+    GLfloat *vertexArray2 = (GLfloat*)malloc(sizeof(GLfloat) * 3 * vertexCount);
     normalArray = (GLfloat*)malloc(sizeof(GLfloat) * 3 * vertexCount);
     texCoordArray = (GLfloat*)malloc(sizeof(GLfloat) * 2 * vertexCount);
     indexArray = (GLuint*)malloc(sizeof(GLuint) * triangleCount*3);
@@ -25,18 +26,18 @@ Model* GenerateTerrain(TextureData *tex)
     texHeight = tex->height;
 
 
-    printf("bpp %d\n", tex->bpp);
     for (x = 0; x < tex->width; x++)
         for (z = 0; z < tex->height; z++)
         {
 // Vertex array. You need to scale this properly
             vertexArray[(x + z * tex->width)*3 + 0] = x;
             y = tex->imageData[(x + z * tex->width) * (tex->bpp/8)] / 25.0;
-            if (y < 1.5) {
-                y = 1.5;
+            if (y < 0.1){
+                y += 0.01;
             }
             vertexArray[(x + z * tex->width)*3 + 1] = y;
             vertexArray[(x + z * tex->width)*3 + 2] = z;
+
 // Normal vectors. You need to calculate these.
             normalArray[(x + z * tex->width)*3 + 0] = 0.0;
             normalArray[(x + z * tex->width)*3 + 1] = 1.0;
@@ -186,7 +187,8 @@ GLfloat findY(int x, int z) {
     // A * x + B * y + C * z - D = 0 => y = (D - A*x - C*z) / B
     d = norm.x * v1.x + norm.y * v1.y + norm.z * v1.z;
     y = (d - norm.x * v1.x - norm.z * v1.z) / norm.y;
-
+    if (y < 1.5)
+        return 1.5;
     return y;
 }
 

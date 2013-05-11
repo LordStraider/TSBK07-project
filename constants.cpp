@@ -121,7 +121,9 @@ void init_constants(void) {
     glUniformMatrix4fv(glGetUniformLocation(programInvisible, "projMatrix"), 1, GL_TRUE, proj.m);
     glUseProgram(programTerrain);
     glUniformMatrix4fv(glGetUniformLocation(programTerrain, "projMatrix"), 1, GL_TRUE, proj.m);
-    glUniform1i(glGetUniformLocation(programTerrain, "tex"), 0); // Texture unit 0
+    glUniform1i(glGetUniformLocation(program, "tex"), 0); // Texture unit 0
+    glUniform1i(glGetUniformLocation(programTerrain, "tex"), 1); // Texture unit 1
+    glUniform1i(glGetUniformLocation(programTerrain, "tex2"), 2); // Texture unit 0
 	printError("load objs");
 
 	programs.push_back(&program);

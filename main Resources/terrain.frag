@@ -5,8 +5,8 @@ in vec2 texCoord;
 in vec3 exPos;
 in vec3 exNormal;
 uniform sampler2D tex;
+uniform sampler2D tex2;
 uniform vec3 camPos;
-uniform bool mode;
 uniform mat4 mdlMatrix;
 uniform mat4 camMatrix;
 uniform vec3 lightSourcesDirPosArr[8];
@@ -48,7 +48,7 @@ void main(void)
 	vec3 lights = (specularLight / exPos.y);
 
 	if (exPos.y <= 1.5){ //water
-		outColor = vec4(lights,1.0) + exPos.y / 2.5 * (diffuse * 1.2 * texture(tex, texCoord) + diffuse * vec4(0,0,1,1));
+		outColor = vec4(lights,1.0) + exPos.y / 2 * (diffuse * 1.2 * texture(tex2, texCoord));
 	} else {
 		outColor = vec4(lights,1.0) + diffuse * texture(tex, texCoord);
 	}

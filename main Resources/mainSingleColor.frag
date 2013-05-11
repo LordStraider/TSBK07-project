@@ -1,6 +1,6 @@
 #version 150
 
-uniform vec3 color; 
+uniform vec3 color;
 in vec3 exNormal; 
 out vec4 outColor;
 

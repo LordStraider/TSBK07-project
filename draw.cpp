@@ -78,7 +78,7 @@ void display(void) {
     yCamPos += camModY;
 
     xValue += xModify * speed;
-    yValue += yModify;
+    //yValue += yModify;
     zValue += zModify * speed;
 
     /*if (checkBoundaries() || checkCollisionBS()) {
@@ -89,7 +89,7 @@ void display(void) {
     }*/
 
     yFind = findY(xValue, zValue);
-    if (yFind != 1.5) {
+    if (yFind >= 1.5) {
         yValue += yModify;
     }
 
@@ -117,7 +117,7 @@ void display(void) {
 
     /* Special displays */
     displayNoLight(t);
-	displayTerrain();
+
  //   displaySingleColor(t);
 
 	for_each(programs.begin(), programs.end(), updateProgram());
@@ -126,9 +126,12 @@ void display(void) {
 	allObjects.erase(remove_if(allObjects.begin(), allObjects.end(), ObjectUpdater()), allObjects.end());
     //for_each(allObjects.begin(), allObjects.end(), ObjectUpdater());
 
+    displayTerrain();
+
     displayPlayerStatus();
 
     printError("display");
+
 
     #if defined(_WIN32)
 		glutSwapBuffers();
@@ -162,12 +165,7 @@ void displayPlayerStatus() {
 }
 
 void displayTerrain() {
-	GLfloat b = 1;
-	GLfloat p_array[] = {p.x,p.y+=14,p.z};
-	glUseProgram(programTerrain);
-
-	glUniform3fv(glGetUniformLocation(programTerrain, "camPos"), 1, p_array);
-    glUniform1fv(glGetUniformLocation(programTerrain, "mode"), 1, &b);
+    glUseProgram(programTerrain);
 
     // Build matrix
 
@@ -177,10 +175,27 @@ void displayTerrain() {
     glUniformMatrix4fv(glGetUniformLocation(programTerrain, "camMatrix"), 1, GL_TRUE, tmp.m);
     glUniformMatrix4fv(glGetUniformLocation(programTerrain, "mdlMatrix"), 1, GL_TRUE, total.m);
 
+    glActiveTexture(GL_TEXTURE1);
     glBindTexture(GL_TEXTURE_2D, grassTex);
+    glActiveTexture(GL_TEXTURE2);
+    glBindTexture(GL_TEXTURE_2D, dirtTex);
     DrawModel(terrain, program, "inPosition", "inNormal", "inTexCoord");
+    glActiveTexture(GL_TEXTURE0);
 
 
+    glUseProgram(programInvisible);
+    glEnable(GL_BLEND);
+
+    //GLfloat p_array[] = {p.x,p.y+=14,p.z};
+    //glUniform3fv(glGetUniformLocation(programInvisible, "camPos"), 1, p_array);
+
+    trans = T(texHeight / 2, 1.5, texWidth / 2);
+    shear = S(texHeight, 0, texWidth);
+    total = Mult(trans, shear);
+    glUniformMatrix4fv(glGetUniformLocation(programInvisible, "camMatrix"), 1, GL_TRUE, cam.m);
+    glUniformMatrix4fv(glGetUniformLocation(programInvisible, "mdlMatrix"), 1, GL_TRUE, total.m);
+    DrawModel(cube, programInvisible, "inPosition", "inNormal", "inTexCoord");
+    glDisable(GL_BLEND);
 }
 
 void displayNoLight(GLfloat t) {
@@ -195,6 +210,7 @@ void displayNoLight(GLfloat t) {
     rot = Ry(t/50000);
     total = Mult(trans, rot);
 
+    glActiveTexture(GL_TEXTURE0);
     glBindTexture(GL_TEXTURE_2D, skyBoxTex);
 
     tmp = cam;
