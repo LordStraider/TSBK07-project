@@ -72,6 +72,7 @@ extern std::vector<DrawableObject*> allObjects;
 
 extern std::vector<vec3> lightDirections;
 extern std::vector<vec3> lightColors; 
+extern std::vector<vec3> lightPositions; 
 
 extern Player* bunnyObj;
 

@@ -311,8 +311,9 @@ bool Player::update() {
     setCoords(&xValue, &yValue, &zValue);
     
 	//just testing lights. This won't be here.
-	lightDirections[0] = getCoords();
-	
+	//lightPositions[0] = getCoords();
+	//lightDirections[0] = vec3(cos(rotation), 0, sin(rotation));
+
 	for_each(allObjects.begin(), allObjects.end(), CollisionChecker(this));
     return gameOver;
 }
@@ -358,7 +359,7 @@ Light::Light(GLfloat x, GLfloat yOffset, GLfloat z, vec3 rotation, GLfloat scale
 		this->lightId = lightDirections.size();
 		lightDirections.push_back(rotation);
 		lightColors.push_back(vec3(0,0,1));
-
+		lightPositions.push_back(source->position);
     };
 
 void Light::setCoords(GLfloat* x, GLfloat* y, GLfloat* z){

@@ -9,6 +9,8 @@
     #include <GL/glut.h>
 #endif
 
+#include <time.h>
+
 // Third-party module imports
 #include "lib/GL_utilities.h"
 #include "lib/loadobj.h"
@@ -65,7 +67,7 @@ int main(int argc, char *argv[]) {
     glutInitWindowSize (800, 640);
 
     glutInit(&argc, argv);
-    glutInitDisplayMode(GLUT_DOUBLE | GLUT_DEPTH);
+    glutInitDisplayMode(GLUT_DOUBLE | GLUT_DEPTH | GLUT_RGBA);
     glutCreateWindow ("TSBK07 - project");
 
     //glutHideCursor();
@@ -91,8 +93,11 @@ int main(int argc, char *argv[]) {
     glutTimerFunc(20, &OnTimer, 0);
 
     sfMakeRasterFont();
-
-    init_constants();
+	
+	//give seed to rand().
+	srand (time(NULL));
+    
+	init_constants();
 
     glutMainLoop();
     exit(0);

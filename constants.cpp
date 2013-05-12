@@ -30,7 +30,8 @@ vector<GLuint*> programs;
 vector<DrawableObject*> allObjects;
 
 vector<vec3> lightDirections;
-vector<vec3> lightColors; 
+vector<vec3> lightColors;
+vector<vec3> lightPositions;
 
 Player* bunnyObj;
 
@@ -44,7 +45,8 @@ void DrawableObjectVector::drawAll(GLfloat t){
 TextureData ttex; // terrain
 
 void init_constants(void) {
-    /* GL inits*/
+    
+	/* GL inits*/
     glClearColor(0.2,0.2,0.5,0);
     glEnable(GL_DEPTH_TEST);
     glEnable(GL_CULL_FACE);
@@ -166,7 +168,7 @@ void init_constants(void) {
         /* Trees */
     	allObjects.push_back(new Tree(rand() % texWidth, 0, rand() % texHeight, 0, 1, &grassTex, highResTree, &program, vec3(0.5, 10, 0.5), BOX));
 	    /* Billboards */
-        allObjects.push_back(new Billboard(rand() % (texWidth-1), 10, rand() % (texHeight-1), 10, &skyBoxTex, &program, vec3(0,0,0), NONE));
+        //allObjects.push_back(new Billboard(rand() % (texWidth-1), 10, rand() % (texHeight-1), 10, &skyBoxTex, &program, vec3(0,0,0), NONE));
     }
 
 	for (int i = 0; i < 8; i++){
