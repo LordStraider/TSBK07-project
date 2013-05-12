@@ -170,15 +170,15 @@ void init_constants(void) {
 	    /* Billboards */
         //allObjects.push_back(new Billboard(rand() % (texWidth-1), 10, rand() % (texHeight-1), 10, &skyBoxTex, &program, vec3(0,0,0), NONE));
     }
-
-	for (int i = 0; i < 8; i++){
+	
+	//for (int i = 0; i < 8; i++){
 		//when lightSources works: only push to allObjects, let constructor take care of its LightSource.
 		//these are only displayed for debug purposes
 		//the objects are also there to make eventual subclasses simpler. Moving lights, fires, etc. 
-		vec3 pos = vec3(rand() % (texWidth -1), 0, rand() % (texHeight - 1));
-		Light* light = new Light(pos.x,pos.y,pos.z, pos, 1, &grassTex, bunny, &program);
-		allObjects.push_back(light);
-	}
+		//vec3 pos = vec3(rand() % (texWidth -1), 0, rand() % (texHeight - 1));
+		//Light* light = new Light(pos.x,pos.y,pos.z, pos, 1, &grassTex, bunny, &program);
+		//allObjects.push_back(light);
+	//}
 
 
 //    frustumG = new FrustumG();
