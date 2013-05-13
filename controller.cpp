@@ -358,7 +358,7 @@ void keyController(){
         yModify = 0;
         gravity = 0;
 
-        if (yFind == 1.5) {
+        if (yFind == 2) {
             yValue = 0;
         } else {
             yValue = 0.7;

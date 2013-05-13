@@ -84,7 +84,7 @@ void DrawableObject::draw() {
     DrawModel(model, *program, "inPosition", "inNormal", "inTexCoord");
 
     vec3 coords = getCoords();
-    if (shadow && findY(coords.x, coords.z) != 1.5) {
+    if (shadow && findY(coords.x, coords.z) != 2) {
         glUseProgram(programShadow);
         mat4 shadowTrans = T(x, findY(x,z) + 0.1, z); //are you sure that findY(x,y) is necessary here. y - yOffset should work.
         mat4 sub = Mult(rot, S(scale,0,scale));
@@ -244,7 +244,7 @@ void Tree::collisionHandler(DrawableObject* obj) {
 }
 
 bool Tree::update() {
-    if (findY(x, z) == 1.5) {
+    if (findY(x, z) == 2) {
         return true;
     }
 

@@ -14,7 +14,7 @@ uniform mat4 camMatrix;
 uniform vec3 lightSourcesDirPosArr[8];
 uniform vec3 lightSourcesColorArr[8];
 
-vec3 specular(int i){
+/*vec3 specular(int i){
 	vec3 normal = normalize(mat3(camMatrix * mdlMatrix) * exNormal);
 	vec3 surf = vec3(camMatrix * mdlMatrix * vec4(exPos,1.0));
 	//vec3 normal = normalize(mat3(mdlMatrix) * exNormal);
@@ -30,11 +30,11 @@ vec3 specular(int i){
 	specularStrength = max(specularStrength, 0.01);	//prevent negative light
 	specularStrength = pow(specularStrength, 10);
 	return specularStrength * lightSourcesColorArr[i];
-}
+}*/
 
 void main(void)
 {
-	const vec3 light = vec3(0.58, 1, 0.58);
+/*	const vec3 light = vec3(0.58, 1, 0.58);
 	float diffuse;
 	
 //	diffuse = dot(norm, normalize(lightSourcesDirPosArr[i]));
@@ -48,6 +48,6 @@ void main(void)
 	}
 	
 	vec3 lights = (specularLight / exPos.y);
-
-	outColor = 0.5 * vec4(lights, 0.35) + diffuse * vec4(0, 0, 1, 0.5);
+*/
+	outColor = vec4(0, 0, 1, 0.5);
 }
