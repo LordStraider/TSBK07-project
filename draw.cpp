@@ -28,9 +28,9 @@ struct updateProgram{
 		glUniformMatrix4fv(glGetUniformLocation(*program, "camMatrix"), 1, GL_TRUE, cam.m);
 		//we have to specify amount of lights at compile time
 		//a way around this would be upgrading to some newer opengl version or passing these arrays as textures.
-		glUniform3fv(glGetUniformLocation(*program, "lightSourcesDirArr"), 8, &lightDirections[0].x);
+/*		glUniform3fv(glGetUniformLocation(*program, "lightSourcesDirArr"), 8, &lightDirections[0].x);
 		glUniform3fv(glGetUniformLocation(*program, "lightSourcesColorArr"), 8, &lightColors[0].x);	
-		glUniform3fv(glGetUniformLocation(*program, "lightSourcesPosArr"), 8, &lightPositions[0].x);	
+		glUniform3fv(glGetUniformLocation(*program, "lightSourcesPosArr"), 8, &lightPositions[0].x);	*/
 	}
 };
 
