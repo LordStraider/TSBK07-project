@@ -32,7 +32,7 @@ Model* GenerateTerrain(TextureData *tex)
 // Vertex array. You need to scale this properly
             vertexArray[(x + z * tex->width)*3 + 0] = x;
             y = tex->imageData[(x + z * tex->width) * (tex->bpp/8)] / 25.0;
-            if (y < 0.1){
+            if (y < 0.01){
                 y += 0.01;
             }
             vertexArray[(x + z * tex->width)*3 + 1] = y;
@@ -187,8 +187,8 @@ GLfloat findY(int x, int z) {
     // A * x + B * y + C * z - D = 0 => y = (D - A*x - C*z) / B
     d = norm.x * v1.x + norm.y * v1.y + norm.z * v1.z;
     y = (d - norm.x * v1.x - norm.z * v1.z) / norm.y;
-    if (y < 1.5)
-        return 1.5;
+    if (y < 2)
+        return 2;
     return y;
 }
 

@@ -90,7 +90,7 @@ void display(void) {
     }*/
 
     yFind = findY(xValue, zValue);
-    if (yFind >= 1.5) {
+    if (yFind >= 2) {
         yValue += yModify;
     }
 
@@ -190,7 +190,7 @@ void displayTerrain() {
     //GLfloat p_array[] = {p.x,p.y+=14,p.z};
     //glUniform3fv(glGetUniformLocation(programInvisible, "camPos"), 1, p_array);
 
-    trans = T(texHeight / 2, 1.5, texWidth / 2);
+    trans = T(texHeight / 2, 2, texWidth / 2);
     shear = S(texHeight, 0, texWidth);
     total = Mult(trans, shear);
     glUniformMatrix4fv(glGetUniformLocation(programInvisible, "camMatrix"), 1, GL_TRUE, cam.m);

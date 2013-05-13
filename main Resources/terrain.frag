@@ -47,7 +47,7 @@ void main(void)
 	
 	vec3 lights = (specularLight / exPos.y);
 
-	if (exPos.y <= 1.5){ //water
+	if (exPos.y <= 1.9){ //water
 		outColor = vec4(lights,1.0) + max(exPos.y / 2, 0.6) * (diffuse * 1.2 * texture(tex2, texCoord));
 	} else {
 		outColor = vec4(lights,1.0) + diffuse * texture(tex, texCoord);
